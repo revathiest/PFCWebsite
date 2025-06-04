@@ -5,6 +5,7 @@ const session = require('express-session');
 const passport = require('passport');
 const DiscordStrategy = require('passport-discord').Strategy;
 const path = require('path');
+const contentRoutes = require('./routes/content');
 
 const app = express();
 
@@ -35,6 +36,8 @@ passport.use(new DiscordStrategy({
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use('/api/content', contentRoutes);
 
 // Static files
 app.use(express.static(path.join(__dirname, 'public')));
