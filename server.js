@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const session = require('express-session');
 const passport = require('passport');
 const DiscordStrategy = require('passport-discord').Strategy;
@@ -42,7 +43,7 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname, 'public')));
 
 function checkAuth(req, res, next) {
   if (req.isAuthenticated()) return next();
@@ -66,7 +67,7 @@ app.get('/logout', (req, res) => {
 });
 
 app.get('/member', checkAuth, (req, res) => {
-  res.sendFile(__dirname + '/member.html');
+  res.sendFile(path.join(__dirname, 'protected', 'member.html'));
 });
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
