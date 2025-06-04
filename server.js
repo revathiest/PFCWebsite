@@ -45,6 +45,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Serve the main index.html from the project root
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
 function checkAuth(req, res, next) {
   if (req.isAuthenticated()) return next();
   res.redirect('/unauthorized.html');
