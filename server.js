@@ -1,5 +1,4 @@
 const express = require('express');
-const path = require('path');
 const session = require('express-session');
 const passport = require('passport');
 const DiscordStrategy = require('passport-discord').Strategy;
@@ -48,10 +47,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 function checkAuth(req, res, next) {
   if (req.isAuthenticated()) return next();
-  res.redirect('/');
+  res.redirect('/unauthorized.html');
 }
 
-app.get('/auth/discord', passport.authenticate('discord'));
+app.get('/auth/discord', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'auth', 'discord.html'));
+});
+
+app.get('/auth/discord/redirect', passport.authenticate('discord'));
 
 app.get(
   '/auth/discord/callback',
@@ -67,16 +70,9 @@ app.get('/logout', (req, res) => {
   });
 });
 
-// Protect direct access to member.html
-app.get('/member.html', checkAuth, (req, res) => {
-  res.sendFile(path.join(__dirname, 'member.html'));
-});
-
 app.get('/member', checkAuth, (req, res) => {
   res.sendFile(path.join(__dirname, 'protected', 'member.html'));
 });
 
-// Serve static files after protecting member routes
-app.use(express.static(__dirname));
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
