@@ -2,6 +2,7 @@ const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
 const DiscordStrategy = require('passport-discord').Strategy;
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
@@ -42,7 +43,6 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(express.static(__dirname));
 
 function checkAuth(req, res, next) {
   if (req.isAuthenticated()) return next();
@@ -65,8 +65,16 @@ app.get('/logout', (req, res) => {
   });
 });
 
+// Protect direct access to member.html
+app.get('/member.html', checkAuth, (req, res) => {
+  res.sendFile(path.join(__dirname, 'member.html'));
+});
+
 app.get('/member', checkAuth, (req, res) => {
   res.sendFile(__dirname + '/member.html');
 });
+
+// Serve static files after protecting member routes
+app.use(express.static(__dirname));
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
