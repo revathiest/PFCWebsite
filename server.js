@@ -42,7 +42,6 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(express.static(__dirname));
 
 function checkAuth(req, res, next) {
   if (req.isAuthenticated()) return next();
@@ -68,5 +67,8 @@ app.get('/logout', (req, res) => {
 app.get('/member', checkAuth, (req, res) => {
   res.sendFile(__dirname + '/member.html');
 });
+
+// Serve static files (HTML, CSS, client-side JS)
+app.use(express.static(__dirname));
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
