@@ -1,10 +1,17 @@
 {
-    "name": "Pyro Freelancer Corps",
-    "version": "1.0.0",
-    "main": "index.js",
-    "scripts": {
-        "test": "echo \"No tests yet, mate.\""
-      },      
-    "license": "ISC"
+  "name": "Pyro Freelancer Corps",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"No tests yet, mate.\""
+  },
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "passport": "^0.6.0",
+    "passport-discord": "^1.0.0",
+    "dotenv": "^16.0.3"
   }
-  
+}
