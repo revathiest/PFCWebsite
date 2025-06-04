@@ -152,5 +152,94 @@ Each "agent" refers to a key component or responsibility in the system.
 
 ---
 
+# 🧪 Testing Guide for PFC Web App
+
+This guide provides instructions on how to test the PFC web application, particularly after implementing Discord authentication and protecting routes.
+
+---
+
+## 🔍 Testing Objectives
+
+* Verify Discord OAuth2 flow works correctly.
+* Confirm protected pages are inaccessible without authentication.
+* Ensure valid sessions allow access to protected content.
+* Validate backend routes with unit and integration tests.
+
+---
+
+## ✅ Manual Testing Steps
+
+### 1. Discord Login Flow
+
+* Go to `/api/auth/signin` or click your Sign In button.
+* Authenticate with Discord.
+* Confirm you're redirected back and see a session-aware page (e.g., user info displayed).
+
+### 2. Protected Page Access
+
+* Visit a protected route (e.g., `/protected`) without logging in.
+* Ensure you're redirected to the sign-in page.
+* Log in and revisit `/protected`.
+* Ensure content loads properly and session data is displayed.
+
+### 3. Sign Out Flow
+
+* Click the Sign Out button.
+* Try accessing `/protected` again — confirm redirection back to login.
+
+---
+
+## 🧪 Automated Testing
+
+### Unit Tests (Jest)
+
+* Location: `tests/unit/`
+* Run: `npm run test`
+* Coverage: Test key utilities, session logic, UI components if using React
+
+### API Integration Tests (Supertest)
+
+* Location: `tests/integration/`
+* Focus:
+
+  * `/api/auth` routes
+  * Session persistence middleware
+  * Discord OAuth token handling
+
+#### Sample Test Example (for `/protected`):
+
+```js
+const request = require('supertest');
+const app = require('../../api/index');
+
+describe('GET /protected', () => {
+  it('should redirect if not authenticated', async () => {
+    const res = await request(app).get('/protected');
+    expect(res.status).toBe(302);
+    expect(res.header.location).toContain('/api/auth/signin');
+  });
+});
+```
+
+---
+
+## 🔁 Testing in Dev Workflow
+
+* Run `npm run dev` to start the server with hot reload.
+* Use Discord test account for repeated login/logout.
+* Ensure `.env.local` is correctly set up with Discord credentials.
+* Use browser DevTools to inspect cookies and session tokens.
+
+---
+
+## 🧰 Troubleshooting
+
+* **Issue:** Redirect loop
+
+  * **Fix:** Check `NEXTAUTH_URL` matches your local or prod domain.
+
+* **Issue:** Auth state
+
+
 > Built for the Pyro Freelancer Corps. Stay frosty, don't submit low-effort screenshots, and always back up your bloody database.
 
