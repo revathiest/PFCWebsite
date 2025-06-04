@@ -77,8 +77,8 @@
   <script>
     const isFile = location.protocol === 'file:';
     const apiBase = isFile || location.hostname === 'localhost'
-      ? 'http://localhost:3000'
-      : 'http://167.114.213.21:3000';
+      ? 'https://localhost:3000'
+      : 'https://167.114.213.21:3000';
   
     async function loadContent(sectionId) {
       try {
