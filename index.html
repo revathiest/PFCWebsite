@@ -1,26 +1,16 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Pyro Freelancer Corps</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <style>
-    :root {
-      --pfc-red: #87021b;
-      --pfc-gold: #b59f3b;
-    }
-    .bg-pfc-red { background-color: var(--pfc-red); }
-    .text-pfc-red { color: var(--pfc-red); }
-    .text-pfc-gold { color: var(--pfc-gold); }
-    .bg-pfc-gold { background-color: var(--pfc-gold); }
-  </style>
+  <link rel="stylesheet" href="css/main.css">
+  <script src="js/main.js" defer></script>
 </head>
 <body class="bg-black text-white">
   <!-- Navigation Bar -->
   <nav class="flex justify-end p-4 bg-black space-x-4">
-    <a href="./login" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded">Login</a>
     <a href="https://discord.gg/pfcs" target="_blank" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded">Join Discord</a>
   </nav>
 
@@ -29,7 +19,7 @@
     <div class="absolute inset-0 bg-black bg-opacity-60"></div>
     <div class="relative z-10 max-w-2xl mx-auto">
       <img src="./images/PFCSeal2.png" alt="PFC Logo" class="mx-auto w-24 mb-4">
-      <h1 class="text-4xl font-bold mb-2 text-pfc-gold">Pyro Freelancer Corps</h1>
+      <h1 class="text-4xl font-bold mb-2 text-pfc-red">Pyro Freelancer Corps</h1>
       <p id="motto" class="text-lg mb-4 text-white">Loading motto...</p>
     </div>
   </section>
@@ -61,37 +51,5 @@
   <footer class="bg-black text-gray-400 py-6 text-center">
     <p>&copy; 2025 Pyro Freelancer Corps. All rights reserved.</p>
   </footer>
-
-  <script>
-    // Base URL for the content API
-    const apiBase = 'https://api.pyrofreelancercorps.com';
-  
-    async function loadContent(sectionId) {
-      try {
-        console.log(`[DEBUG] Requesting: ${apiBase}/api/content/${sectionId}`);
-        const res = await fetch(`${apiBase}/api/content/${sectionId}`);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        console.log(`[DEBUG] Received for ${sectionId}:`, data);
-  
-        const element = document.getElementById(sectionId);
-        if (!element) {
-          console.warn(`[WARN] Missing element for ${sectionId}`);
-          return;
-        }
-  
-        if (sectionId === 'structure') {
-          element.innerHTML = data.content;
-        } else {
-          element.textContent = data.content;
-        }
-      } catch (e) {
-        console.error(`Failed to load ${sectionId} content:`, e);
-      }
-    }
-  
-    ['about', 'structure', 'motto'].forEach(loadContent);
-  </script>  
-  
 </body>
 </html>

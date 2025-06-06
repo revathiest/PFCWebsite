@@ -1,0 +1,21 @@
+/* main.css */
+:root {
+    --pfc-red: #87021b;
+    --pfc-gold: #b59f3b;
+  }
+  
+  .bg-pfc-red {
+    background-color: var(--pfc-red);
+  }
+  
+  .text-pfc-red {
+    color: var(--pfc-red);
+  }
+  
+  .text-pfc-gold {
+    color: var(--pfc-gold);
+  }
+  
+  .bg-pfc-gold {
+    background-color: var(--pfc-gold);
+  }
