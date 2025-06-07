@@ -66,4 +66,15 @@
     color: #eee;
     margin-bottom: 0.5rem;
   }
+
+  .community-watermark {
+    position: fixed;
+    bottom: 1rem;
+    left: 1rem;
+    width: 100px; /* Adjust as needed */
+    opacity: 0.2; /* Light touch for watermark effect */
+    z-index: 10;
+    pointer-events: none; /* So it doesn't interfere with clicks */
+  }
+  
   
