@@ -2,12 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pyro Freelancer Corps</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/main.css" />
   <script src="js/auth.js" defer></script>
   <script src="js/main.js" defer></script>
+  <script src="js/discordAuth.js" defer></script>
 </head>
 <body class="bg-black text-white">
   <!-- Navigation Bar -->
@@ -22,15 +23,12 @@
     <div class="relative z-10 max-w-4xl mx-auto px-4">
       <div class="flex flex-col items-center text-center space-y-4 mb-6 md:mb-8">
         <div class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
-          <img src="./images/PFCSeal2.png" alt="PFC Logo" class="w-20 md:w-24">
-          <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-pfc-red drop-shadow-lg">
-            Pyro Freelancer Corps
-          </h1>
+          <img src="./images/PFCSeal2.png" alt="PFC Logo" class="w-20 md:w-24" />
+          <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-pfc-red drop-shadow-lg">Pyro Freelancer Corps</h1>
         </div>
         <p id="motto" class="text-xl italic text-gray-200">Loading motto...</p>
       </div>
     </div>
-    
   </section>
 
   <!-- About Section -->
@@ -56,12 +54,21 @@
     </div>
   </section>
 
+  <!-- Discord Login Section -->
+  <section class="py-10 px-6 text-center">
+    <h2 class="text-3xl font-bold mb-4 text-pfc-red">Login</h2>
+    <p class="mb-6 text-lg text-gray-300">Authenticate using your Discord account:</p>
+    <button onclick="PFCDiscord.startDiscordLogin()" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-6 rounded">Login with Discord</button>
+    <div id="dashboard-link" class="hidden mt-4">
+      <a href="html/events.html" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-6 rounded inline-block">Go to Dashboard</a>
+    </div>
+  </section>
+
   <!-- Footer -->
   <footer class="bg-black text-gray-400 py-6 text-center">
     <p>&copy; 2025 Pyro Freelancer Corps. All rights reserved.</p>
   </footer>
 
-  <img src="./images/Fankit/03_LOGOS/MadeByTheCommunity_Black.png" alt="Made by the Community" class="community-watermark">
-
+  <img src="./images/Fankit/03_LOGOS/MadeByTheCommunity_Black.png" alt="Made by the Community" class="community-watermark" />
 </body>
 </html>
