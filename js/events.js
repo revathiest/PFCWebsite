@@ -1,20 +1,39 @@
 const apiBase = 'https://api.pyrofreelancercorps.com';
 
 function formatDateRange(start, end) {
-  const options = { weekday: 'short', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZoneName: 'short' };
+  const options = {
+    weekday: 'short',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZoneName: 'short'
+  };
   const startStr = new Date(start).toLocaleString(undefined, options);
-  const endStr = end && new Date(end).getFullYear() > 1970 ? new Date(end).toLocaleString(undefined, options) : '';
+  const endStr = end && new Date(end).getFullYear() > 1970
+    ? new Date(end).toLocaleString(undefined, options)
+    : '';
   return endStr ? `${startStr} – ${endStr}` : `${startStr}`;
 }
 
 function formatDescription(text) {
-  return text.split('\n').map(line => `<p class="mb-2">${line.trim()}</p>`).join('');
+  return text
+    .split('\n')
+    .map(line => `<p class="mb-2">${line.trim()}</p>`)
+    .join('');
 }
 
 async function loadEvents() {
   const container = document.getElementById('events');
   try {
-    const res = await fetch(`${apiBase}/api/events`);
+    const token = await window.PFCAuth.getApiToken(apiBase);
+
+    const res = await fetch(`${apiBase}/api/events`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const { events } = await res.json();
 

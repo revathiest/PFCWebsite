@@ -1,9 +1,14 @@
 const apiBase = 'https://api.pyrofreelancercorps.com';
 
-async function loadContent(sectionId) {
+async function loadContent(sectionId, token) {
   try {
     console.log(`[DEBUG] Requesting: ${apiBase}/api/content/${sectionId}`);
-    const res = await fetch(`${apiBase}/api/content/${sectionId}`);
+    const res = await fetch(`${apiBase}/api/content/${sectionId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     console.log(`[DEBUG] Received for ${sectionId}:`, data);
@@ -24,4 +29,7 @@ async function loadContent(sectionId) {
   }
 }
 
-['about', 'structure', 'motto'].forEach(loadContent);
+(async function () {
+  const token = await window.PFCAuth.getApiToken(apiBase);
+  ['about', 'structure', 'motto'].forEach(id => loadContent(id, token));
+})();
