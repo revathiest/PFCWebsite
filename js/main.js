@@ -1,15 +1,11 @@
 const apiBase = 'https://api.pyrofreelancercorps.com';
 
-async function loadContent(sectionId, token) {
+async function loadContent(sectionId) {
   try {
     const url = `${apiBase}/api/content/${sectionId}`;
     console.log(`[DEBUG] Requesting: ${url}`);
 
-    const res = await fetch(url, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+    const res = await fetch(url);
 
     if (!res.ok) {
       throw new Error(`API call failed with status ${res.status}`);
@@ -36,17 +32,11 @@ async function loadContent(sectionId, token) {
 
 (async function () {
   try {
-    const token = await window.PFCAuth.getApiToken(apiBase);
-    if (!token) {
-      console.warn('[WARN] No JWT found. Skipping authenticated content load.');
-      return;
-    }
-
     const contentSections = ['about', 'structure', 'motto'];
     for (const section of contentSections) {
-      await loadContent(section, token);
+      await loadContent(section);
     }
   } catch (err) {
-    console.error('[ERROR] Failed to initialise authenticated content loader:', err);
+    console.error('[ERROR] Failed to load site content:', err);
   }
 })();

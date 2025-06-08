@@ -1,21 +1,9 @@
 {
   "name": "Pyro Freelancer Corps",
   "version": "1.0.0",
-  "main": "server.js",
   "scripts": {
-    "start": "node server.js",
     "test": "echo \"No tests yet, mate.\""
   },
   "license": "ISC",
-  "dependencies": {
-    "cors": "^2.8.5",
-    "dotenv": "^16.5.0",
-    "express": "^4.21.2",
-    "express-session": "^1.18.1",
-    "jsonwebtoken": "^9.0.2",
-    "mysql2": "^3.14.1",
-    "passport": "^0.6.0",
-    "passport-discord": "^0.1.4",
-    "sequelize": "^6.37.7"
-  }
+  "dependencies": {}
 }

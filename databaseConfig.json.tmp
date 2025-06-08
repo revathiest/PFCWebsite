@@ -1,9 +1,0 @@
-{
-    "development": {
-        "database": "pfcquartermasterdev",
-        "username": "root",
-        "password": "1Hunglow!",
-        "host": "localhost",
-        "dialect": "mysql"
-    }
-}
