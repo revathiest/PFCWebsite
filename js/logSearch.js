@@ -3,32 +3,57 @@ let allMembers = [];
 
 async function populateFilters() {
   const token = localStorage.getItem('jwt');
-  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+  if (!token) return;
+
+  const headers = {
+    Authorization: `Bearer ${token}`
+  };
 
   try {
     const [commandsRes, membersRes] = await Promise.all([
-      fetch(`${window.PFC_CONFIG.apiBase}/api/activity-log/commands`, { headers }),
+      fetch(`${window.PFC_CONFIG.apiBase}/api/commands`, { headers }),
       fetch(`${window.PFC_CONFIG.apiBase}/api/members`, { headers })
     ]);
 
-    allCommands = commandsRes.ok ? await commandsRes.json() : [];
-    allMembers = membersRes.ok ? await membersRes.json() : [];
+    if (!commandsRes.ok) {
+      const text = await commandsRes.text();
+      console.error('Command fetch failed:', commandsRes.status, text);
+      throw new Error('Failed to load commands');
+    }
 
-    const commandSel = document.getElementById('command');
-    commandSel.innerHTML = '<option value="">Any</option>' +
-      allCommands.map(c => `<option value="${c}">${c}</option>`).join('');
+    if (!membersRes.ok) {
+      const text = await membersRes.text();
+      console.error('Member fetch failed:', membersRes.status, text);
+      throw new Error('Failed to load members');
+    }
 
-    const userSel = document.getElementById('userId');
-    userSel.innerHTML = '<option value="">Any</option>' +
+    const contentTypeC = commandsRes.headers.get('content-type') || '';
+    const contentTypeM = membersRes.headers.get('content-type') || '';
+
+    const allCommands = contentTypeC.includes('application/json')
+      ? (await commandsRes.json()).commands || []
+      : (() => { console.error('Commands response not JSON:', contentTypeC); return []; })();
+
+    const allMembers = contentTypeM.includes('application/json')
+      ? (await membersRes.json()).members || []
+      : (() => { console.error('Members response not JSON:', contentTypeM); return []; })();
+
+    const commandSelect = document.getElementById('command');
+    commandSelect.innerHTML = '<option value="">Any</option>' +
+      allCommands.map(cmd => `<option value="${cmd}">${cmd}</option>`).join('');
+
+    const userSelect = document.getElementById('userId');
+    userSelect.innerHTML = '<option value="">Any</option>' +
       allMembers.map(m => `<option value="${m.userId}">${m.username}</option>`).join('');
 
     const typeSelect = document.getElementById('type');
     typeSelect.innerHTML = '<option value="">Any</option>' +
-      ['LOGIN','COMMAND_EXECUTION'].map(t => `<option value="${t}">${t}</option>`).join('');
+      ['LOGIN', 'COMMAND_EXECUTION'].map(t => `<option value="${t}">${t}</option>`).join('');
   } catch (err) {
-    console.error('Failed to populate filters', err);
+    console.error('Failed to populate filters:', err);
   }
 }
+
 
 function renderResults(logs = []) {
   const container = document.getElementById('results');
