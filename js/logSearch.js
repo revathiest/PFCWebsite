@@ -44,7 +44,7 @@ async function populateFilters() {
 
     const userSelect = document.getElementById('userId');
     userSelect.innerHTML = '<option value="">Any</option>' +
-      allMembers.map(m => `<option value="${m.userId}">${m.username}</option>`).join('');
+      allMembers.map(m => `<option value="${m.userId}">${m.displayName}</option>`).join('');
 
     const typeSelect = document.getElementById('type');
     typeSelect.innerHTML = '<option value="">Any</option>' +
