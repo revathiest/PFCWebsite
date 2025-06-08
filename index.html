@@ -7,14 +7,18 @@
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/main.css" />
   <script src="js/config.js"></script>
+  <script src="js/main.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/auth.js" defer></script>
 </head>
 <body class="bg-black text-white">
   <!-- Navigation Bar -->
   <nav class="flex justify-end p-4 bg-black space-x-4">
+    <p id="user-info" class="text-gray-300 mt-2 hidden">Logged in as <span id="display-name"></span></p>
     <a href="html/events.html" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded">Events</a>
     <a href="html/accolades.html" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded">Accolades</a>
+    <button id="login-btn" onclick="PFCDiscord.startDiscordLogin()" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-6 rounded">Login with Discord</button>
+    <button id="logout-btn" onclick="PFCDiscord.logout()" class="bg-gray-800 hover:bg-gray-800 text-white font-bold py-2 px-6 rounded">Logout</button>
   </nav>
 
   <!-- Hero Section -->
@@ -54,18 +58,6 @@
     </div>
   </section>
 
-  <!-- Discord Login Section -->
-  <section class="py-10 px-6 text-center">
-    <h2 class="text-3xl font-bold mb-4 text-pfc-red">Login</h2>
-    <p class="mb-6 text-lg text-gray-300">Authenticate using your Discord account:</p>
-    <button id="login-btn" onclick="PFCDiscord.startDiscordLogin()" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-6 rounded">Login with Discord</button>
-    <button id="logout-btn" onclick="PFCDiscord.logout()" class="bg-gray-600 hover:bg-gray-800 text-white font-bold py-2 px-6 rounded hidden mt-2">Logout</button>
-    <p id="user-info" class="text-gray-300 mt-2 hidden">Logged in as <span id="display-name"></span></p>
-    <div id="dashboard-link" class="hidden mt-4">
-      <a href="html/events.html" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-6 rounded inline-block">Go to Dashboard</a>
-    </div>
-  </section>
-
   <!-- Footer -->
   <footer class="bg-black text-gray-400 py-6 text-center">
     <p>&copy; 2025 Pyro Freelancer Corps. All rights reserved.</p>
@@ -82,14 +74,14 @@
       console.log("JWT in storage:", token);
 
       if (token) {
-        document.getElementById('dashboard-link')?.classList.remove('hidden');
         document.getElementById('logout-btn')?.classList.remove('hidden');
         document.getElementById('login-btn')?.classList.add('hidden');
         const user = PFCDiscord.getUser();
-        if (user && user.displayName) {
+        debugger;
+        if (user) {
           const info = document.getElementById('user-info');
           const nameEl = document.getElementById('display-name');
-          nameEl.textContent = user.displayName;
+          nameEl.textContent = user.username;
           info.classList.remove('hidden');
         }
       } else {
