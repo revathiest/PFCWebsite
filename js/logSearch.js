@@ -48,9 +48,18 @@ async function populateFilters() {
     userSelect.innerHTML = '<option value="">Any</option>' +
       allMembers.map(m => `<option value="${m.userId}">${m.displayName}</option>`).join('');
 
-    const typeSelect = document.getElementById('type');
-    typeSelect.innerHTML = '<option value="">Any</option>' +
-      ['LOGIN', 'COMMAND_EXECUTION'].map(t => `<option value="${t}">${t}</option>`).join('');
+      const typeSelect = document.getElementById('type');
+      try {
+        const typeRes = await fetch(`${window.PFC_CONFIG.apiBase}/api/activity-log/event-types`, { headers });
+        const typeContentType = typeRes.headers.get('content-type') || '';
+        const typeData = typeContentType.includes('application/json') ? await typeRes.json() : { eventTypes: [] };
+        const types = Array.isArray(typeData.eventTypes) ? typeData.eventTypes : [];
+        typeSelect.innerHTML = '<option value="">Any</option>' +
+          types.map(t => `<option value="${t}">${t}</option>`).join('');
+      } catch (e) {
+        console.error('Failed to load event types:', e);
+      }
+      
   } catch (err) {
     console.error('Failed to populate filters:', err);
   }

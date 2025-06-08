@@ -76,5 +76,16 @@
     z-index: 10;
     pointer-events: none; /* So it doesn't interfere with clicks */
   }
+
+  #nav-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  
+  #nav-menu.expanded {
+    max-height: 500px; /* Enough room for all menu items */
+  }
+  
   
   
