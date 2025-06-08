@@ -34,9 +34,11 @@ async function populateFilters() {
       ? (await commandsRes.json()).commands || []
       : (() => { console.error('Commands response not JSON:', contentTypeC); return []; })();
 
-    const allMembers = contentTypeM.includes('application/json')
-      ? (await membersRes.json()).members || []
-      : (() => { console.error('Members response not JSON:', contentTypeM); return []; })();
+      const allMembers = contentTypeM.includes('application/json')
+      ? ((await membersRes.json()).members || []).sort((a, b) =>
+          (a.displayName || '').localeCompare(b.displayName || '')
+        )
+      : (() => { console.error('Members response not JSON:', contentTypeM); return []; })();   
 
     const commandSelect = document.getElementById('command');
     commandSelect.innerHTML = '<option value="">Any</option>' +
