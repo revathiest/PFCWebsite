@@ -1,13 +1,9 @@
-const apiBase = 'https://api.pyrofreelancercorps.com';
 
 function getSlug() {
   const params = new URLSearchParams(window.location.search);
   return params.get('slug');
 }
 
-function slugify(str) {
-  return str.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
-}
 
 async function loadAccoladePage() {
   const slug = getSlug();
@@ -22,15 +18,15 @@ async function loadAccoladePage() {
   }
 
   try {
-    const res = await fetch(`${apiBase}/api/accolades`);
+    const res = await fetch(`${window.PFC_CONFIG.apiBase}/api/accolades`);
 
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const { accolades } = await res.json();
 
-    const debugSlugs = accolades.map(a => ({ name: a.name, slug: slugify(a.name) }));
+    const debugSlugs = accolades.map(a => ({ name: a.name, slug: window.PFCUtils.slugify(a.name) }));
     console.log('[DEBUG] Available slugs:', debugSlugs);
 
-    const accolade = accolades.find(a => slugify(a.name) === slug);
+    const accolade = accolades.find(a => window.PFCUtils.slugify(a.name) === slug);
     if (!accolade) throw new Error(`No accolade found matching slug: ${slug}`);
 
     nameEl.textContent = `${accolade.emoji || ''} ${accolade.name}`;

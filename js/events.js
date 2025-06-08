@@ -1,4 +1,3 @@
-const apiBase = 'https://api.pyrofreelancercorps.com';
 
 function formatDateRange(start, end) {
   const options = {
@@ -26,7 +25,7 @@ function formatDescription(text) {
 async function loadEvents() {
   const container = document.getElementById('events');
   try {
-    const res = await fetch(`${apiBase}/api/events`);
+    const res = await fetch(`${window.PFC_CONFIG.apiBase}/api/events`);
 
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const { events } = await res.json();
