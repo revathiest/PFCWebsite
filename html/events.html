@@ -13,8 +13,8 @@
 </head>
 <body class="bg-black text-white">
   <nav class="flex justify-end items-center p-4 bg-black space-x-4">
+    <p id="user-info" class="text-gray-300 mt-2 hidden">Logged in as <span id="display-name"></span></p>
     <a href="../index.html" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded">Home</a>
-    <span id="display-name" class="text-gray-300 hidden"></span>
     <button id="logout-btn" onclick="PFCDiscord.logout()" class="bg-gray-800 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded hidden">Logout</button>
   </nav>
 
@@ -36,8 +36,8 @@
         const user = PFCDiscord.getUser();
         if (user && user.displayName) {
           const nameEl = document.getElementById('display-name');
-          nameEl.textContent = user.displayName;
-          nameEl.classList.remove('hidden');
+          if (nameEl) nameEl.textContent = user.displayName;
+          document.getElementById('user-info')?.classList.remove('hidden');
         }
       }
     });
