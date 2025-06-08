@@ -12,8 +12,9 @@
   <script src="../js/accolades.js" defer></script>
 </head>
 <body class="bg-black text-white">
-  <nav class="flex justify-end p-4 bg-black space-x-4">
+  <nav class="flex justify-end items-center p-4 bg-black space-x-4">
     <a href="../index.html" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded">Home</a>
+    <span id="display-name" class="text-gray-300 hidden"></span>
     <button id="logout-btn" onclick="PFCDiscord.logout()" class="bg-gray-600 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded hidden">Logout</button>
   </nav>
 
@@ -30,8 +31,15 @@
   <img src="../images/Fankit/03_LOGOS/MadeByTheCommunity_Black.png" alt="Made by the Community" class="community-watermark">
   <script>
     window.addEventListener('DOMContentLoaded', () => {
-      if (localStorage.getItem('jwt')) {
+      const token = localStorage.getItem('jwt');
+      if (token) {
         document.getElementById('logout-btn')?.classList.remove('hidden');
+        const user = PFCDiscord.getUser();
+        if (user && user.displayName) {
+          const nameEl = document.getElementById('display-name');
+          nameEl.textContent = user.displayName;
+          nameEl.classList.remove('hidden');
+        }
       }
     });
   </script>
