@@ -26,13 +26,7 @@ function formatDescription(text) {
 async function loadEvents() {
   const container = document.getElementById('events');
   try {
-    const token = await window.PFCAuth.getApiToken(apiBase);
-
-    const res = await fetch(`${apiBase}/api/events`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+    const res = await fetch(`${apiBase}/api/events`);
 
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const { events } = await res.json();
