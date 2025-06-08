@@ -9,7 +9,7 @@ function slugify(str) {
   return str.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
 }
 
-async function loadAccoladePage(token) {
+async function loadAccoladePage() {
   const slug = getSlug();
   const nameEl = document.getElementById('accolade-name');
   const descEl = document.getElementById('accolade-description');
@@ -22,11 +22,7 @@ async function loadAccoladePage(token) {
   }
 
   try {
-    const res = await fetch(`${apiBase}/api/accolades`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+    const res = await fetch(`${apiBase}/api/accolades`);
 
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const { accolades } = await res.json();
@@ -53,6 +49,5 @@ async function loadAccoladePage(token) {
 }
 
 (async function () {
-  const token = await window.PFCAuth.getApiToken(apiBase);
-  loadAccoladePage(token);
+  await loadAccoladePage();
 })();
