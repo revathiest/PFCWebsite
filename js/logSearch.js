@@ -54,7 +54,6 @@ async function populateFilters() {
   }
 }
 
-
 function renderResults(logs = []) {
   const container = document.getElementById('results');
   if (!Array.isArray(logs) || logs.length === 0) {
@@ -62,14 +61,21 @@ function renderResults(logs = []) {
     return;
   }
 
-  container.innerHTML = logs.map(log => `
-    <div class="card">
-      <h3>${log.type} - ${log.userId}</h3>
-      <p class="text-sm">${log.timestamp || ''}</p>
-      <p>${log.command || ''}</p>
-      <p>${log.message || ''}</p>
-    </div>
-  `).join('');
+  container.innerHTML = logs.map(log => {
+    const timestamp = new Date(log.timestamp).toLocaleString();
+    const type = log.interaction_type?.toUpperCase() || log.event_type?.toUpperCase() || 'UNKNOWN';
+    const user = log.displayName || log.memberName || log.user_id;
+    const location = log.channelName ? `in #${log.channelName}` : '';
+    const command = log.command_name ? `used /${log.command_name}` : '';
+    const message = log.message_content?.trim() ? `— "${log.message_content}"` : '';
+    const summary = [user, command || message, location, `@ ${timestamp}`].filter(Boolean).join(' ');
+
+    return `
+      <div class="p-2 bg-gray-800 rounded shadow text-sm">
+        <div><strong>[${type}]</strong> ${summary}</div>
+      </div>
+    `;
+  }).join('');
 }
 
 async function searchLogs(e) {
