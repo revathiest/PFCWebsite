@@ -28,7 +28,7 @@ window.PFCDiscord = {
     try {
       console.log("Sending POST request to exchange code...");
 
-      const response = await fetch('http://api.pyrofreelancercorps.com/api/login', {
+      const response = await fetch('https://api.pyrofreelancercorps.com/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code, redirectUri: this.redirectUri })
