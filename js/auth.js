@@ -56,5 +56,24 @@ window.PFCDiscord = {
     localStorage.removeItem('jwt');
     console.log('🔒 Logged out and removed JWT');
     window.location.reload();
+  },
+
+  /**
+   * Decode the JWT payload stored in localStorage.
+   * @returns {object|null}
+   */
+  getUser() {
+    const token = localStorage.getItem('jwt');
+    if (!token) return null;
+    try {
+      const base64 = token.split('.')[1]
+        .replace(/-/g, '+')
+        .replace(/_/g, '/');
+      const json = atob(base64);
+      return JSON.parse(json);
+    } catch (err) {
+      console.error('Failed to decode JWT', err);
+      return null;
+    }
   }
 };
