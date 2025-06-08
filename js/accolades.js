@@ -1,19 +1,15 @@
-const apiBase = 'https://api.pyrofreelancercorps.com';
 
-function slugify(str) {
-  return str.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-');
-}
 
 async function loadAccolades() {
   const container = document.getElementById('accolade-list');
   try {
-    const res = await fetch(`${apiBase}/api/accolades`);
+    const res = await fetch(`${window.PFC_CONFIG.apiBase}/api/accolades`);
 
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const { accolades } = await res.json();
 
     container.innerHTML = accolades.map(acc => {
-      const slug = slugify(acc.name);
+      const slug = window.PFCUtils.slugify(acc.name);
       return `
         <a href="accolade.html?slug=${slug}" class="block bg-gray-800 p-6 rounded-lg shadow hover:shadow-lg transition">
           <h2 class="text-2xl font-bold text-pfc-red mb-2">${acc.emoji || ''} ${acc.name}</h2>
