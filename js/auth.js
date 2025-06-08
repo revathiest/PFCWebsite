@@ -1,6 +1,6 @@
 window.PFCDiscord = {
-  clientId: '819004565869035531',
-  redirectUri: 'https://pyrofreelancercorps.com/', // Must match Discord Dev Portal
+  clientId: window.PFC_CONFIG.discordClientId,
+  redirectUri: window.PFC_CONFIG.redirectUri, // Must match Discord Dev Portal
 
   startDiscordLogin() {
     const discordUrl = new URL('https://discord.com/api/oauth2/authorize');
@@ -28,7 +28,7 @@ window.PFCDiscord = {
     try {
       console.log("Sending POST request to exchange code...");
 
-      const response = await fetch('https://api.pyrofreelancercorps.com/api/login', {
+      const response = await fetch(`${window.PFC_CONFIG.apiBase}/api/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code, redirectUri: this.redirectUri })
