@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Console - Pyro Freelancer Corps</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/main.css">
+  <script src="../js/config.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/auth.js" defer></script>
+  <script src="../js/admin.js" defer></script>
+</head>
+<body class="bg-black text-white">
+  <nav class="flex justify-end items-center p-4 bg-black space-x-4">
+    <a href="../index.html" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded">Home</a>
+    <span id="display-name" class="text-gray-300 hidden"></span>
+    <button id="logout-btn" onclick="PFCDiscord.logout()" class="bg-gray-600 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded hidden">Logout</button>
+  </nav>
+
+  <section class="py-16 px-6 text-center">
+    <h1 class="text-4xl font-bold text-pfc-red mb-8">Admin Console</h1>
+    <a href="log-search.html" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded">Search Logs</a>
+  </section>
+
+  <footer class="bg-black text-gray-400 py-6 text-center">
+    <p>&copy; 2025 Pyro Freelancer Corps. All rights reserved.</p>
+  </footer>
+
+  <img src="../images/Fankit/03_LOGOS/MadeByTheCommunity_Black.png" alt="Made by the Community" class="community-watermark">
+</body>
+</html>
