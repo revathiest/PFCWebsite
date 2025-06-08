@@ -7,8 +7,6 @@
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/main.css" />
   <script src="js/auth.js" defer></script>
-  <script src="js/main.js" defer></script>
-  <script src="js/discordAuth.js" defer></script>
 </head>
 <body class="bg-black text-white">
   <!-- Navigation Bar -->
@@ -17,7 +15,7 @@
     <a href="html/accolades.html" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded">Accolades</a>
   </nav>
 
-  <!-- Banner/Header Section -->
+  <!-- Hero Section -->
   <section class="relative py-20 px-4 text-center bg-cover bg-center" style="background-image: url('./images/PFC_ILW_2953.png');">
     <div class="absolute inset-0 bg-black bg-opacity-60"></div>
     <div class="relative z-10 max-w-4xl mx-auto px-4">
@@ -70,5 +68,20 @@
   </footer>
 
   <img src="./images/Fankit/03_LOGOS/MadeByTheCommunity_Black.png" alt="Made by the Community" class="community-watermark" />
+
+  <script>
+    window.addEventListener('DOMContentLoaded', async () => {
+      console.log("DOM loaded. Attempting login finish...");
+      await PFCDiscord.finishDiscordLogin();
+  
+      const token = localStorage.getItem('jwt');
+      console.log("JWT in storage:", token);
+  
+      if (token) {
+        document.getElementById('dashboard-link')?.classList.remove('hidden');
+      }
+    });
+  </script>
+  
 </body>
 </html>

@@ -2,34 +2,51 @@ const apiBase = 'https://api.pyrofreelancercorps.com';
 
 async function loadContent(sectionId, token) {
   try {
-    console.log(`[DEBUG] Requesting: ${apiBase}/api/content/${sectionId}`);
-    const res = await fetch(`${apiBase}/api/content/${sectionId}`, {
+    const url = `${apiBase}/api/content/${sectionId}`;
+    console.log(`[DEBUG] Requesting: ${url}`);
+
+    const res = await fetch(url, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     });
 
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if (!res.ok) {
+      throw new Error(`API call failed with status ${res.status}`);
+    }
+
     const data = await res.json();
     console.log(`[DEBUG] Received for ${sectionId}:`, data);
 
-    const element = document.getElementById(sectionId);
-    if (!element) {
-      console.warn(`[WARN] Missing element for ${sectionId}`);
+    const target = document.getElementById(sectionId);
+    if (!target) {
+      console.warn(`[WARN] Element #${sectionId} not found.`);
       return;
     }
 
     if (sectionId === 'structure') {
-      element.innerHTML = data.content;
+      target.innerHTML = data.content;
     } else {
-      element.textContent = data.content;
+      target.textContent = data.content;
     }
-  } catch (e) {
-    console.error(`Failed to load ${sectionId} content:`, e);
+  } catch (err) {
+    console.error(`[ERROR] Could not load content for "${sectionId}":`, err);
   }
 }
 
 (async function () {
-  const token = await window.PFCAuth.getApiToken(apiBase);
-  ['about', 'structure', 'motto'].forEach(id => loadContent(id, token));
+  try {
+    const token = await window.PFCAuth.getApiToken(apiBase);
+    if (!token) {
+      console.warn('[WARN] No JWT found. Skipping authenticated content load.');
+      return;
+    }
+
+    const contentSections = ['about', 'structure', 'motto'];
+    for (const section of contentSections) {
+      await loadContent(section, token);
+    }
+  } catch (err) {
+    console.error('[ERROR] Failed to initialise authenticated content loader:', err);
+  }
 })();

@@ -1,55 +1,54 @@
-window.PFCAuth = {
-    signingSecret: 'idontknowwhatgoeshere', // ⬅️ Replace with your actual secret
-  
-    base64urlStr: function (input) {
-      return btoa(unescape(encodeURIComponent(input)))
-        .replace(/\+/g, '-')
-        .replace(/\//g, '_')
-        .replace(/=+$/, '');
-    },
-  
-    createJWT: async function (payload, secret) {
-      const header = { alg: 'HS256', typ: 'JWT' };
-      const headerStr = this.base64urlStr(JSON.stringify(header));
-      const payloadStr = this.base64urlStr(JSON.stringify(payload));
-      const data = `${headerStr}.${payloadStr}`;
-  
-      const enc = new TextEncoder();
-      const key = await crypto.subtle.importKey(
-        'raw',
-        enc.encode(secret),
-        { name: 'HMAC', hash: 'SHA-256' },
-        false,
-        ['sign']
-      );
-  
-      const sig = await crypto.subtle.sign('HMAC', key, enc.encode(data));
-      const sigBytes = new Uint8Array(sig);
-      const sigStr = btoa(String.fromCharCode(...sigBytes))
-        .replace(/\+/g, '-')
-        .replace(/\//g, '_')
-        .replace(/=+$/, '');
-  
-      return `${data}.${sigStr}`;
-    },
-  
-    getApiToken: async function (apiBase) {
-      const payload = {
-        iat: Math.floor(Date.now() / 1000),
-        iss: 'pfc-website'
-      };
-  
-      const preToken = await this.createJWT(payload, this.signingSecret);
-  
-      const res = await fetch(`${apiBase}/api/token`, {
+window.PFCDiscord = {
+  clientId: '819004565869035531',
+  redirectUri: 'https://pyrofreelancercorps.com/', // Must match Discord Dev Portal
+
+  startDiscordLogin() {
+    const discordUrl = new URL('https://discord.com/api/oauth2/authorize');
+    discordUrl.searchParams.set('client_id', this.clientId);
+    discordUrl.searchParams.set('redirect_uri', this.redirectUri);
+    discordUrl.searchParams.set('response_type', 'code');
+    discordUrl.searchParams.set('scope', 'identify');
+
+    console.log("Redirecting to Discord auth:", discordUrl.toString());
+    window.location.href = discordUrl.toString();
+  },
+
+  async finishDiscordLogin() {
+
+    console.log("finishDiscordLogin triggered.");
+    
+    const code = new URLSearchParams(window.location.search).get('code');
+    console.log("Parsed code from URL:", code);
+
+    if (!code) {
+      console.log("No code found in URL — skipping login finish.");
+      return;
+    }
+
+    try {
+      console.log("Sending POST request to exchange code...");
+
+      const response = await fetch('http://api.pyrofreelancercorps.com/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: preToken })
+        body: JSON.stringify({ code, redirectUri: this.redirectUri })
       });
-  
-      if (!res.ok) throw new Error(`Token exchange failed: ${res.status}`);
-      const data = await res.json();
-      return data.token;
+
+      console.log("Received response:", response);
+
+      const data = await response.json();
+      console.log("Parsed response JSON:", data);
+
+      if (data.token) {
+        localStorage.setItem('jwt', data.token);
+        console.log('✅ JWT stored:', data.token);
+
+        window.history.replaceState({}, document.title, window.location.pathname);
+      } else {
+        console.error('❌ Login failed — no token in response:', data);
+      }
+    } catch (err) {
+      console.error('🔥 Auth error:', err);
     }
-  };
-  
+  }
+};
