@@ -50,5 +50,11 @@ window.PFCDiscord = {
     } catch (err) {
       console.error('🔥 Auth error:', err);
     }
+  },
+
+  logout() {
+    localStorage.removeItem('jwt');
+    console.log('🔒 Logged out and removed JWT');
+    window.location.reload();
   }
 };
