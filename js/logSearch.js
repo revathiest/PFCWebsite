@@ -1,36 +1,5 @@
 let allCommands = [];
 let allMembers = [];
-let usernameToId = {};
-
-function fuzzyMatch(str, pattern) {
-  pattern = pattern.toLowerCase();
-  str = str.toLowerCase();
-  let i = 0;
-  for (const ch of pattern) {
-    i = str.indexOf(ch, i);
-    if (i === -1) return false;
-    i++;
-  }
-  return true;
-}
-
-function updateUserDatalist(term = '') {
-  const list = document.getElementById('user-options');
-  list.innerHTML = allMembers
-    .filter(m => fuzzyMatch(m.username, term))
-    .slice(0, 25)
-    .map(m => `<option value="${m.username}">`)
-    .join('');
-}
-
-function updateCommandDatalist(term = '') {
-  const list = document.getElementById('command-options');
-  list.innerHTML = allCommands
-    .filter(c => fuzzyMatch(c, term))
-    .slice(0, 25)
-    .map(c => `<option value="${c}">`)
-    .join('');
-}
 
 async function populateFilters() {
   const token = localStorage.getItem('jwt');
@@ -45,11 +14,13 @@ async function populateFilters() {
     allCommands = commandsRes.ok ? await commandsRes.json() : [];
     allMembers = membersRes.ok ? await membersRes.json() : [];
 
-    usernameToId = {};
-    allMembers.forEach(m => { usernameToId[m.username] = m.userId; });
+    const commandSel = document.getElementById('command');
+    commandSel.innerHTML = '<option value="">Any</option>' +
+      allCommands.map(c => `<option value="${c}">${c}</option>`).join('');
 
-    updateCommandDatalist('');
-    updateUserDatalist('');
+    const userSel = document.getElementById('userId');
+    userSel.innerHTML = '<option value="">Any</option>' +
+      allMembers.map(m => `<option value="${m.userId}">${m.username}</option>`).join('');
 
     const typeSelect = document.getElementById('type');
     typeSelect.innerHTML = '<option value="">Any</option>' +
@@ -121,21 +92,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   }
 
   await populateFilters();
-  const userInput = document.getElementById('user-search');
-  const userHidden = document.getElementById('userId');
-  const commandInput = document.getElementById('command');
-
-  userInput.addEventListener('input', () => {
-    updateUserDatalist(userInput.value);
-    userHidden.value = usernameToId[userInput.value] || '';
-  });
-  userInput.addEventListener('change', () => {
-    userHidden.value = usernameToId[userInput.value] || '';
-  });
-
-  commandInput.addEventListener('input', () => {
-    updateCommandDatalist(commandInput.value);
-  });
 
   document.getElementById('log-search-form').addEventListener('submit', searchLogs);
 });
