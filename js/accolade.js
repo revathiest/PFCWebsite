@@ -18,9 +18,7 @@ async function loadAccoladePage() {
   }
 
   try {
-    const token = localStorage.getItem('jwt');
-    const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
-    const res = await fetch(`${window.PFC_CONFIG.apiBase}/api/accolades`, { headers });
+    const res = await fetch(`${window.PFC_CONFIG.apiBase}/api/accolades`);
 
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const { accolades } = await res.json();
