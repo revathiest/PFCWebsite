@@ -3,7 +3,9 @@
 async function loadAccolades() {
   const container = document.getElementById('accolade-list');
   try {
-    const res = await fetch(`${window.PFC_CONFIG.apiBase}/api/accolades`);
+    const token = localStorage.getItem('jwt');
+    const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+    const res = await fetch(`${window.PFC_CONFIG.apiBase}/api/accolades`, { headers });
 
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const { accolades } = await res.json();
