@@ -33,9 +33,19 @@
   <script>
     window.addEventListener('DOMContentLoaded', async () => {
       console.log("[SPA] Initialising...");
-      await PFCDiscord.finishDiscordLogin();
-      loadInitialRoute();
+  
+      const urlParams = new URLSearchParams(window.location.search);
+      const code = urlParams.get('code');
+  
+      // Run login only if code is present
+      if (code) {
+        console.log("[SPA] Found OAuth code, finishing login first...");
+        await PFCDiscord.finishDiscordLogin();
+      }
+  
+      loadInitialRoute(); // Now safe to init routing
     });
   </script>
+  
 </body>
 </html>

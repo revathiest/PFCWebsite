@@ -10,7 +10,7 @@ function finishDiscordLogin() {
     return;
   }
 
-  fetch(`${window.PFC_CONFIG.apiBase}/login`, {
+  fetch(`${window.PFC_CONFIG.apiBase}/api/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ code })
