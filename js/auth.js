@@ -13,7 +13,10 @@ function finishDiscordLogin() {
   fetch(`${window.PFC_CONFIG.apiBase}/api/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ code })
+    body: JSON.stringify({
+      code,
+      redirectUri: window.PFC_CONFIG.redirectUri
+    })
   })
     .then(response => {
       console.log('Received response:', response);
