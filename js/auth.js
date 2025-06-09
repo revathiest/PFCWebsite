@@ -42,6 +42,20 @@ window.PFCDiscord = {
       if (data.token) {
         localStorage.setItem('jwt', data.token);
         console.log('✅ JWT stored:', data.token);
+        
+        // Reload nav and view properly after login
+        document.querySelector('[data-include="partials/nav.html"]')?.remove();
+
+        const newNav = document.createElement('div');
+        newNav.setAttribute('data-include', 'partials/nav.html');
+        document.body.insertBefore(newNav, document.body.firstChild);
+
+        import('./includes.js').then(() => {
+          console.log('[auth] Reloaded nav after login');
+          document.dispatchEvent(new Event('login-success'));
+        });
+
+        document.dispatchEvent(new Event('login-success'));
 
         window.history.replaceState({}, document.title, window.location.pathname);
       } else {
