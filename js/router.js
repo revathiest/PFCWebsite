@@ -4,6 +4,8 @@ const routes = {
     '/accolades': 'views/accolades.html',
     '/events': 'views/events.html',
     '/admin': 'views/admin.html',
+    '/log-search': 'views/log-search.html',
+    '/accolade': 'views/accolade.html',
     '/unauthorized': 'views/unauthorized.html'
   };
   
@@ -22,15 +24,20 @@ const routes = {
       if (!res.ok) throw new Error('Failed to fetch view: ' + route);
       const html = await res.text();
       viewContainer.innerHTML = html;
+      window.runNavLogic?.();
   
       // Trigger any page-specific scripts after load
       if (path.includes('accolades')) {
         import('./accolades.js').then(m => m.init?.());
+      } else if (path.includes('accolade')) {
+        import('./accolade.js').then(m => m.init?.());
       } else if (path.includes('events')) {
         import('./events.js').then(m => m.init?.());
+      } else if (path.includes('log-search')) {
+        import('./logSearch.js').then(m => m.init?.());
       } else if (path.includes('admin')) {
         import('./admin.js').then(m => m.init?.());
-      }else if (path === '/' || path === '/home') {
+      } else if (path === '/' || path === '/home') {
         import('./home.js').then(m => m.init?.());
       }
       

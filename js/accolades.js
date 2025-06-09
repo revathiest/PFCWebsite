@@ -11,7 +11,7 @@ async function loadAccolades() {
     container.innerHTML = accolades.map(acc => {
       const slug = window.PFCUtils.slugify(acc.name);
       return `
-        <a href="accolade.html?slug=${slug}" class="block bg-gray-800 p-6 rounded-lg shadow hover:shadow-lg transition">
+        <a href="/accolade?slug=${slug}" data-link class="block bg-gray-800 p-6 rounded-lg shadow hover:shadow-lg transition">
           <h2 class="text-2xl font-bold text-pfc-red mb-2">${acc.emoji || ''} ${acc.name}</h2>
           <p class="text-gray-300 text-sm">${acc.description || 'No description available.'}</p>
         </a>
