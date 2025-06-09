@@ -1,24 +1,125 @@
-<section class="py-8 px-6">
-  <h1 class="text-3xl font-bold text-pfc-red mb-4 text-center">Activity Log Search</h1>
-  <form id="log-search-form" class="space-y-4 mb-6 text-black">
-    <div>
-      <label class="block text-white mb-1" for="type">Type</label>
-      <select id="type" class="w-full p-2 rounded"></select>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Activity Log Search - PFC</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/main.css">
+  <script src="../js/config.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/auth.js" defer></script>
+  <script src="../js/logSearch.js" defer></script>
+</head>
+<body class="bg-black text-white">
+  <nav class="bg-black p-4">
+    <div class="max-w-7xl mx-auto flex items-center justify-between flex-wrap">
+      <div class="block lg:hidden ml-auto">
+        <button id="nav-toggle" class="flex items-center px-3 py-2 border rounded text-gray-300 border-gray-400 hover:text-white hover:border-white">
+          <svg class="fill-current h-4 w-4" viewBox="0 0 20 20">
+            <path d="M0 3h20v2H0zM0 9h20v2H0zM0 15h20v2H0z"/>
+          </svg>
+        </button>
+      </div>
+  
+      <!-- Mobile Menu (Toggle visibility) -->
+      <div id="nav-menu-mobile" class="w-full block lg:hidden hidden transition-all duration-300 ease-in-out">
+        <div class="flex flex-col space-y-2 mt-4">
+          <a href="../index.html" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded text-center">Home</a>
+          <a href="events.html" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded text-center">Events</a>
+          <a href="accolades.html" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded text-center">Accolades</a>
+          <a href="admin.html" id="admin-link-mobile" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded text-center hidden">Admin</a>
+          <button id="login-btn-mobile" onclick="PFCDiscord.startDiscordLogin()" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-6 rounded">Login with Discord</button>
+          <button id="logout-btn-mobile" onclick="PFCDiscord.logout()" class="bg-gray-800 hover:bg-gray-800 text-white font-bold py-2 px-6 rounded">Logout</button>
+        </div>
+      </div>
+  
+      <!-- Desktop Menu (Always visible on lg and up) -->
+      <div class="hidden lg:flex lg:items-center lg:w-auto lg:ml-auto space-x-4">
+        <p id="user-info" class="text-gray-300 hidden lg:inline-block mt-2">Logged in as <span id="display-name"></span></p>
+        <a href="../index.html" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded">Home</a>
+        <a href="events.html" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded">Events</a>
+        <a href="accolades.html" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded">Accolades</a>
+        <a href="admin.html" id="admin-link" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded hidden">Admin</a>
+        <button id="login-btn" onclick="PFCDiscord.startDiscordLogin()" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-6 rounded">Login with Discord</button>
+        <button id="logout-btn" onclick="PFCDiscord.logout()" class="bg-gray-800 hover:bg-gray-800 text-white font-bold py-2 px-6 rounded">Logout</button>
+      </div>
     </div>
-    <div>
-      <label class="block text-white mb-1" for="userId">Member</label>
-      <select id="userId" class="w-full p-2 rounded"></select>
-    </div>
-    <div>
-      <label class="block text-white mb-1" for="command">Command</label>
-      <select id="command" class="w-full p-2 rounded"></select>
-    </div>
-    <div>
-      <label class="block text-white mb-1" for="message">Message Contains</label>
-      <input id="message" type="text" class="w-full p-2 rounded" />
-    </div>
-    <button type="submit" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded">Search</button>
-  </form>
+  </nav>
 
-  <div id="results" class="space-y-4"></div>
-</section>
+  <section class="py-8 px-6">
+    <h1 class="text-3xl font-bold text-pfc-red mb-4 text-center">Activity Log Search</h1>
+    <form id="log-search-form" class="space-y-4 mb-6 text-black">
+      <div>
+        <label class="block text-white mb-1" for="type">Type</label>
+        <select id="type" class="w-full p-2 rounded"></select>
+      </div>
+      <div>
+        <label class="block text-white mb-1" for="userId">Member</label>
+        <select id="userId" class="w-full p-2 rounded"></select>
+      </div>
+      <div>
+        <label class="block text-white mb-1" for="command">Command</label>
+        <select id="command" class="w-full p-2 rounded"></select>
+      </div>
+      <div>
+        <label class="block text-white mb-1" for="message">Message Contains</label>
+        <input id="message" type="text" class="w-full p-2 rounded" />
+      </div>
+      <button type="submit" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded">Search</button>
+    </form>
+
+    <div id="results" class="space-y-4"></div>
+  </section>
+
+  <footer class="bg-black text-gray-400 py-6 text-center">
+    <p>&copy; 2025 Pyro Freelancer Corps. All rights reserved.</p>
+  </footer>
+
+  <img src="../images/Fankit/03_LOGOS/MadeByTheCommunity_Black.png" alt="Made by the Community" class="community-watermark">
+  <script>
+    window.addEventListener('DOMContentLoaded', async () => {
+      const toggle = document.getElementById('nav-toggle');
+      const menu = document.getElementById('nav-menu-mobile');
+
+      toggle?.addEventListener('click', () => {
+        if (menu.classList.contains('hidden')) {
+          menu.classList.remove('hidden');
+          menu.style.maxHeight = menu.scrollHeight + 'px';
+        } else {
+          menu.classList.add('hidden');
+          menu.style.maxHeight = null;
+        }
+      });
+
+      const token = localStorage.getItem('jwt');
+      if (token) {
+        document.getElementById('logout-btn')?.classList.remove('hidden');
+        document.getElementById('login-btn')?.classList.add('hidden');
+        document.getElementById('logout-btn-mobile')?.classList.remove('hidden');
+        document.getElementById('login-btn-mobile')?.classList.add('hidden');
+        const user = PFCDiscord.getUser();
+
+        if (user) {
+          document.getElementById('display-name').textContent = user.displayName;
+          document.getElementById('user-info').classList.remove('hidden');
+
+          if (Array.isArray(user.roles) && user.roles.includes('Server Admin')) {
+            document.getElementById('admin-link')?.classList.remove('hidden');
+            document.getElementById('admin-link-mobile')?.classList.remove('hidden');
+          }
+        }
+      } else {
+        document.getElementById('logout-btn')?.classList.add('hidden');
+        document.getElementById('login-btn')?.classList.remove('hidden');
+        document.getElementById('logout-btn-mobile')?.classList.add('hidden');
+        document.getElementById('login-btn-mobile')?.classList.remove('hidden');
+        document.getElementById('user-info')?.classList.add('hidden');
+        document.getElementById('user-info')?.classList.remove('lg:inline-block');
+        document.getElementById('admin-link')?.classList.add('hidden');
+        document.getElementById('admin-link-mobile')?.classList.add('hidden');
+      }
+    });
+  </script>
+</body>
+</html>

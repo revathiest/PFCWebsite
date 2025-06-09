@@ -59,9 +59,9 @@ function runNavLogic() {
         show('admin-link'); show('admin-link-mobile'); show('admin-container');
       } else {
         hide('admin-link'); hide('admin-link-mobile'); hide('admin-container');
-        if (window.location.pathname.startsWith('/admin')) {
+        if (window.location.pathname.includes('admin.html')) {
           console.log('[nav] Redirecting non-admin');
-          window.location.href = '/unauthorized';
+          window.location.href = '../unauthorized.html';
         }
       }
     } else {
@@ -70,9 +70,9 @@ function runNavLogic() {
       hide('user-info');
       hide('admin-link'); hide('admin-link-mobile');
       hide('admin-container');
-      if (window.location.pathname.startsWith('/admin')) {
+      if (window.location.pathname.includes('admin.html')) {
         console.log('[nav] Redirecting unauthenticated user');
-        window.location.href = '/unauthorized';
+        window.location.href = '../unauthorized.html';
       }
     }
 

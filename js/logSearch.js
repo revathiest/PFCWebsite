@@ -122,7 +122,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   const isAdmin = Array.isArray(user?.roles) && user.roles.includes('Server Admin');
 
   if (!token || !isAdmin) {
-    window.location.href = '/unauthorized';
+    window.location.href = '../index.html';
     return;
   }
 
