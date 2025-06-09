@@ -28,9 +28,9 @@
         <div class="flex flex-col space-y-2 mt-4">
           <a href="html/events.html" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded text-center">Events</a>
           <a href="html/accolades.html" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded text-center">Accolades</a>
-          <a href="html/admin.html" id="admin-link" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded text-center hidden">Admin</a>
-          <button id="login-btn" onclick="PFCDiscord.startDiscordLogin()" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-6 rounded">Login with Discord</button>
-          <button id="logout-btn" onclick="PFCDiscord.logout()" class="bg-gray-800 hover:bg-gray-800 text-white font-bold py-2 px-6 rounded">Logout</button>
+          <a href="html/admin.html" id="admin-link-mobile" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded text-center hidden">Admin</a>
+          <button id="login-btn-mobile" onclick="PFCDiscord.startDiscordLogin()" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-6 rounded">Login with Discord</button>
+          <button id="logout-btn-mobile" onclick="PFCDiscord.logout()" class="bg-gray-800 hover:bg-gray-800 text-white font-bold py-2 px-6 rounded">Logout</button>
         </div>
       </div>
   
@@ -109,6 +109,8 @@
       if (token) {
         document.getElementById('logout-btn')?.classList.remove('hidden');
         document.getElementById('login-btn')?.classList.add('hidden');
+        document.getElementById('logout-btn-mobile')?.classList.remove('hidden');
+        document.getElementById('login-btn-mobile')?.classList.add('hidden');
         const user = PFCDiscord.getUser();
 
         if (user) {
@@ -116,19 +118,28 @@
           const nameEl = document.getElementById('display-name');
           nameEl.textContent = user.displayName;
           info.classList.remove('hidden');
+          info.classList.add('lg:inline-block');
 
           const adminLink = document.getElementById('admin-link');
+          const adminLinkMobile = document.getElementById('admin-link-mobile');
           if (Array.isArray(user.roles) && user.roles.includes('Server Admin')) {
             adminLink?.classList.remove('hidden');
+            adminLinkMobile?.classList.remove('hidden');
           } else {
             adminLink?.classList.add('hidden');
+            adminLinkMobile?.classList.add('hidden');
           }
         }
       } else {
+        debugger;
         document.getElementById('logout-btn')?.classList.add('hidden');
         document.getElementById('login-btn')?.classList.remove('hidden');
+        document.getElementById('logout-btn-mobile')?.classList.add('hidden');
+        document.getElementById('login-btn-mobile')?.classList.remove('hidden');
         document.getElementById('user-info')?.classList.add('hidden');
+        document.getElementById('user-info')?.classList.remove('lg:inline-block');
         document.getElementById('admin-link')?.classList.add('hidden');
+        document.getElementById('admin-link-mobile')?.classList.add('hidden');
       }
     });
   </script>
