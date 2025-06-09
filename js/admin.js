@@ -4,7 +4,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const isAdmin = Array.isArray(user?.roles) && user.roles.includes('Server Admin');
 
   if (!token || !isAdmin) {
-    window.location.href = '../index.html';
+    window.location.href = '/unauthorized';
     return;
   }
 
