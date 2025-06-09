@@ -1,3 +1,4 @@
+// js/home.js
 
 async function loadContent(sectionId) {
   try {
@@ -5,10 +6,7 @@ async function loadContent(sectionId) {
     console.log(`[DEBUG] Requesting: ${url}`);
 
     const res = await fetch(url);
-
-    if (!res.ok) {
-      throw new Error(`API call failed with status ${res.status}`);
-    }
+    if (!res.ok) throw new Error(`API call failed with status ${res.status}`);
 
     const data = await res.json();
     console.log(`[DEBUG] Received for ${sectionId}:`, data);
@@ -29,7 +27,7 @@ async function loadContent(sectionId) {
   }
 }
 
-(async function () {
+export async function init() {
   try {
     const contentSections = ['about', 'structure', 'motto'];
     for (const section of contentSections) {
@@ -38,4 +36,4 @@ async function loadContent(sectionId) {
   } catch (err) {
     console.error('[ERROR] Failed to load site content:', err);
   }
-})();
+}
