@@ -1,5 +1,6 @@
 // includes.js
-document.addEventListener('DOMContentLoaded', () => {
+
+export async function runIncludes() {
     const includeElements = document.querySelectorAll('[data-include]');
     includeElements.forEach(el => {
       const file = el.getAttribute('data-include');
@@ -20,5 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
           console.error(`[includes.js] Error loading ${file}:`, err);
         });
     });
-  });
+  }
+  
+  document.addEventListener('DOMContentLoaded', () => runIncludes());
   
