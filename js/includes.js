@@ -1,6 +1,6 @@
-// includes.js
+// includes.js (non-module global version)
 
-export async function runIncludes() {
+window.runIncludes = function runIncludes() {
     const includeElements = document.querySelectorAll('[data-include]');
     includeElements.forEach(el => {
       const file = el.getAttribute('data-include');
@@ -21,7 +21,8 @@ export async function runIncludes() {
           console.error(`[includes.js] Error loading ${file}:`, err);
         });
     });
-  }
+  };
   
-  document.addEventListener('DOMContentLoaded', () => runIncludes());
+  // Auto-run on DOM load
+  document.addEventListener('DOMContentLoaded', () => window.runIncludes());
   

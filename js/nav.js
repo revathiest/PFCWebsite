@@ -89,3 +89,6 @@ document.addEventListener('login-success', () => {
   console.log('[nav] login-success event received — rerunning logic');
   runNavLogic();
 });
+
+// Expose to window for SPA reloads
+window.runNavLogic = runNavLogic;

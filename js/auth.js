@@ -1,8 +1,4 @@
-// auth.js
-
-import { runIncludes } from './includes.js';
-
-export async function finishDiscordLogin() {
+function finishDiscordLogin() {
   console.log('finishDiscordLogin triggered.');
 
   const params = new URLSearchParams(window.location.search);
@@ -14,37 +10,61 @@ export async function finishDiscordLogin() {
     return;
   }
 
-  try {
-    console.log('Sending POST request to exchange code...');
-    const response = await fetch(`${API_URL}/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code })
+  fetch(`${window.PFC_CONFIG.apiBase}/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code })
+  })
+    .then(response => {
+      console.log('Received response:', response);
+      return response.json();
+    })
+    .then(data => {
+      console.log('Parsed response JSON:', data);
+      localStorage.setItem('jwt', data.token);
+      console.log('✅ JWT stored:', data.token);
+      window.location.href = window.PFC_CONFIG.redirectUri;
+    })
+    .catch(err => {
+      console.error('❌ Error finishing Discord login:', err);
     });
+}
 
-    console.log('Received response:', response);
-    const data = await response.json();
-    console.log('Parsed response JSON:', data);
-
-    localStorage.setItem('jwt', data.token);
-    console.log('✅ JWT stored:', data.token);
-
-    // Reload nav and run logic cleanly
-    const navPlaceholder = document.querySelector('[data-include="partials/nav.html"]');
-    if (navPlaceholder) navPlaceholder.remove();
-
-    const newNav = document.createElement('div');
-    newNav.setAttribute('data-include', 'partials/nav.html');
-    document.body.insertBefore(newNav, document.body.firstChild);
-
-    runIncludes();
-
-    document.addEventListener('nav-ready', () => {
-      console.log('[auth] Nav is ready — dispatching login-success');
-      document.dispatchEvent(new Event('login-success'));
-    }, { once: true });
-
+function getUser() {
+  try {
+    const token = localStorage.getItem('jwt');
+    if (!token) return null;
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload;
   } catch (err) {
-    console.error('❌ Error finishing Discord login:', err);
+    console.warn('[auth] Failed to decode JWT:', err);
+    return null;
   }
 }
+
+function startDiscordLogin() {
+  const clientId = window.PFC_CONFIG?.discordClientId;
+  const redirectUri = window.PFC_CONFIG?.redirectUri;
+
+
+  if (!clientId) {
+    console.error('[auth] Missing Discord Client ID in PFC_CONFIG');
+    return;
+  }
+
+  const url = `https://discord.com/oauth2/authorize?response_type=code&client_id=${clientId}&scope=identify+guilds.members.read&redirect_uri=${redirectUri}`;
+  window.location.href = url;
+}
+
+function logout() {
+  localStorage.removeItem('jwt');
+  console.log('🔒 Logged out. Reloading...');
+  window.location.reload();
+}
+
+window.PFCDiscord = {
+  finishDiscordLogin,
+  getUser,
+  startDiscordLogin,
+  logout
+};
