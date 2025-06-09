@@ -21,8 +21,12 @@ function finishDiscordLogin() {
     })
     .then(data => {
       console.log('Parsed response JSON:', data);
-      localStorage.setItem('jwt', data.token);
-      console.log('✅ JWT stored:', data.token);
+      if (data && data.token) {
+        localStorage.setItem('jwt', data.token);
+        console.log('✅ JWT stored:', data.token);
+      } else {
+        console.warn('[auth] No token received from API:', data);
+      }
       window.location.href = window.PFC_CONFIG.redirectUri;
     })
     .catch(err => {
@@ -33,7 +37,7 @@ function finishDiscordLogin() {
 function getUser() {
   try {
     const token = localStorage.getItem('jwt');
-    if (!token) return null;
+    if (!token || token === 'undefined') return null;
     const payload = JSON.parse(atob(token.split('.')[1]));
     return payload;
   } catch (err) {
@@ -68,3 +72,4 @@ window.PFCDiscord = {
   startDiscordLogin,
   logout
 };
+
