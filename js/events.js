@@ -57,4 +57,10 @@ async function loadEvents() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', loadEvents);
+export async function init() {
+  try {
+    await loadEvents();
+  } catch (err) {
+    console.error('[ERROR] Failed to load site content:', err);
+  }
+}

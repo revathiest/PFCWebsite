@@ -23,6 +23,10 @@ async function loadAccolades() {
   }
 }
 
-(async function () {
-  await loadAccolades();
-})();
+export async function init() {
+  try {
+    await loadAccolades();
+  } catch (err) {
+    console.error('[ERROR] Failed to load site content:', err);
+  }
+}
