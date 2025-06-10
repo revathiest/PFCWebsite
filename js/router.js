@@ -21,10 +21,22 @@ async function loadRoute() {
 
   console.log(`[router] path: ${path}`);
   console.log(`[router] route: ${route}`);
-  console.log(`[router] fetching: /${route}`);
+
+  // Special case: protect /admin
+  if (path === '/admin' || path === '/log-search') {
+    const user = await PFCDiscord.getUser(); // Make sure this returns role info
+    const isAdmin = user?.roles?.includes('Server Admin'); // Adjust as needed
+
+    if (!user || !isAdmin) {
+      console.warn('[router] Access denied to /admin for non-admin user.');
+      navigateTo('/unauthorized');
+      return;
+    }
+  }
 
   try {
-    const res = await fetch('/' + route); // ← absolute path fix
+    console.log(`[router] fetching: /${route}`);
+    const res = await fetch('/' + route); // Don't fetch unless allowed
     if (!res.ok) throw new Error('Failed to fetch view: ' + route);
 
     const html = await res.text();
@@ -46,6 +58,9 @@ async function loadRoute() {
     } else if (path.includes('log-search')) {
       console.log('[router] importing log-search.js');
       import('./log-search.js').then(m => m.init?.());
+    } else if (path.includes('unauthorized')) {
+      console.log('[router] importing unauthorized.js');
+      import('./unauthorized.js').then(m => m.init?.());
     } else if (path === '/' || path === '/home') {
       console.log('[router] importing home.js');
       import('./home.js').then(m => m.init?.());
@@ -55,7 +70,6 @@ async function loadRoute() {
     viewContainer.innerHTML = '<p class="text-red-500 text-center">Error loading page.</p>';
   }
 }
-
 
 function loadInitialRoute() {
   document.body.addEventListener('click', e => {
