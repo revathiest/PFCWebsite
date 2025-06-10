@@ -91,7 +91,6 @@ function renderResults(logs = []) {
 
 async function searchLogs(e) {
   console.log('[DEBUG] searchLogs() called');
-  console.log('[DEBUG] Search URL:', url);
   e?.preventDefault();
   const token = localStorage.getItem('jwt');
   const headers = token ? { Authorization: `Bearer ${token}` } : {};
@@ -108,6 +107,7 @@ async function searchLogs(e) {
   if (message) params.set('message', message);
 
   const url = `${window.PFC_CONFIG.apiBase}/api/activity-log/search?${params.toString()}`;
+  console.log('[DEBUG] Search URL:', url);
   try {
     const res = await fetch(url, { headers });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -121,7 +121,10 @@ async function searchLogs(e) {
 export async function init() {
   try {
     await populateFilters();
-    document.getElementById('search-button')?.addEventListener('click', searchLogs);
+    document.getElementById('search-button')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      searchLogs();
+    });    
   } catch (err) {
     console.error('[ERROR] Failed to load site content:', err);
   }
