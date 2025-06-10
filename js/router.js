@@ -19,32 +19,43 @@ async function loadRoute() {
   const route = routes[path] || routes['/'];
   const viewContainer = document.getElementById('view-container');
 
+  console.log(`[router] path: ${path}`);
+  console.log(`[router] route: ${route}`);
+  console.log(`[router] fetching: /${route}`);
+
   try {
-    const res = await fetch(route);
+    const res = await fetch('/' + route); // ← absolute path fix
     if (!res.ok) throw new Error('Failed to fetch view: ' + route);
+
     const html = await res.text();
     viewContainer.innerHTML = html;
 
-    // Trigger any page-specific scripts after load
+    // Load matching script module
     if (path.includes('accolades')) {
+      console.log('[router] importing accolades.js');
       import('./accolades.js').then(m => m.init?.());
     } else if (path.includes('accolade')) {
+      console.log('[router] importing accolade.js');
       import('./accolade.js').then(m => m.init?.());
     } else if (path.includes('events')) {
-        import('./events.js').then(m => m.init?.());
+      console.log('[router] importing events.js');
+      import('./events.js').then(m => m.init?.());
     } else if (path.includes('admin')) {
-        import('./admin.js').then(m => m.init?.());
+      console.log('[router] importing admin.js');
+      import('./admin.js').then(m => m.init?.());
     } else if (path.includes('log-search')) {
-        import('./log-search.js').then(m => m.init?.());
+      console.log('[router] importing log-search.js');
+      import('./log-search.js').then(m => m.init?.());
     } else if (path === '/' || path === '/home') {
+      console.log('[router] importing home.js');
       import('./home.js').then(m => m.init?.());
     }
-
   } catch (err) {
     console.error('[router] Error loading route:', err);
     viewContainer.innerHTML = '<p class="text-red-500 text-center">Error loading page.</p>';
   }
 }
+
 
 function loadInitialRoute() {
   document.body.addEventListener('click', e => {

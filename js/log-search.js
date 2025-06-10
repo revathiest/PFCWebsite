@@ -116,24 +116,11 @@ async function searchLogs(e) {
   }
 }
 
-window.addEventListener('DOMContentLoaded', async () => {
-  const user = PFCDiscord.getUser();
-  const token = localStorage.getItem('jwt');
-  const isAdmin = Array.isArray(user?.roles) && user.roles.includes('Server Admin');
-
-  if (!token || !isAdmin) {
-    window.location.href = '../index.html';
-    return;
+export async function init() {
+  try {
+    await populateFilters();
+    await searchLogs();
+  } catch (err) {
+    console.error('[ERROR] Failed to load site content:', err);
   }
-
-  document.getElementById('logout-btn')?.classList.remove('hidden');
-  const nameEl = document.getElementById('display-name');
-  if (nameEl) {
-    nameEl.textContent = user.displayName;
-    nameEl.classList.remove('hidden');
-  }
-
-  await populateFilters();
-
-  document.getElementById('log-search-form').addEventListener('submit', searchLogs);
-});
+}
