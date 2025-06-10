@@ -90,7 +90,9 @@ function renderResults(logs = []) {
 }
 
 async function searchLogs(e) {
-  e.preventDefault();
+  console.log('[DEBUG] searchLogs() called');
+  console.log('[DEBUG] Search URL:', url);
+  e?.preventDefault();
   const token = localStorage.getItem('jwt');
   const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
@@ -119,7 +121,7 @@ async function searchLogs(e) {
 export async function init() {
   try {
     await populateFilters();
-    await searchLogs();
+    document.getElementById('search-button')?.addEventListener('click', searchLogs);
   } catch (err) {
     console.error('[ERROR] Failed to load site content:', err);
   }
