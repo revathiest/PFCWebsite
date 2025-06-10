@@ -90,5 +90,24 @@ document.addEventListener('login-success', () => {
   runNavLogic();
 });
 
+document.addEventListener('nav-ready', () => {
+  console.log('[nav] nav-ready fired');
+  runNavLogic();
+
+  const toggle = document.getElementById('nav-toggle');
+  const menu = document.getElementById('nav-menu-mobile');
+
+  if (toggle && menu) {
+    console.log('[nav] Hamburger elements found — binding toggle');
+    toggle.addEventListener('click', () => {
+      console.log('[nav] Toggling mobile menu');
+      menu.classList.toggle('hidden');
+      menu.style.maxHeight = menu.classList.contains('hidden') ? null : menu.scrollHeight + 'px';
+    });
+  } else {
+    console.warn('[nav] Couldn’t find nav-toggle or nav-menu-mobile');
+  }
+});
+
 // Expose to window for SPA reloads
 window.runNavLogic = runNavLogic;
