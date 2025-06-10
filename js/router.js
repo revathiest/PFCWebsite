@@ -2,8 +2,10 @@
 const routes = {
   '/': 'views/home.html',
   '/accolades': 'views/accolades.html',
+  '/accolade': 'views/accolade.html',
   '/events': 'views/events.html',
   '/admin': 'views/admin.html',
+  '/log-search': 'views/log-search.html',
   '/unauthorized': 'views/unauthorized.html'
 };
 
