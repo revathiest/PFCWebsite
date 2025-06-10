@@ -44,6 +44,11 @@ async function loadAccoladePage() {
   }
 }
 
-(async function () {
-  await loadAccoladePage();
-})();
+export async function init() {
+  try {
+    await new Promise(resolve => requestAnimationFrame(resolve));
+    await loadAccoladePage();
+  } catch (err) {
+    console.error('[ERROR] Failed to load site content:', err);
+  }
+}
