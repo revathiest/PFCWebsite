@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - development  # or whichever branch you work from
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
