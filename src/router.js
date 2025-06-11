@@ -1,3 +1,5 @@
+import { getUser } from './auth.js';
+
 // router.js
 const routes = {
   '/': 'views/home.html',
@@ -24,7 +26,7 @@ async function loadRoute() {
 
   // Special case: protect /admin
   if (path === '/admin' || path === '/log-search') {
-    const user = await PFCDiscord.getUser(); // Make sure this returns role info
+    const user = await getUser(); // Make sure this returns role info
     const isAdmin = user?.roles?.includes('Server Admin'); // Adjust as needed
 
     if (!user || !isAdmin) {

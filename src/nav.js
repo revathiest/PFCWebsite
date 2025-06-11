@@ -1,4 +1,4 @@
-import { getUser } from './auth.js'
+import { startDiscordLogin, logout, getUser } from './auth.js';
 
 console.log('[nav] Script start');
 
@@ -49,6 +49,12 @@ function runNavLogic() {
 
     const isAdmin = user?.roles?.includes('Server Admin');
     console.log('[nav] Is admin:', isAdmin);
+
+    // Bind login/logout buttons
+    document.getElementById('login-btn')?.addEventListener('click', startDiscordLogin);
+    document.getElementById('login-btn-mobile')?.addEventListener('click', startDiscordLogin);
+    document.getElementById('logout-btn')?.addEventListener('click', logout);
+    document.getElementById('logout-btn-mobile')?.addEventListener('click', logout);
 
     if (user) {
       document.getElementById('display-name').textContent = user.displayName;
