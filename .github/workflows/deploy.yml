@@ -3,8 +3,7 @@ name: Deploy to PebbleHost
 on:
   push:
     branches:
-      - main  # or whichever branch you work from
-  workflow_dispatch:
+      - development
 
 jobs:
   build-and-deploy:
@@ -19,7 +18,7 @@ jobs:
         with:
           node-version: 22
 
-      - name: Clean and install dependencies
+      - name: Clean install
         run: |
           rm -rf node_modules package-lock.json
           npm install
@@ -38,5 +37,3 @@ jobs:
           git add --all
           git commit -m "Deploy from GitHub Actions"
           git push origin production --force
-
-
