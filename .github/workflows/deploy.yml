@@ -32,8 +32,11 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git fetch origin production
-          git switch --orphan temp-deploy
-          git --work-tree dist add --all
-          git --work-tree dist commit -m "Deploy from GitHub Actions"
-          git push origin temp-deploy:production --force
+          git worktree add temp-deploy production
+          cp -r dist/* temp-deploy/
+          cd temp-deploy
+          git add --all
+          git commit -m "Deploy from GitHub Actions"
+          git push origin production --force
+
 
