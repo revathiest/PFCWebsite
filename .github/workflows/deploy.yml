@@ -34,21 +34,25 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           
-          # Create orphan branch temp-deploy
           git fetch origin
           git worktree add temp-deploy production
 
-          # Copy built files to temp-deploy
+          if [ ! -d "dist" ]; then
+            echo "❌ Build folder 'dist' not found! Aborting."
+            exit 1
+          fi
+
           rsync -av --delete dist/ temp-deploy/
 
           cd temp-deploy
           git add --all
           if git diff --cached --quiet; then
-            echo "No changes to commit."
+            echo "ℹ️ No changes to commit."
           else
             git commit -m "🚀 Deploy from GitHub Actions"
             git push origin HEAD:production --force
           fi
-          
+
           cd ..
           git worktree remove temp-deploy --force
+          git worktree prune
