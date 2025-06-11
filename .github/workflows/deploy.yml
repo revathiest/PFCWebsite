@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -18,7 +18,7 @@ jobs:
         with:
           node-version: 22
 
-      - name: Clean install
+      - name: Clean and install dependencies
         run: |
           rm -rf node_modules package-lock.json
           npm install
@@ -26,16 +26,29 @@ jobs:
       - name: Build site
         run: npm run build
 
-      - name: Deploy dist to production branch
+      - name: Deploy to production branch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          echo "✅ Starting deploy step..."
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git fetch origin production
+          
+          # Create orphan branch temp-deploy
+          git fetch origin
           git worktree add temp-deploy production
-          cp -r dist/* temp-deploy/
+
+          # Copy built files to temp-deploy
+          rsync -av --delete dist/ temp-deploy/
+
           cd temp-deploy
           git add --all
-          git commit -m "Deploy from GitHub Actions"
-          git push origin production --force
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "🚀 Deploy from GitHub Actions"
+            git push origin HEAD:production --force
+          fi
+          
           cd ..
           git worktree remove temp-deploy --force
