@@ -1,3 +1,5 @@
+import { getUser } from './auth.js'
+
 console.log('[nav] Script start');
 
 // Wait until all nav elements are present in DOM
@@ -38,7 +40,7 @@ function runNavLogic() {
     let user = null;
     if (token) {
       try {
-        user = PFCDiscord.getUser();
+        user = getUser();
         console.log('[nav] User:', user);
       } catch (err) {
         console.warn('[nav] Failed to get user:', err);

@@ -1,3 +1,5 @@
+import { PFC_CONFIG } from "./config";
+
 function finishDiscordLogin() {
   console.log('finishDiscordLogin triggered.');
 
@@ -10,12 +12,12 @@ function finishDiscordLogin() {
     return;
   }
 
-  fetch(`${window.PFC_CONFIG.apiBase}/api/login`, {
+  fetch(`${PFC_CONFIG.apiBase}/api/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       code,
-      redirectUri: window.PFC_CONFIG.redirectUri
+      redirectUri: PFC_CONFIG.redirectUri
     })
   })
     .then(response => {
@@ -30,7 +32,7 @@ function finishDiscordLogin() {
       } else {
         console.warn('[auth] No token received from API:', data);
       }
-      window.location.href = window.PFC_CONFIG.redirectUri;
+      window.location.href = PFC_CONFIG.redirectUri;
     })
     .catch(err => {
       console.error('❌ Error finishing Discord login:', err);
@@ -50,8 +52,8 @@ function getUser() {
 }
 
 function startDiscordLogin() {
-  const clientId = window.PFC_CONFIG?.discordClientId;
-  const redirectUri = window.PFC_CONFIG?.redirectUri;
+  const clientId = PFC_CONFIG?.discordClientId;
+  const redirectUri = PFC_CONFIG?.redirectUri;
 
 
   if (!clientId) {
@@ -69,7 +71,7 @@ function logout() {
   window.location.reload();
 }
 
-window.PFCDiscord = {
+export {
   finishDiscordLogin,
   getUser,
   startDiscordLogin,
