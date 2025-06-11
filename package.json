@@ -2,7 +2,9 @@
   "name": "Pyro Freelancer Corps",
   "version": "1.0.0",
   "scripts": {
-    "test": "echo \"No tests yet, mate.\""
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "license": "ISC",
   "dependencies": {}

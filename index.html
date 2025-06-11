@@ -14,38 +14,25 @@
   <script src="js/router.js" defer></script>
   <script src="js/includes.js" defer></script>
 </head>
-<body class="bg-black text-white">
+  <body class="bg-black text-white">
 
-  <!-- Static Nav (now stays loaded forever) -->
-  <div data-include="partials/nav.html"></div>
+    <!-- Static Nav (dynamically injected) -->
+    <div data-include="partials/nav.html"></div>
 
-  <!-- Main container for swapping page content -->
-  <main id="view-container" class="min-h-screen"></main>
+    <!-- Main SPA Content Area -->
+    <main id="view-container" class="min-h-screen"></main>
 
-  <!-- Static footer (optional) -->
-  <footer class="bg-black text-gray-400 py-6 text-center">
-    <p>&copy; 2025 Pyro Freelancer Corps. All rights reserved.</p>
-  </footer>
+    <!-- Static Footer -->
+    <footer class="bg-black text-gray-400 py-6 text-center">
+      <p>&copy; 2025 Pyro Freelancer Corps. All rights reserved.</p>
+      <div class="flex justify-center items-center gap-4 mt-4">
+        <img src="/images/Fankit/03_LOGOS/MadeByTheCommunity_Black.png" alt="Made by the Community" class="h-16 opacity-70">
+        <img src="/images/Fankit/03_LOGOS/STARCITIZEN_WHITE.png" alt="Star Citizen Logo" class="h-16 opacity-70">
+      </div>
+    </footer>
 
-  <img src="./images/Fankit/03_LOGOS/MadeByTheCommunity_Black.png" alt="Made by the Community" class="community-watermark">
+    <!-- Vite Entrypoint -->
+    <script type="module" src="/src/main.js"></script>
 
-  <!-- Page Load Trigger -->
-  <script>
-    window.addEventListener('DOMContentLoaded', async () => {
-      console.log("[SPA] Initialising...");
-  
-      const urlParams = new URLSearchParams(window.location.search);
-      const code = urlParams.get('code');
-  
-      // Run login only if code is present
-      if (code) {
-        console.log("[SPA] Found OAuth code, finishing login first...");
-        await PFCDiscord.finishDiscordLogin();
-      }
-  
-      loadInitialRoute(); // Now safe to init routing
-    });
-  </script>
-  
-</body>
+  </body>
 </html>
