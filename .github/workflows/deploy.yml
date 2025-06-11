@@ -37,3 +37,5 @@ jobs:
           git add --all
           git commit -m "Deploy from GitHub Actions"
           git push origin production --force
+          cd ..
+          git worktree remove temp-deploy --force
