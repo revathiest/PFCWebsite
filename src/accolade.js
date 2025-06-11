@@ -1,3 +1,5 @@
+import { PFC_CONFIG } from './config.js'
+import { slugify } from './utils.js'
 
 function getSlug() {
   const params = new URLSearchParams(window.location.search);
@@ -18,15 +20,15 @@ async function loadAccoladePage() {
   }
 
   try {
-    const res = await fetch(`${window.PFC_CONFIG.apiBase}/api/accolades`);
+    const res = await fetch(`${PFC_CONFIG.apiBase}/api/accolades`);
 
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const { accolades } = await res.json();
 
-    const debugSlugs = accolades.map(a => ({ name: a.name, slug: window.PFCUtils.slugify(a.name) }));
+    const debugSlugs = accolades.map(a => ({ name: a.name, slug: slugify(a.name) }));
     console.log('[DEBUG] Available slugs:', debugSlugs);
 
-    const accolade = accolades.find(a => window.PFCUtils.slugify(a.name) === slug);
+    const accolade = accolades.find(a => slugify(a.name) === slug);
     if (!accolade) throw new Error(`No accolade found matching slug: ${slug}`);
 
     nameEl.textContent = `${accolade.emoji || ''} ${accolade.name}`;

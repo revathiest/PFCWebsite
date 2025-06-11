@@ -1,3 +1,5 @@
+import { PFC_CONFIG } from './config.js'
+
 let allCommands = [];
 let allMembers = [];
 
@@ -11,8 +13,8 @@ async function populateFilters() {
 
   try {
     const [commandsRes, membersRes] = await Promise.all([
-      fetch(`${window.PFC_CONFIG.apiBase}/api/commands`, { headers }),
-      fetch(`${window.PFC_CONFIG.apiBase}/api/members`, { headers })
+      fetch(`${PFC_CONFIG.apiBase}/api/commands`, { headers }),
+      fetch(`${PFC_CONFIG.apiBase}/api/members`, { headers })
     ]);
 
     if (!commandsRes.ok) {
@@ -50,7 +52,7 @@ async function populateFilters() {
 
       const typeSelect = document.getElementById('type');
       try {
-        const typeRes = await fetch(`${window.PFC_CONFIG.apiBase}/api/activity-log/event-types`, { headers });
+        const typeRes = await fetch(`${PFC_CONFIG.apiBase}/api/activity-log/event-types`, { headers });
         const typeContentType = typeRes.headers.get('content-type') || '';
         const typeData = typeContentType.includes('application/json') ? await typeRes.json() : { eventTypes: [] };
         const types = Array.isArray(typeData.eventTypes) ? typeData.eventTypes : [];
@@ -106,7 +108,7 @@ async function searchLogs(e) {
   if (command) params.set('command', command);
   if (message) params.set('message', message);
 
-  const url = `${window.PFC_CONFIG.apiBase}/api/activity-log/search?${params.toString()}`;
+  const url = `${PFC_CONFIG.apiBase}/api/activity-log/search?${params.toString()}`;
   console.log('[DEBUG] Search URL:', url);
   try {
     const res = await fetch(url, { headers });

@@ -1,8 +1,10 @@
+
 // js/home.js
+import { PFC_CONFIG } from './config.js'
 
 async function loadContent(sectionId) {
   try {
-    const url = `${window.PFC_CONFIG.apiBase}/api/content/${sectionId}`;
+    const url = `${PFC_CONFIG.apiBase}/api/content/${sectionId}`;
     console.log(`[DEBUG] Requesting: ${url}`);
 
     const res = await fetch(url);

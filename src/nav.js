@@ -1,3 +1,5 @@
+import { startDiscordLogin, logout, getUser } from './auth.js';
+
 console.log('[nav] Script start');
 
 // Wait until all nav elements are present in DOM
@@ -38,7 +40,7 @@ function runNavLogic() {
     let user = null;
     if (token) {
       try {
-        user = PFCDiscord.getUser();
+        user = getUser();
         console.log('[nav] User:', user);
       } catch (err) {
         console.warn('[nav] Failed to get user:', err);
@@ -48,6 +50,11 @@ function runNavLogic() {
     const isAdmin = user?.roles?.includes('Server Admin');
     console.log('[nav] Is admin:', isAdmin);
 
+    document.getElementById('login-btn')?.addEventListener('click', startDiscordLogin);
+    document.getElementById('login-btn-mobile')?.addEventListener('click', startDiscordLogin);
+    document.getElementById('logout-btn')?.addEventListener('click', logout);
+    document.getElementById('logout-btn-mobile')?.addEventListener('click', logout);
+
     if (user) {
       document.getElementById('display-name').textContent = user.displayName;
 
@@ -56,12 +63,14 @@ function runNavLogic() {
       hide('login-btn'); hide('login-btn-mobile');
 
       if (isAdmin) {
-        show('admin-link'); show('admin-link-mobile'); show('admin-container');
+        show('admin-link'); show('admin-link-mobile');
+        show('admin-container');
       } else {
-        hide('admin-link'); hide('admin-link-mobile'); hide('admin-container');
+        hide('admin-link'); hide('admin-link-mobile');
+        hide('admin-container');
         if (window.location.pathname.includes('admin.html')) {
           console.log('[nav] Redirecting non-admin');
-          window.location.href = '../unauthorized.html';
+          navigateTo('./unauthorized.html');
         }
       }
     } else {
@@ -72,7 +81,7 @@ function runNavLogic() {
       hide('admin-container');
       if (window.location.pathname.includes('admin.html')) {
         console.log('[nav] Redirecting unauthenticated user');
-        window.location.href = '../unauthorized.html';
+        navigateTo('./unauthorized.html');
       }
     }
 
@@ -80,6 +89,7 @@ function runNavLogic() {
   });
 }
 
+// Attach hamburger toggle once DOM is ready
 document.addEventListener('nav-ready', () => {
   console.log('[nav] nav-ready fired');
   runNavLogic();
@@ -90,9 +100,9 @@ document.addEventListener('login-success', () => {
   runNavLogic();
 });
 
+// Hamburger toggle support
 document.addEventListener('nav-ready', () => {
   console.log('[nav] nav-ready fired');
-  runNavLogic();
 
   const toggle = document.getElementById('nav-toggle');
   const menu = document.getElementById('nav-menu-mobile');
@@ -105,9 +115,11 @@ document.addEventListener('nav-ready', () => {
       menu.style.maxHeight = menu.classList.contains('hidden') ? null : menu.scrollHeight + 'px';
     });
   } else {
-    console.warn('[nav] Couldn’t find nav-toggle or nav-menu-mobile');
+    console.warn("[nav] Couldn't find nav-toggle or nav-menu-mobile");
   }
 });
 
-// Expose to window for SPA reloads
-window.runNavLogic = runNavLogic;
+// Expose to SPA router
+export function init() {
+  runNavLogic();
+}
