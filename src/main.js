@@ -1,17 +1,21 @@
+// src/main.js
+
+// Global styles
 import './style.css'
-import './includes.js'
+
+// App logic modules
+import { runIncludes } from './includes.js'
 import * as nav from './nav.js'
 import * as router from './router.js'
-import * as PFCDiscord from './auth.js' // or wherever it's defined
+import * as PFCDiscord from './auth.js'
+// utils are now modular; import as needed
+import { slugify } from './utils.js'
 
+// Run includes (e.g. nav, footer injection)
+runIncludes()
+
+// Init navigation and routing
 nav.init()
-
-const urlParams = new URLSearchParams(window.location.search)
-const code = urlParams.get('code')
-
-if (code) {
-  console.log('[SPA] Found OAuth code, finishing login...')
-  await PFCDiscord.finishDiscordLogin()
-}
-
 router.init()
+
+console.log('[MAIN] Booted up successfully')

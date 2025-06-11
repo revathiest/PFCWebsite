@@ -110,4 +110,7 @@ document.addEventListener('nav-ready', () => {
 });
 
 // Expose to window for SPA reloads
-window.runNavLogic = runNavLogic;
+export function init() {
+  runNavLogic()
+}
+

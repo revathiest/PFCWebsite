@@ -80,3 +80,7 @@ function loadInitialRoute() {
   });
   loadRoute();
 }
+
+export function init(){
+  loadInitialRoute()
+}
