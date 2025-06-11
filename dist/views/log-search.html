@@ -1,0 +1,24 @@
+<section class="py-8 px-6">
+    <h1 class="text-3xl font-bold text-pfc-red mb-4 text-center">Activity Log Search</h1>
+    <form id="log-search-form" class="space-y-4 mb-6 text-black">
+      <div>
+        <label class="block text-white mb-1" for="type">Type</label>
+        <select id="type" class="w-full p-2 rounded"></select>
+      </div>
+      <div>
+        <label class="block text-white mb-1" for="userId">Member</label>
+        <select id="userId" class="w-full p-2 rounded"></select>
+      </div>
+      <div>
+        <label class="block text-white mb-1" for="command">Command</label>
+        <select id="command" class="w-full p-2 rounded"></select>
+      </div>
+      <div>
+        <label class="block text-white mb-1" for="message">Message Contains</label>
+        <input id="message" type="text" class="w-full p-2 rounded" />
+      </div>
+      <button type="submit"  id="search-button" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded">Search</button>
+    </form>
+
+    <div id="results" class="space-y-4"></div>
+  </section>
