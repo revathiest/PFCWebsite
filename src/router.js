@@ -66,7 +66,9 @@ async function loadRoute() {
     } else if (path === '/' || path === '/home') {
       console.log('[router] importing home.js');
       import('./home.js').then(m => m.init?.());
-    }
+    } else if (path.startsWith('/shop') || path.startsWith('/product/')) {
+      import('./shop.js').then(m => m.init?.());
+    }    
   } catch (err) {
     console.error('[router] Error loading route:', err);
     viewContainer.innerHTML = '<p class="text-red-500 text-center">Error loading page.</p>';
