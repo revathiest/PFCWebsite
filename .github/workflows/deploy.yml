@@ -18,47 +18,36 @@ jobs:
         with:
           node-version: 22
 
-      - name: Cache node modules
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: Clean and install dependencies
+      - name: Install dependencies
         run: |
           rm -rf node_modules package-lock.json
           npm install
 
-      - name: Ensure build script exists
-        run: |
-          if ! npm run | grep -q ' build'; then
-            echo "❌ No build script found in package.json"
-            exit 1
-          fi
-
       - name: Build site
         run: npm run build
 
-      - name: Deploy to production branch for PebbleHost
+      - name: Deploy to production branch (dist-only)
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
-          echo "🚀 Starting clean deploy to production..."
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          echo "🚀 Deploying dist/ to orphan branch 'production'..."
 
-          # Prepare a separate deploy directory
-          mkdir deploy && cp -r dist/* deploy/
-          cd deploy
+          # Sanity check
+          if [ ! -d "dist" ]; then
+            echo "❌ Build output missing. Aborting."
+            exit 1
+          fi
+
+          # Make a clean deploy directory
+          DEPLOY_DIR=$(mktemp -d)
+          cp -r dist/* "$DEPLOY_DIR"
+          cd "$DEPLOY_DIR"
 
           git init
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git remote add origin https://x-access-token:${GH_TOKEN}@github.com/revathiest/PFCWebsite.git
           git checkout --orphan production
-
           git add .
           git commit -m "🚀 Deploy static site"
           git push --force origin HEAD:production
