@@ -18,7 +18,7 @@ jobs:
         with:
           node-version: 22
 
-      - name: Cache node modules
+      - name: Cache node modules package-lock.json
         uses: actions/cache@v3
         with:
           path: ~/.npm
