@@ -18,7 +18,7 @@ jobs:
         with:
           node-version: 22
 
-      - name: Cache node modules package-lock.json
+      - name: Cache node modules
         uses: actions/cache@v3
         with:
           path: ~/.npm
@@ -28,8 +28,8 @@ jobs:
 
       - name: Clean and install dependencies
         run: |
-          rm -rf node_modules
-          npm ci
+          rm -rf node_modules package-lock.json
+          npm install
 
       - name: Ensure build script exists
         run: |
