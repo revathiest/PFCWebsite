@@ -3,7 +3,7 @@ name: Deploy to PebbleHost
 on:
   push:
     branches:
-      - development
+      - main
 
 jobs:
   build-and-deploy:
@@ -18,7 +18,7 @@ jobs:
         with:
           node-version: 22
 
-      - name: Clean and install dependencies
+      - name: Install dependencies
         run: |
           rm -rf node_modules package-lock.json
           npm install
@@ -26,33 +26,28 @@ jobs:
       - name: Build site
         run: npm run build
 
-      - name: Deploy to production branch
+      - name: Deploy to production branch (dist-only)
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
-          echo "✅ Starting deploy step..."
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          
-          git fetch origin
-          git worktree add temp-deploy production
+          echo "🚀 Deploying dist/ to orphan branch 'production'..."
 
+          # Sanity check
           if [ ! -d "dist" ]; then
-            echo "❌ Build folder 'dist' not found! Aborting."
+            echo "❌ Build output missing. Aborting."
             exit 1
           fi
 
-          rsync -av --delete dist/ temp-deploy/
+          # Make a clean deploy directory
+          DEPLOY_DIR=$(mktemp -d)
+          cp -r dist/* "$DEPLOY_DIR"
+          cd "$DEPLOY_DIR"
 
-          cd temp-deploy
-          git add --all
-          if git diff --cached --quiet; then
-            echo "ℹ️ No changes to commit."
-          else
-            git commit -m "🚀 Deploy from GitHub Actions"
-            git push origin HEAD:production --force
-          fi
-
-          cd ..
-          git worktree remove temp-deploy --force
-          git worktree prune
+          git init
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote add origin https://x-access-token:${GH_TOKEN}@github.com/revathiest/PFCWebsite.git
+          git checkout --orphan production
+          git add .
+          git commit -m "🚀 Deploy static site"
+          git push --force origin HEAD:production
