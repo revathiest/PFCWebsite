@@ -18,24 +18,40 @@ jobs:
         with:
           node-version: 22
 
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Clean and install dependencies
         run: |
-          rm -rf node_modules package-lock.json
-          npm install
+          rm -rf node_modules
+          npm ci
+
+      - name: Ensure build script exists
+        run: |
+          if ! npm run | grep -q ' build'; then
+            echo "❌ No build script found in package.json"
+            exit 1
+          fi
 
       - name: Build site
         run: npm run build
 
-      - name: Deploy to production branch
+      - name: Deploy to production branch for PebbleHost
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "✅ Starting deploy step..."
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          
+
           git fetch origin
           git worktree add temp-deploy production
+          rm -rf temp-deploy/*
 
           if [ ! -d "dist" ]; then
             echo "❌ Build folder 'dist' not found! Aborting."
@@ -46,13 +62,9 @@ jobs:
 
           cd temp-deploy
           git add --all
-          if git diff --cached --quiet; then
-            echo "ℹ️ No changes to commit."
-          else
-            git commit -m "🚀 Deploy from GitHub Actions"
-            git push origin HEAD:production --force
-          fi
-
+          git commit -m "🚀 Deploy from GitHub Actions" || echo "ℹ️ Nothing to commit"
+          git push origin HEAD:production
           cd ..
+
           git worktree remove temp-deploy --force
           git worktree prune
