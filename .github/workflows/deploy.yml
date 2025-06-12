@@ -49,9 +49,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
+          rm -rf temp-deploy
+          git worktree prune
           git fetch origin
           git worktree add temp-deploy production
-          rm -rf temp-deploy/*
 
           if [ ! -d "dist" ]; then
             echo "❌ Build folder 'dist' not found! Aborting."
