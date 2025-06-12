@@ -43,11 +43,13 @@ jobs:
 
       - name: Deploy to production branch for PebbleHost
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           echo "✅ Starting deploy step..."
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/revathiest/PFCWebsite.git
 
           rm -rf temp-deploy
           git worktree prune
