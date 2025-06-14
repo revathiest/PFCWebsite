@@ -81,13 +81,12 @@ function extractTags(products) {
 function renderProducts(edges, tags) {
   const container = document.getElementById('view-container');
   const tagButtons = [
-    `<button class=\"tag-button\" data-tag=\"__all__\">All</button>`,
-    ...tags.map(tag => `<button class=\"tag-button\" data-tag=\"${tag}\">${tag}</button>`)
+    `<button class=\"button\" data-tag=\"__all__\">All</button>`,
+    ...tags.map(tag => `<button class=\"button\" data-tag=\"${tag}\">${tag}</button>`)
   ].join('');
 
   container.innerHTML = `
     <div class=\"shop-header enhanced-header\">
-      <div class=\"shop-logo-placeholder\">🛒</div>
       <div>
         <h1 class=\"shop-title\">PFC Commissary</h1>
         <p class=\"shop-subtitle\">Gear up like a champ. Snacks, swag, and serious essentials.</p>
@@ -106,7 +105,7 @@ function renderProducts(edges, tags) {
     window.initNav();
   }
 
-  document.querySelectorAll('.tag-button').forEach(button => {
+  document.querySelectorAll('.button').forEach(button => {
     button.addEventListener('click', () => {
       currentTag = button.dataset.tag;
       const filtered = currentTag === '__all__'
@@ -184,6 +183,10 @@ function appendProducts(edges) {
 }
 
 export async function init(path) {
+
+  while (!document.getElementById('view-container')) {
+    await new Promise(r => setTimeout(r, 10));
+  }
   if (path && path.startsWith('/product/')) {
     const handle = path.split('/product/')[1];
     const result = await shopifyGraphQL(getProductByHandleQuery(handle));
@@ -195,7 +198,6 @@ export async function init(path) {
 
     const content = `
       <div class=\"shop-header enhanced-header\">
-        <div class=\"shop-logo-placeholder\">🛒</div>
         <div>
           <h1 class=\"shop-title\">PFC Commissary</h1>
           <p class=\"shop-subtitle\">Gear up like a champ. Swag, and serious essentials.</p>
@@ -210,7 +212,7 @@ export async function init(path) {
           <select id=\"variant-select\" style=\"color: black; background-color: white;\">
             ${product.variants.edges.map(v => `<option value=\"${v.node.id}\" data-handle=\"${product.handle}\">${v.node.title} - $${v.node.price.amount}</option>`).join('')}
           </select>
-          <button id=\"buy-now\">Buy Now</button>
+          <button class=\"button\" id=\"buy-now\">Buy Now</button>
         </div>
       </div>
     `;
@@ -223,7 +225,7 @@ export async function init(path) {
       const variantId = select.value;
       const handle = select.options[select.selectedIndex].dataset.handle;
       const shopUrl = `https://pfc-commissary.myshopify.com/products/${handle}?variant=${variantId}`;
-      window.location.href = shopUrl;
+      window.open(shopUrl, '_blank'); // Open in new tab
     });
 
     if (window.runIncludes) await window.runIncludes();

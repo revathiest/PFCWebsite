@@ -10,7 +10,7 @@ const routes = {
   '/log-search': 'views/log-search.html',
   '/unauthorized': 'views/unauthorized.html',
   '/shop': 'views/shop.html',
-  '/product': 'views/shop.html'
+  '/product/:handle': 'views/shop.html'
 };
 
 function navigateTo(url) {
@@ -20,16 +20,30 @@ function navigateTo(url) {
 
 async function loadRoute() {
   const path = window.location.pathname;
-  const route = routes[path] || routes['/'];
+  let route = routes[path];
+
+  if (!route) {
+    if (path.startsWith('/product/')) {
+      route = routes['/product/:handle'];
+    } else {
+      route = routes['/'];
+    }
+  }
+
   const viewContainer = document.getElementById('view-container');
+
+  if (!viewContainer) {
+    console.error('[router] view-container not found!');
+    return;
+  }
 
   console.log(`[router] path: ${path}`);
   console.log(`[router] route: ${route}`);
 
   // Special case: protect /admin
   if (path === '/admin' || path === '/log-search') {
-    const user = await getUser(); // Make sure this returns role info
-    const isAdmin = user?.roles?.includes('Server Admin'); // Adjust as needed
+    const user = await getUser();
+    const isAdmin = user?.roles?.includes('Server Admin');
 
     if (!user || !isAdmin) {
       console.warn('[router] Access denied to /admin for non-admin user.');
@@ -40,11 +54,25 @@ async function loadRoute() {
 
   try {
     console.log(`[router] fetching: /${route}`);
-    const res = await fetch('/' + route); // Don't fetch unless allowed
+    const res = await fetch('/' + route);
     if (!res.ok) throw new Error('Failed to fetch view: ' + route);
 
     const html = await res.text();
-    viewContainer.innerHTML = html;
+
+    // Replace only view container section between <!--view-start--> and <!--view-end-->
+    const fullDoc = document.createElement('div');
+    fullDoc.innerHTML = html;
+    const newView = fullDoc.querySelector('#view-container');
+
+    if (newView) {
+      viewContainer.innerHTML = newView.innerHTML;
+    } else {
+      viewContainer.innerHTML = html; // fallback
+    }
+
+    // Dispatch nav-ready manually to re-trigger nav setup
+    const navReadyEvent = new Event('nav-ready');
+    window.dispatchEvent(navReadyEvent);
 
     // Load matching script module
     if (path.includes('accolades')) {
@@ -69,8 +97,9 @@ async function loadRoute() {
       console.log('[router] importing home.js');
       import('./home.js').then(m => m.init?.());
     } else if (path.startsWith('/shop') || path.startsWith('/product/')) {
-      import('./shop.js').then(m => m.init?.());
-    }    
+      console.log('[router] importing shop.js');
+      import('./shop.js').then(m => m.init?.(path));
+    }
   } catch (err) {
     console.error('[router] Error loading route:', err);
     viewContainer.innerHTML = '<p class="text-red-500 text-center">Error loading page.</p>';
@@ -87,6 +116,6 @@ function loadInitialRoute() {
   loadRoute();
 }
 
-export function init(){
-  loadInitialRoute()
+export function init() {
+  loadInitialRoute();
 }
