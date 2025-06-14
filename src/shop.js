@@ -1,58 +1,126 @@
 // src/shop.js
 
-import { shopifyGraphQL, GET_PRODUCTS_QUERY, GET_PRODUCT_QUERY, CREATE_CHECKOUT_MUTATION } from './api/shopify';
+import { shopifyGraphQL, CREATE_CHECKOUT_MUTATION } from './api/shopify.js';
+
+let currentTag = null;
+let nextCursor = null;
+let allProducts = [];
+
+function getAllProductsQuery(cursor = null) {
+  return `{
+    products(first: 10${cursor ? `, after: \"${cursor}\"` : ''}) {
+      edges {
+        cursor
+        node {
+          id
+          title
+          handle
+          tags
+          images(first: 1) {
+            edges {
+              node {
+                url
+                altText
+              }
+            }
+          }
+          variants(first: 1) {
+            edges {
+              node {
+                id
+                price {
+                  amount
+                }
+              }
+            }
+          }
+        }
+      }
+      pageInfo {
+        hasNextPage
+      }
+    }
+  }`;
+}
+
+function extractTags(products) {
+  const tagSet = new Set();
+  products.forEach(p => p.node.tags.forEach(tag => tagSet.add(tag)));
+  return Array.from(tagSet);
+}
+
+function renderProducts(edges, tags) {
+  const container = document.getElementById('view-container');
+  const tagButtons = tags.map(tag => `<button class="tag-button" data-tag="${tag}">${tag}</button>`).join('');
+
+  container.innerHTML = `
+    <div class="shop-header">
+      <img src="/images/shop-logo.png" alt="PFC Commissary" class="shop-logo" />
+    </div>
+    <div id="filter-tags">
+      ${tagButtons}
+    </div>
+    <div id="product-list"></div>
+    <button id="load-more">Load More</button>
+  `;
+
+  document.querySelectorAll('.tag-button').forEach(button => {
+    button.addEventListener('click', () => {
+      currentTag = button.dataset.tag;
+      const filtered = allProducts.filter(p => p.node.tags.includes(currentTag));
+      updateProductGrid(filtered);
+    });
+  });
+
+  document.getElementById('load-more').addEventListener('click', async () => {
+    if (!nextCursor) return;
+    const data = await shopifyGraphQL(getAllProductsQuery(nextCursor));
+    nextCursor = data.products.pageInfo.hasNextPage ? data.products.edges.at(-1)?.cursor : null;
+    allProducts.push(...data.products.edges);
+    const displayList = currentTag ? allProducts.filter(p => p.node.tags.includes(currentTag)) : allProducts;
+    appendProducts(data.products.edges);
+  });
+
+  updateProductGrid(edges);
+}
+
+function updateProductGrid(edges) {
+  const grid = document.getElementById('product-list');
+  grid.innerHTML = '';
+  edges.forEach(p => {
+    const product = p.node;
+    grid.innerHTML += `
+      <div class="product-card">
+        <a href="/product/${product.handle}" data-link>
+          <img src="${product.images.edges[0]?.node.url}" alt="${product.images.edges[0]?.node.altText || product.title}" />
+          <h3>${product.title}</h3>
+        </a>
+        <p>$${product.variants.edges[0].node.price.amount}</p>
+      </div>
+    `;
+  });
+}
+
+function appendProducts(edges) {
+  const grid = document.getElementById('product-list');
+  edges.forEach(p => {
+    const product = p.node;
+    grid.innerHTML += `
+      <div class="product-card">
+        <a href="/product/${product.handle}" data-link>
+          <img src="${product.images.edges[0]?.node.url}" alt="${product.images.edges[0]?.node.altText || product.title}" />
+          <h3>${product.title}</h3>
+        </a>
+        <p>$${product.variants.edges[0].node.price.amount}</p>
+      </div>
+    `;
+  });
+}
 
 export async function init() {
-  const viewContainer = document.getElementById('view-container');
-  const path = window.location.pathname;
-
-  if (path.startsWith('/product/')) {
-    const handle = path.split('/product/')[1];
-    const data = await shopifyGraphQL(GET_PRODUCT_QUERY, { handle });
-    const product = data.productByHandle;
-
-    let variantId = product.variants.edges[0]?.node.id;
-
-    viewContainer.innerHTML = `
-      <h2>${product.title}</h2>
-      <div class="product-gallery">
-        ${product.images.edges.map(img => `<img src="${img.node.url}" alt="${img.node.altText || product.title}" />`).join('')}
-      </div>
-      <p>${product.description}</p>
-      <select id="variant-select">
-        ${product.variants.edges.map(v => `<option value="${v.node.id}">${v.node.title} - $${v.node.price.amount}</option>`).join('')}
-      </select>
-      <button id="buy-now">Buy Now</button>
-    `;
-
-    document.getElementById('variant-select').addEventListener('change', e => {
-      variantId = e.target.value;
-    });
-
-    document.getElementById('buy-now').addEventListener('click', async () => {
-      const checkout = await shopifyGraphQL(CREATE_CHECKOUT_MUTATION, {
-        lineItems: [{ variantId, quantity: 1 }]
-      });
-      window.location.href = checkout.checkoutCreate.checkout.webUrl;
-    });
-
-  } else {
-    const data = await shopifyGraphQL(GET_PRODUCTS_QUERY);
-    const products = data.products.edges.map(edge => edge.node);
-
-    viewContainer.innerHTML = `
-      <h2>Shop</h2>
-      <div class="product-grid">
-        ${products.map(p => `
-          <div class="product-card">
-            <a href="/product/${p.handle}" data-link>
-              <img src="${p.images.edges[0]?.node.url}" alt="${p.images.edges[0]?.node.altText || p.title}" />
-              <h3>${p.title}</h3>
-            </a>
-            <p>$${p.variants.edges[0].node.price.amount}</p>
-          </div>
-        `).join('')}
-      </div>
-    `;
-  }
+  const data = await shopifyGraphQL(getAllProductsQuery());
+  allProducts = data.products.edges;
+  nextCursor = data.products.pageInfo.hasNextPage ? data.products.edges.at(-1)?.cursor : null;
+  const tags = extractTags(allProducts);
+  renderProducts(allProducts, tags);
 }
