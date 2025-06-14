@@ -1,1 +1,0 @@
-async function n(){console.log("[unauthorized.js] Init called");const t=document.querySelector("a[data-link]");t==null||t.addEventListener("click",e=>{e.preventDefault(),history.pushState(null,null,"/"),loadInitialRoute()})}export{n as init};
