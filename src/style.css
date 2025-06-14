@@ -162,6 +162,7 @@
     cursor: pointer;
     font-weight: 500;
     transition: background-color 0.2s ease;
+    
   }
   
   .tag-button:hover {
@@ -172,6 +173,7 @@
     outline: 2px solid var(--pfc-gold);
     outline-offset: 1px;
   }
+
   .product-detail {
     display: flex;
     flex-wrap: wrap;
@@ -215,17 +217,6 @@
     flex-wrap: wrap;
     gap: 0.5rem;
     margin-bottom: 1rem;
-  }
-
-  .tag-button {
-    padding: 0.5rem 1rem;
-    background-color: var(--pfc-red);
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-  }
-  
-  .tag-button:hover {
-    background-color: var(--pfc-gold);
   }
   
   
