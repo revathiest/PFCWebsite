@@ -26,11 +26,11 @@ jobs:
       - name: Build site
         run: npm run build
 
-      - name: Deploy to production branch (dist-only)
+      - name: Deploy to production branch (dist-only, keep history)
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
-          echo "🚀 Deploying dist/ to orphan branch 'production'..."
+          echo "🚀 Deploying dist/ to 'production' branch with history..."
 
           # Sanity check
           if [ ! -d "dist" ]; then
@@ -38,16 +38,19 @@ jobs:
             exit 1
           fi
 
-          # Make a clean deploy directory
+          # Clone the production branch into a temp dir
           DEPLOY_DIR=$(mktemp -d)
-          cp -r dist/* "$DEPLOY_DIR"
-          cd "$DEPLOY_DIR"
+          git clone --branch production https://x-access-token:${GH_TOKEN}@github.com/revathiest/PFCWebsite.git "$DEPLOY_DIR"
 
-          git init
+          # Clear out old files but keep .git and anything not being replaced
+          find "$DEPLOY_DIR" -mindepth 1 -not -name '.git' -exec rm -rf {} +
+
+          # Copy new build into deploy dir
+          cp -r dist/* "$DEPLOY_DIR"
+
+          cd "$DEPLOY_DIR"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git remote add origin https://x-access-token:${GH_TOKEN}@github.com/revathiest/PFCWebsite.git
-          git checkout --orphan production
           git add .
           git commit -m "🚀 Deploy static site"
-          git push --force origin HEAD:production
+          git push origin production
