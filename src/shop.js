@@ -51,23 +51,30 @@ function extractTags(products) {
 
 function renderProducts(edges, tags) {
   const container = document.getElementById('view-container');
-  const tagButtons = tags.map(tag => `<button class="tag-button" data-tag="${tag}">${tag}</button>`).join('');
+  const tagButtons = [
+    `<button class="tag-button" data-tag="__all__">All</button>`,
+    ...tags.map(tag => `<button class="tag-button" data-tag="${tag}">${tag}</button>`)
+  ].join('');
 
   container.innerHTML = `
     <div class="shop-header">
       <img src="/images/shop-logo.png" alt="PFC Commissary" class="shop-logo" />
     </div>
-    <div id="filter-tags">
+    <div class="category-filters">
       ${tagButtons}
     </div>
-    <div id="product-list"></div>
-    <button id="load-more">Load More</button>
+    <div id="product-list" class="product-grid"></div>
+    <div class="load-more-wrapper">
+      <button id="load-more">Load More</button>
+    </div>
   `;
 
   document.querySelectorAll('.tag-button').forEach(button => {
     button.addEventListener('click', () => {
       currentTag = button.dataset.tag;
-      const filtered = allProducts.filter(p => p.node.tags.includes(currentTag));
+      const filtered = currentTag === '__all__'
+        ? allProducts
+        : allProducts.filter(p => p.node.tags.includes(currentTag));
       updateProductGrid(filtered);
     });
   });
@@ -77,7 +84,9 @@ function renderProducts(edges, tags) {
     const data = await shopifyGraphQL(getAllProductsQuery(nextCursor));
     nextCursor = data.products.pageInfo.hasNextPage ? data.products.edges.at(-1)?.cursor : null;
     allProducts.push(...data.products.edges);
-    const displayList = currentTag ? allProducts.filter(p => p.node.tags.includes(currentTag)) : allProducts;
+    const displayList = currentTag && currentTag !== '__all__'
+      ? allProducts.filter(p => p.node.tags.includes(currentTag))
+      : allProducts;
     appendProducts(data.products.edges);
   });
 
