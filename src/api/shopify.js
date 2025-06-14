@@ -1,7 +1,7 @@
 // src/api/shopify.js
 
-const SHOPIFY_DOMAIN = 'your-store.myshopify.com'; // Replace with actual domain
-const STOREFRONT_TOKEN = 'your_token_here'; // Replace with actual token
+const SHOPIFY_DOMAIN = 'pfc-commissary.myshopify.com'; // Replace with actual domain
+const STOREFRONT_TOKEN = '33522d6190a58189d30ed85f4c48549f'; // Replace with actual token
 
 export async function shopifyGraphQL(query, variables = {}) {
   const response = await fetch(`https://${SHOPIFY_DOMAIN}/api/2023-04/graphql.json`, {

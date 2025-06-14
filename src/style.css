@@ -86,6 +86,113 @@
   #nav-menu.expanded {
     max-height: 500px; /* Enough room for all menu items */
   }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
   
+  .product-card {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    background: #fff;
+  }
+  
+  .product-card img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+  }
+  .load-more-wrapper {
+    display: flex;
+    justify-content: center;
+    margin: 2rem 0;
+  }
+  
+  #load-more {
+    background-color: var(--pfc-red);
+    color: #fff;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  
+  #load-more:hover {
+    background-color: var(--pfc-gold);
+  }
+
+  .shop-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .shop-header h1 {
+    font-size: 2.25rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  .shop-header p {
+    font-size: 1.1rem;
+    color: #999;
+  }
+  .category-filters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 1rem 0 2rem;
+  }
+  
+  .tag-button {
+    padding: 0.5rem 1rem;
+    background-color: var(--pfc-red);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+  }
+  
+  .tag-button:hover {
+    background-color:var(--pfc-gold);
+  }
+  
+  .tag-button.active {
+    outline: 2px solid var(--pfc-gold);
+    outline-offset: 1px;
+  }
+  .product-detail {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+  
+  .product-detail-image {
+    flex: 1 1 300px;
+    max-width: 500px;
+  }
+  
+  .product-detail-info {
+    flex: 1 1 300px;
+  }
+  
+  .product-detail img {
+    width: 100%;
+    border-radius: 8px;
+  }
+  
+  #variant-select, #buy-now {
+    margin-top: 1rem;
+    display: block;
+  }
   
   

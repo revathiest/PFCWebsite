@@ -8,7 +8,9 @@ const routes = {
   '/events': 'views/events.html',
   '/admin': 'views/admin.html',
   '/log-search': 'views/log-search.html',
-  '/unauthorized': 'views/unauthorized.html'
+  '/unauthorized': 'views/unauthorized.html',
+  '/shop': 'views/shop.html',
+  '/product': 'views/shop.html'
 };
 
 function navigateTo(url) {
