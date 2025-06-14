@@ -80,13 +80,20 @@ export const GET_PRODUCT_QUERY = `
   }
 `;
 
-export const CREATE_CHECKOUT_MUTATION = `
-  mutation checkoutCreate($lineItems: [CheckoutLineItemInput!]!) {
-    checkoutCreate(input: { lineItems: $lineItems }) {
-      checkout {
-        id
-        webUrl
+export function getCreateCheckoutMutation(variantId) {
+  return `
+    mutation {
+      checkoutCreate(input: {
+        lineItems: [{ variantId: "${variantId}", quantity: 1 }]
+      }) {
+        checkout {
+          webUrl
+        }
+        userErrors {
+          field
+          message
+        }
       }
     }
-  }
-`;
+  `;
+}

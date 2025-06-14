@@ -1,6 +1,6 @@
 // src/shop.js
 
-import { shopifyGraphQL, CREATE_CHECKOUT_MUTATION } from './api/shopify.js';
+import { shopifyGraphQL } from './api/shopify.js';
 
 let currentTag = null;
 let nextCursor = null;
@@ -47,6 +47,7 @@ function getProductByHandleQuery(handle) {
   return `{
     productByHandle(handle: \"${handle}\") {
       title
+      handle
       descriptionHtml
       images(first: 10) {
         edges {
@@ -85,8 +86,12 @@ function renderProducts(edges, tags) {
   ].join('');
 
   container.innerHTML = `
-    <div class=\"shop-header\">
-      <img src=\"/images/shop-logo.png\" alt=\"PFC Commissary\" class=\"shop-logo\" />
+    <div class=\"shop-header enhanced-header\">
+      <div class=\"shop-logo-placeholder\">🛒</div>
+      <div>
+        <h1 class=\"shop-title\">PFC Commissary</h1>
+        <p class=\"shop-subtitle\">Gear up like a champ. Snacks, swag, and serious essentials.</p>
+      </div>
     </div>
     <div class=\"category-filters\">
       ${tagButtons}
@@ -189,8 +194,12 @@ export async function init(path) {
     `).join('');
 
     const content = `
-      <div class=\"shop-header\">
-        <img src=\"/images/shop-logo.png\" alt=\"PFC Commissary\" class=\"shop-logo\" />
+      <div class=\"shop-header enhanced-header\">
+        <div class=\"shop-logo-placeholder\">🛒</div>
+        <div>
+          <h1 class=\"shop-title\">PFC Commissary</h1>
+          <p class=\"shop-subtitle\">Gear up like a champ. Swag, and serious essentials.</p>
+        </div>
       </div>
       <div class=\"product-detail\">
         <div class=\"product-detail-image\">
@@ -199,7 +208,7 @@ export async function init(path) {
         <div class=\"product-detail-info\">
           <h2>${product.title}</h2>
           <select id=\"variant-select\" style=\"color: black; background-color: white;\">
-            ${product.variants.edges.map(v => `<option value=\"${v.node.id}\">${v.node.title} - $${v.node.price.amount}</option>`).join('')}
+            ${product.variants.edges.map(v => `<option value=\"${v.node.id}\" data-handle=\"${product.handle}\">${v.node.title} - $${v.node.price.amount}</option>`).join('')}
           </select>
           <button id=\"buy-now\">Buy Now</button>
         </div>
@@ -208,6 +217,14 @@ export async function init(path) {
 
     const container = document.getElementById('view-container');
     container.innerHTML = content;
+
+    document.getElementById('buy-now').addEventListener('click', () => {
+      const select = document.getElementById('variant-select');
+      const variantId = select.value;
+      const handle = select.options[select.selectedIndex].dataset.handle;
+      const shopUrl = `https://pfc-commissary.myshopify.com/products/${handle}?variant=${variantId}`;
+      window.location.href = shopUrl;
+    });
 
     if (window.runIncludes) await window.runIncludes();
     if (window.initNav) window.initNav();
