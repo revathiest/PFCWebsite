@@ -1,5 +1,5 @@
 export const PFC_CONFIG = {
-  apiBase: "http://localhost:8003",
-  redirectUri: "http://localhost:4173/",
-  discordClientId: "1013095667201228810"
+  apiBase: import.meta.env.VITE_API_BASE,
+  redirectUri: import.meta.env.VITE_REDIRECT_URI,
+  discordClientId: import.meta.env.VITE_DISCORD_CLIENT_ID
 };
