@@ -56,7 +56,7 @@ jobs:
 
           # Copy new build into deploy dir
           echo "📥 Copying new files..."
-          cp -r dist/* "$DEPLOY_DIR"
+          cp -r dist/. "$DEPLOY_DIR"
 
           # Commit and push
           cd "$DEPLOY_DIR"
