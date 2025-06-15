@@ -1,6 +1,5 @@
 node_modules/
 dist/
 .env
-.gitignore
 server.cert
 server.key
