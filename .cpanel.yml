@@ -1,10 +1,8 @@
 ---
 deployment:
-  production:
-    branch: production
-    tasks:
-      - echo "📁 Deploying Vite SPA from Git to public_html..."
-      - export DEPLOYPATH=/home/pyrofre1/public_html
-      - rm -rf $DEPLOYPATH/*
-      - cp -r ./ $DEPLOYPATH
-      - echo "✅ Deploy complete!"
+  tasks:
+    - echo "📁 Deploying Vite SPA from Git to public_html..."
+    - export DEPLOYPATH=/home/pyrofre1/public_html
+    - rm -rf $DEPLOYPATH/*
+    - cp -r ./ $DEPLOYPATH
+    - echo "✅ Deploy complete!"
