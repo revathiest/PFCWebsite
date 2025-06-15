@@ -2,6 +2,7 @@ import { PFC_CONFIG } from './config.js';
 
 const DEBUG = PFC_CONFIG.debug;
 
+// Fetch available content sections from the API and populate the dropdown.
 async function loadSections() {
   const select = document.getElementById('section-select');
   const errorEl = document.getElementById('content-error');
@@ -10,18 +11,35 @@ async function loadSections() {
     const res = await fetch(`${PFC_CONFIG.apiBase}/api/content`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    const items = Array.isArray(data.content) ? data.content : (Array.isArray(data.contents) ? data.contents : data);
-    const options = Array.isArray(items)
-      ? items.map(i => i.key || i.id).filter(Boolean)
-      : [];
+
+    // Normalise potential API response shapes into an array of objects
+    let items = [];
+    if (Array.isArray(data.content)) {
+      items = data.content;
+    } else if (Array.isArray(data.contents)) {
+      items = data.contents;
+    } else if (Array.isArray(data)) {
+      items = data;
+    } else if (data && typeof data === 'object') {
+      items = Object.entries(data).map(([key, val]) => ({ key, ...(val || {}) }));
+    }
+
+    const options = items
+      .map(i => ({
+        value: i.key || i.id || i.name,
+        label: i.name || i.title || i.key || i.id
+      }))
+      .filter(o => o.value);
+
     select.innerHTML = '<option value="">Choose a section</option>' +
-      options.map(o => `<option value="${o}">${o}</option>`).join('');
+      options.map(o => `<option value="${o.value}">${o.label}</option>`).join('');
   } catch (err) {
     console.error('[content-manager] Failed to load sections', err);
     if (errorEl) errorEl.textContent = 'Failed to load sections.';
   }
 }
 
+// Retrieve a section's content and populate the textarea.
 async function loadContent(section) {
   const textarea = document.getElementById('content-area');
   const errorEl = document.getElementById('content-error');
@@ -38,6 +56,7 @@ async function loadContent(section) {
   }
 }
 
+// Save the textarea contents back to the API for a given section.
 async function saveContent(section) {
   const textarea = document.getElementById('content-area');
   const errorEl = document.getElementById('content-error');
@@ -59,6 +78,10 @@ async function saveContent(section) {
   }
 }
 
+/**
+ * Initialise the content manager page.
+ * Binds event handlers and loads available sections.
+ */
 export async function init() {
   try {
     await loadSections();
