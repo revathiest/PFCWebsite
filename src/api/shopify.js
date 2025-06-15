@@ -1,8 +1,16 @@
 // src/api/shopify.js
 
-const SHOPIFY_DOMAIN = 'pfc-commissary.myshopify.com'; // Replace with actual domain
-const STOREFRONT_TOKEN = '33522d6190a58189d30ed85f4c48549f'; // Replace with actual token
+// Shopify store domain, e.g. "example.myshopify.com"
+const SHOPIFY_DOMAIN = import.meta.env.VITE_SHOPIFY_DOMAIN;
+// Storefront access token generated from the Shopify admin
+const STOREFRONT_TOKEN = import.meta.env.VITE_SHOPIFY_STOREFRONT_TOKEN;
 
+/**
+ * Execute a GraphQL query against the Shopify Storefront API.
+ * @param {string} query - GraphQL query string
+ * @param {Object} variables - optional variables for the query
+ * @returns {Promise<Object>} resolved data from the API
+ */
 export async function shopifyGraphQL(query, variables = {}) {
   const response = await fetch(`https://${SHOPIFY_DOMAIN}/api/2023-04/graphql.json`, {
     method: 'POST',
@@ -80,6 +88,11 @@ export const GET_PRODUCT_QUERY = `
   }
 `;
 
+/**
+ * Generate a mutation to create a checkout for a given variant ID.
+ * @param {string} variantId - Shopify variant identifier
+ * @returns {string} GraphQL mutation string
+ */
 export function getCreateCheckoutMutation(variantId) {
   return `
     mutation {
@@ -97,3 +110,4 @@ export function getCreateCheckoutMutation(variantId) {
     }
   `;
 }
+
