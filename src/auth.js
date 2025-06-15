@@ -39,22 +39,7 @@ function finishDiscordLogin() {
     .catch(err => {
       console.error('❌ Error finishing Discord login:', err);
     });
-    console.log('Received response:', response);
-    const data = await response.json();
-    console.log('Parsed response JSON:', data);
-    if (data && data.token) {
-      localStorage.setItem('jwt', data.token);
-      console.log('✅ JWT stored:', data.token);
-    } else {
-      console.warn('[auth] No token received from API:', data);
-    }
-    window.location.href = PFC_CONFIG.redirectUri;
-    return data;
-  } catch (err) {
-    console.error('❌ Error finishing Discord login:', err);
-    return null;
   }
-}
 
 function getUser() {
   try {
