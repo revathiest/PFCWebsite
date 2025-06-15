@@ -30,6 +30,8 @@ jobs:
         run: |
           echo "📄 Copying .htaccess to dist/"
           cp .htaccess dist/.htaccess
+          echo "📁 Contents of dist/ after copy:"
+          ls -al dist/
 
       - name: Deploy to production branch (dist-only, keep history)
         env:
