@@ -2,21 +2,16 @@ import { PFC_CONFIG } from './config.js';
 
 /**
  * Fetch the list of officers from the API and render them.
+ * This endpoint is now public and requires no JWT.
  */
 async function loadOfficers() {
   const container = document.getElementById('officer-list');
   if (!container) return;
 
-  const token = localStorage.getItem('jwt');
-  if (!token) {
-    container.innerHTML = '<p class="text-gray-300">Please log in to view officers.</p>';
-    return;
-  }
+
 
   try {
-    const res = await fetch(`${PFC_CONFIG.apiBase}/api/officers`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    const res = await fetch(`${PFC_CONFIG.apiBase}/api/officers`);
 
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
