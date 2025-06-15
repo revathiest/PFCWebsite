@@ -9,6 +9,7 @@ const routes = {
   '/accolades': 'views/accolades.html',
   '/accolade': 'views/accolade.html',
   '/events': 'views/events.html',
+  '/officers': 'views/officers.html',
   '/admin': 'views/admin.html',
   '/log-search': 'views/log-search.html',
   '/unauthorized': 'views/unauthorized.html',
@@ -87,6 +88,9 @@ async function loadRoute() {
     } else if (path.includes('events')) {
       if (DEBUG) console.log('[router] importing events.js');
       import('./events.js').then(m => m.init?.());
+    } else if (path.includes('officers')) {
+      if (DEBUG) console.log('[router] importing officers.js');
+      import('./officers.js').then(m => m.init?.());
     } else if (path.includes('admin')) {
       if (DEBUG) console.log('[router] importing admin.js');
       import('./admin.js').then(m => m.init?.());
