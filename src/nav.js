@@ -50,7 +50,7 @@ function runNavLogic() {
       }
     }
 
-    const isAdmin = user?.roles?.includes('Server Admin');
+    const isAdmin = user?.roles?.includes('Fleet Admiral');
     if (DEBUG) console.log('[nav] Is admin:', isAdmin);
 
     document.getElementById('login-btn')?.addEventListener('click', startDiscordLogin);

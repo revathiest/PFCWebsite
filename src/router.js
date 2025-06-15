@@ -9,8 +9,10 @@ const routes = {
   '/accolades': 'views/accolades.html',
   '/accolade': 'views/accolade.html',
   '/events': 'views/events.html',
+  '/officers': 'views/officers.html',
   '/admin': 'views/admin.html',
   '/log-search': 'views/log-search.html',
+  '/content-manager': 'views/content-manager.html',
   '/unauthorized': 'views/unauthorized.html',
   '/shop': 'views/shop.html',
   '/product/:handle': 'views/shop.html'
@@ -44,7 +46,11 @@ async function loadRoute() {
   if (DEBUG) console.log(`[router] route: ${route}`);
 
   // Special case: protect /admin
-  if (path === '/admin' || path === '/log-search') {
+  if 
+  (path === '/admin' || 
+  path === '/log-search' || 
+  path === '/content-manager'
+  ) {
     const user = await getUser();
     const isAdmin = user?.roles?.includes('Server Admin');
 
@@ -87,12 +93,18 @@ async function loadRoute() {
     } else if (path.includes('events')) {
       if (DEBUG) console.log('[router] importing events.js');
       import('./events.js').then(m => m.init?.());
+    } else if (path.includes('officers')) {
+      if (DEBUG) console.log('[router] importing officers.js');
+      import('./officers.js').then(m => m.init?.());
     } else if (path.includes('admin')) {
       if (DEBUG) console.log('[router] importing admin.js');
       import('./admin.js').then(m => m.init?.());
     } else if (path.includes('log-search')) {
       if (DEBUG) console.log('[router] importing log-search.js');
       import('./log-search.js').then(m => m.init?.());
+    } else if (path.includes('content-manager')) {
+      if (DEBUG) console.log('[router] importing content-manager.js');
+      import('./content-manager.js').then(m => m.init?.());
     } else if (path.includes('unauthorized')) {
       if (DEBUG) console.log('[router] importing unauthorized.js');
       import('./unauthorized.js').then(m => m.init?.());
