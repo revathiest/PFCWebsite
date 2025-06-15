@@ -4,6 +4,48 @@ This document outlines the architecture and responsibilities of the Pyro Freelan
 
 ---
 
+## 🧱 Coding Standards & Practices
+
+### 📁 Project Structure
+
+* Static site with HTML, JS, and CSS
+* Organised under `/src`, with logic files like `auth.js`, `router.js`, and `main.js`
+* External API handles dynamic logic via JWT-authenticated endpoints
+
+### 🎯 Style Guide
+
+* **Language:** JavaScript (Vanilla)
+* **Framework:** None — raw JS with modular organisation
+* **Module Style:** ESModules used where appropriate; otherwise CommonJS-like requires
+* **Variable Naming:** kebab-case for CSS, camelCase for JS, SCREAMING\_SNAKE\_CASE for env vars
+* **Comments:** Required for all exported functions and anything non-obvious
+
+### 🧪 Testing
+
+* Manual testing via local Live Server or Vite dev
+* Ensure `.env` is not committed
+* Use Git or cPanel deployment only
+
+### 🧼 Code Quality
+
+* Use `const` by default; use `let` only if reassigned
+* Always prefer `async/await` to `.then()`
+* Always return from async handlers and use `try/catch` around awaits
+* All functions and handlers should have meaningful names
+
+### 🎨 CSS Maintenance Requirement
+
+The `src/style.css` file **must be regularly audited**:
+
+* Remove unused classes
+* Avoid duplicate style rules
+* Use semantic, consistent class names
+* Prefer utility-style rules over deep nested selectors
+
+A regular quarterly style review should be done to keep styling lean and manageable.
+
+---
+
 ## 🧠 Tech Stack Overview
 
 | Layer    | Stack                                                                                 |
