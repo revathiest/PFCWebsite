@@ -46,7 +46,11 @@ async function loadRoute() {
   if (DEBUG) console.log(`[router] route: ${route}`);
 
   // Special case: protect /admin
-  if (path === '/admin' || path === '/log-search') {
+  if 
+  (path === '/admin' || 
+  path === '/log-search' || 
+  path === '/content-manager'
+  ) {
     const user = await getUser();
     const isAdmin = user?.roles?.includes('Server Admin');
 
