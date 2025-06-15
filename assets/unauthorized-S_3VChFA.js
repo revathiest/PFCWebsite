@@ -1,1 +1,0 @@
-import{P as n}from"./index-CJK2gzTJ.js";const l=n.debug;async function i(){l&&console.log("[unauthorized.js] Init called");const t=document.querySelector("a[data-link]");t==null||t.addEventListener("click",e=>{e.preventDefault(),history.pushState(null,null,"/"),loadInitialRoute()})}export{i as init};

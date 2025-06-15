@@ -1,4 +1,4 @@
-import{P as h}from"./index-CJK2gzTJ.js";const w=h.shopifyDomain,$=h.shopifyStorefrontToken;async function u(n,a={}){const e=await(await fetch(`https://${w}/api/2023-04/graphql.json`,{method:"POST",headers:{"Content-Type":"application/json","X-Shopify-Storefront-Access-Token":$},body:JSON.stringify({query:n,variables:a})})).json();return e.errors&&console.error("Shopify API Errors:",e.errors),e.data}let c=null,l=null,i=[];function m(n=null){return`{
+import{P as h}from"./index-DgYdFkUY.js";const w=h.shopifyDomain,$=h.shopifyStorefrontToken;async function u(n,a={}){const e=await(await fetch(`https://${w}/api/2023-04/graphql.json`,{method:"POST",headers:{"Content-Type":"application/json","X-Shopify-Storefront-Access-Token":$},body:JSON.stringify({query:n,variables:a})})).json();return e.errors&&console.error("Shopify API Errors:",e.errors),e.data}let c=null,l=null,i=[];function m(n=null){return`{
     products(first: 10${n?`, after: "${n}"`:""}) {
       edges {
         cursor
