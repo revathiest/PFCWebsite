@@ -28,14 +28,17 @@ async function loadOfficers() {
     }
 
     container.innerHTML = officers.map(officer => {
-      const roleColor = officer.color || '#fff';
+      const roleObj = officer.role || {};
+      const roleName = typeof roleObj === 'string' ? roleObj : roleObj.name;
+      const roleColor = officer.color || roleObj.color || '#fff';
       const bio = officer.bio && officer.bio.trim()
         ? `<p class="text-gray-300 mt-2">${officer.bio}</p>`
         : '<p class="text-gray-500 italic mt-2">No biography available.</p>';
+
       return `
         <div class="card">
           <h3 style="color: ${roleColor};">${officer.displayName}</h3>
-          <p class="font-semibold" style="color: ${roleColor};">${officer.role}</p>
+          <p class="font-semibold" style="color: ${roleColor};">${roleName ?? ''}</p>
           ${bio}
         </div>
       `;
