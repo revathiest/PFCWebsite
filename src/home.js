@@ -2,16 +2,18 @@
 // js/home.js
 import { PFC_CONFIG } from './config.js'
 
+const DEBUG = PFC_CONFIG.debug;
+
 async function loadContent(sectionId) {
   try {
     const url = `${PFC_CONFIG.apiBase}/api/content/${sectionId}`;
-    console.log(`[DEBUG] Requesting: ${url}`);
+    if (DEBUG) console.log(`[DEBUG] Requesting: ${url}`);
 
     const res = await fetch(url);
     if (!res.ok) throw new Error(`API call failed with status ${res.status}`);
 
     const data = await res.json();
-    console.log(`[DEBUG] Received for ${sectionId}:`, data);
+    if (DEBUG) console.log(`[DEBUG] Received for ${sectionId}:`, data);
 
     const target = document.getElementById(sectionId);
     if (!target) {

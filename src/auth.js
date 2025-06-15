@@ -1,25 +1,43 @@
 import { PFC_CONFIG } from "./config";
 
-async function finishDiscordLogin() {
-  console.log('finishDiscordLogin triggered.');
+const DEBUG = PFC_CONFIG.debug;
+
+function finishDiscordLogin() {
+  if (DEBUG) console.log('finishDiscordLogin triggered.');
 
   const params = new URLSearchParams(window.location.search);
   const code = params.get('code');
-  console.log('Parsed code from URL:', code);
+  if (DEBUG) console.log('Parsed code from URL:', code);
 
   if (!code) {
-    console.log('No code found in URL — skipping login finish.');
+    if (DEBUG) console.log('No code found in URL — skipping login finish.');
     return;
   }
 
-  try {
-    const response = await fetch(`${PFC_CONFIG.apiBase}/api/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        code,
-        redirectUri: PFC_CONFIG.redirectUri
-      })
+  fetch(`${PFC_CONFIG.apiBase}/api/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      code,
+      redirectUri: PFC_CONFIG.redirectUri
+    })
+  })
+    .then(response => {
+      if (DEBUG) console.log('Received response:', response);
+      return response.json();
+    })
+    .then(data => {
+      if (DEBUG) console.log('Parsed response JSON:', data);
+      if (data && data.token) {
+        localStorage.setItem('jwt', data.token);
+        if (DEBUG) console.log('✅ JWT stored:', data.token);
+      } else {
+        console.warn('[auth] No token received from API:', data);
+      }
+      window.location.href = PFC_CONFIG.redirectUri;
+    })
+    .catch(err => {
+      console.error('❌ Error finishing Discord login:', err);
     });
     console.log('Received response:', response);
     const data = await response.json();
@@ -66,7 +84,7 @@ function startDiscordLogin() {
 
 function logout() {
   localStorage.removeItem('jwt');
-  console.log('🔒 Logged out. Reloading...');
+  if (DEBUG) console.log('🔒 Logged out. Reloading...');
   window.location.reload();
 }
 
