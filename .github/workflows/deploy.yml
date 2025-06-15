@@ -30,7 +30,7 @@ jobs:
         run: |
           echo "📄 Copying .htaccess and .cpanel.yml to dist/"
           cp .htaccess dist/.htaccess
-          cp .cpanel.yml dist/.cpanel.yml
+          cp .github/workflows/.cpanel.yml dist/.cpanel.yml
           echo "📁 Contents of dist/ after copy:"
           ls -al dist/
 
