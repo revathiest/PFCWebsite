@@ -26,6 +26,11 @@ jobs:
       - name: Build site
         run: npm run build
 
+      - name: Include .htaccess in dist
+        run: |
+          echo "📄 Copying .htaccess to dist/"
+          cp .htaccess dist/.htaccess
+
       - name: Deploy to production branch (dist-only, keep history)
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
@@ -48,7 +53,7 @@ jobs:
           find "$DEPLOY_DIR" -mindepth 1 -not -path "$DEPLOY_DIR/.git*" -exec rm -rf {} +
 
           # Copy new build into deploy dir
-          echo "📁 Copying new files..."
+          echo "📥 Copying new files..."
           cp -r dist/* "$DEPLOY_DIR"
 
           # Commit and push
@@ -56,7 +61,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add .
-          git commit -m "🚀 Deploy static site" || echo "⚠️ Nothing to commit"
+          git commit -m "🚀 Deploy static site" || echo "ℹ️ Nothing to commit"
           git push origin production
 
           echo "✅ Deployment complete!"
