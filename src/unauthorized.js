@@ -13,4 +13,3 @@ export async function init() {
     loadInitialRoute(); // Should already exist in your SPA setup
   });
 }
-
