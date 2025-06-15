@@ -13,7 +13,7 @@ const routes = {
   '/product/:handle': 'views/shop.html'
 };
 
-function navigateTo(url) {
+export function navigateTo(url) {
   history.pushState(null, null, url);
   loadRoute();
 }
