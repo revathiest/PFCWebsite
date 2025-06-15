@@ -7,6 +7,11 @@ const SHOPIFY_DOMAIN = PFC_CONFIG.shopifyDomain;
 // Storefront access token generated from the Shopify admin
 const STOREFRONT_TOKEN = PFC_CONFIG.shopifyStorefrontToken;
 
+// Warn immediately if required config is missing
+if (!SHOPIFY_DOMAIN || !STOREFRONT_TOKEN) {
+  console.error('[shopify] Missing Shopify configuration.');
+}
+
 /**
  * Execute a GraphQL query against the Shopify Storefront API.
  * @param {string} query - GraphQL query string
@@ -14,6 +19,9 @@ const STOREFRONT_TOKEN = PFC_CONFIG.shopifyStorefrontToken;
  * @returns {Promise<Object>} resolved data from the API
  */
 export async function shopifyGraphQL(query, variables = {}) {
+  if (!SHOPIFY_DOMAIN || !STOREFRONT_TOKEN) {
+    throw new Error('Shopify configuration not provided');
+  }
   const response = await fetch(`https://${SHOPIFY_DOMAIN}/api/2023-04/graphql.json`, {
     method: 'POST',
     headers: {

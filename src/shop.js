@@ -1,6 +1,7 @@
 // src/shop.js
 
 import { shopifyGraphQL } from './api/shopify.js';
+import { PFC_CONFIG } from './config.js';
 
 let currentTag = null;
 let nextCursor = null;
@@ -117,7 +118,13 @@ function renderProducts(edges, tags) {
 
   document.getElementById('load-more').addEventListener('click', async () => {
     if (!nextCursor) return;
-    const data = await shopifyGraphQL(getAllProductsQuery(nextCursor));
+    let data;
+    try {
+      data = await shopifyGraphQL(getAllProductsQuery(nextCursor));
+    } catch (err) {
+      console.error('[shop] Failed to load more products', err);
+      return;
+    }
     nextCursor = data.products.pageInfo.hasNextPage ? data.products.edges.at(-1)?.cursor : null;
     allProducts.push(...data.products.edges);
     const displayList = currentTag && currentTag !== '__all__'
@@ -187,9 +194,24 @@ export async function init(path) {
   while (!document.getElementById('view-container')) {
     await new Promise(r => setTimeout(r, 10));
   }
+
+  if (!PFC_CONFIG.shopifyDomain || !PFC_CONFIG.shopifyStorefrontToken) {
+    document.getElementById('view-container').innerHTML =
+      '<p class="text-red-500 text-center">Shop is not configured.</p>';
+    console.error('[shop] Missing Shopify config');
+    return;
+  }
   if (path && path.startsWith('/product/')) {
     const handle = path.split('/product/')[1];
-    const result = await shopifyGraphQL(getProductByHandleQuery(handle));
+    let result;
+    try {
+      result = await shopifyGraphQL(getProductByHandleQuery(handle));
+    } catch (err) {
+      console.error('[shop] Failed to load product', err);
+      document.getElementById('view-container').innerHTML =
+        '<p class="text-red-500 text-center">Failed to load product.</p>';
+      return;
+    }
     const product = result.productByHandle;
 
     const imageHtml = product.images.edges.map(edge => `
@@ -233,7 +255,15 @@ export async function init(path) {
     return;
   }
 
-  const data = await shopifyGraphQL(getAllProductsQuery());
+  let data;
+  try {
+    data = await shopifyGraphQL(getAllProductsQuery());
+  } catch (err) {
+    console.error('[shop] Failed to load products', err);
+    document.getElementById('view-container').innerHTML =
+      '<p class="text-red-500 text-center">Failed to load products.</p>';
+    return;
+  }
   allProducts = data.products.edges;
   nextCursor = data.products.pageInfo.hasNextPage ? data.products.edges.at(-1)?.cursor : null;
   const tags = extractTags(allProducts);
