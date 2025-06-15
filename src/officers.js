@@ -27,12 +27,12 @@ async function loadOfficers() {
 
     const sortedOfficers = officers
       .filter(o => {
-        const role = o.role && o.role.name ? o.role.name : o.role;
+        const role = o.roleName;
         return RANK_ORDER.includes(role);
       })
       .sort((a, b) => {
-        const roleA = a.role && a.role.name ? a.role.name : a.role;
-        const roleB = b.role && b.role.name ? b.role.name : b.role;
+        const roleA = a.roleName;
+        const roleB = b.roleName;
         return RANK_ORDER.indexOf(roleA) - RANK_ORDER.indexOf(roleB);
       });
 
@@ -42,9 +42,9 @@ async function loadOfficers() {
     }
 
     container.innerHTML = sortedOfficers.map(officer => {
-      const roleObj = officer.role || {};
-      const roleName = typeof roleObj === 'string' ? roleObj : roleObj.name;
-      const roleColor = officer.color || roleObj.color || '#fff';
+      const roleObj = officer.roleName || {};
+      const roleName = typeof roleObj === 'string' ? roleObj : roleObj.roleName;
+      const roleColor = officer.roleColor || roleObj.roleColor || '#fff';
       const bio = officer.bio && officer.bio.trim()
         ? `<p class="text-gray-300 mt-2">${officer.bio}</p>`
         : '<p class="text-gray-500 italic mt-2">No biography available.</p>';
