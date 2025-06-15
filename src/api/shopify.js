@@ -1,9 +1,11 @@
 // src/api/shopify.js
 
+import { PFC_CONFIG } from '../config.js';
+
 // Shopify store domain, e.g. "example.myshopify.com"
-const SHOPIFY_DOMAIN = import.meta.env.VITE_SHOPIFY_DOMAIN;
+const SHOPIFY_DOMAIN = PFC_CONFIG.shopifyDomain;
 // Storefront access token generated from the Shopify admin
-const STOREFRONT_TOKEN = import.meta.env.VITE_SHOPIFY_STOREFRONT_TOKEN;
+const STOREFRONT_TOKEN = PFC_CONFIG.shopifyStorefrontToken;
 
 /**
  * Execute a GraphQL query against the Shopify Storefront API.
