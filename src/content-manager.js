@@ -14,7 +14,10 @@ async function loadSections() {
 
     // Normalise potential API response shapes into an array of objects
     let items = [];
-    if (Array.isArray(data.content)) {
+    if (Array.isArray(data.sections)) {
+      // { sections: ['about', 'motto'] }
+      items = data.sections.map(s => ({ key: s }));
+    } else if (Array.isArray(data.content)) {
       items = data.content;
     } else if (Array.isArray(data.contents)) {
       items = data.contents;
