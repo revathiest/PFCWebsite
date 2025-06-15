@@ -26,11 +26,10 @@ jobs:
       - name: Build site
         run: npm run build
 
-      - name: Include .htaccess and .cpanel.yml in dist
+      - name: Include .htaccess in dist
         run: |
-          echo "📄 Copying .htaccess and .cpanel.yml to dist/"
+          echo "📄 Copying .htaccess to dist/"
           cp .htaccess dist/.htaccess
-          cp .github/workflows/.cpanel.yml dist/.cpanel.yml
           echo "📁 Contents of dist/ after copy:"
           ls -al dist/
 
