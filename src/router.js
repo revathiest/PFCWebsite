@@ -52,7 +52,7 @@ async function loadRoute() {
   path === '/content-manager'
   ) {
     const user = await getUser();
-    const isAdmin = user?.roles?.includes('Server Admin');
+    const isAdmin = user?.roles?.includes('Fleet Admiral');
 
     if (!user || !isAdmin) {
       console.warn('[router] Access denied to /admin for non-admin user.');
