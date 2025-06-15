@@ -1,6 +1,6 @@
 import { PFC_CONFIG } from "./config";
 
-function finishDiscordLogin() {
+async function finishDiscordLogin() {
   console.log('finishDiscordLogin triggered.');
 
   const params = new URLSearchParams(window.location.search);
@@ -12,31 +12,30 @@ function finishDiscordLogin() {
     return;
   }
 
-  fetch(`${PFC_CONFIG.apiBase}/api/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      code,
-      redirectUri: PFC_CONFIG.redirectUri
-    })
-  })
-    .then(response => {
-      console.log('Received response:', response);
-      return response.json();
-    })
-    .then(data => {
-      console.log('Parsed response JSON:', data);
-      if (data && data.token) {
-        localStorage.setItem('jwt', data.token);
-        console.log('✅ JWT stored:', data.token);
-      } else {
-        console.warn('[auth] No token received from API:', data);
-      }
-      window.location.href = PFC_CONFIG.redirectUri;
-    })
-    .catch(err => {
-      console.error('❌ Error finishing Discord login:', err);
+  try {
+    const response = await fetch(`${PFC_CONFIG.apiBase}/api/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        code,
+        redirectUri: PFC_CONFIG.redirectUri
+      })
     });
+    console.log('Received response:', response);
+    const data = await response.json();
+    console.log('Parsed response JSON:', data);
+    if (data && data.token) {
+      localStorage.setItem('jwt', data.token);
+      console.log('✅ JWT stored:', data.token);
+    } else {
+      console.warn('[auth] No token received from API:', data);
+    }
+    window.location.href = PFC_CONFIG.redirectUri;
+    return data;
+  } catch (err) {
+    console.error('❌ Error finishing Discord login:', err);
+    return null;
+  }
 }
 
 function getUser() {
