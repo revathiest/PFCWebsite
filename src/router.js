@@ -12,6 +12,7 @@ const routes = {
   '/officers': 'views/officers.html',
   '/admin': 'views/admin.html',
   '/log-search': 'views/log-search.html',
+  '/content-manager': 'views/content-manager.html',
   '/unauthorized': 'views/unauthorized.html',
   '/shop': 'views/shop.html',
   '/product/:handle': 'views/shop.html'
@@ -97,6 +98,9 @@ async function loadRoute() {
     } else if (path.includes('log-search')) {
       if (DEBUG) console.log('[router] importing log-search.js');
       import('./log-search.js').then(m => m.init?.());
+    } else if (path.includes('content-manager')) {
+      if (DEBUG) console.log('[router] importing content-manager.js');
+      import('./content-manager.js').then(m => m.init?.());
     } else if (path.includes('unauthorized')) {
       if (DEBUG) console.log('[router] importing unauthorized.js');
       import('./unauthorized.js').then(m => m.init?.());
