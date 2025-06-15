@@ -2,21 +2,24 @@ import './style.css'
 import { runIncludes } from './includes.js'
 import * as nav from './nav.js'
 import * as router from './router.js'
-import {finishDiscordLogin, startDiscordLogin, logout, getUser} from './auth.js'
+import { finishDiscordLogin, startDiscordLogin, logout, getUser } from './auth.js'
 import { slugify } from './utils.js'
+import { PFC_CONFIG } from './config.js'
+
+const DEBUG = PFC_CONFIG.debug;
 
 // Log boot
-console.log('[MAIN] Booting up...')
+if (DEBUG) console.log('[MAIN] Booting up...')
 
 // Wait for DOM to be ready
 window.addEventListener('DOMContentLoaded', async () => {
-  console.log('[MAIN] DOM loaded')
+  if (DEBUG) console.log('[MAIN] DOM loaded')
 
   // Handle Discord OAuth code if present
   const urlParams = new URLSearchParams(window.location.search)
   const code = urlParams.get('code')
   if (code) {
-    console.log('[Auth] OAuth code found, finishing login...')
+    if (DEBUG) console.log('[Auth] OAuth code found, finishing login...')
     try {
       await finishDiscordLogin()
     } catch (err) {
@@ -29,5 +32,5 @@ window.addEventListener('DOMContentLoaded', async () => {
   nav.init()
   router.init()
 
-  console.log('[MAIN] Booted up successfully')
+  if (DEBUG) console.log('[MAIN] Booted up successfully')
 })

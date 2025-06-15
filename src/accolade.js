@@ -1,4 +1,6 @@
 import { PFC_CONFIG } from './config.js'
+
+const DEBUG = PFC_CONFIG.debug;
 import { slugify } from './utils.js'
 
 function getSlug() {
@@ -26,7 +28,7 @@ async function loadAccoladePage() {
     const { accolades } = await res.json();
 
     const debugSlugs = accolades.map(a => ({ name: a.name, slug: slugify(a.name) }));
-    console.log('[DEBUG] Available slugs:', debugSlugs);
+    if (DEBUG) console.log('[DEBUG] Available slugs:', debugSlugs);
 
     const accolade = accolades.find(a => slugify(a.name) === slug);
     if (!accolade) throw new Error(`No accolade found matching slug: ${slug}`);

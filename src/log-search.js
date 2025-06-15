@@ -1,5 +1,7 @@
 import { PFC_CONFIG } from './config.js'
 
+const DEBUG = PFC_CONFIG.debug;
+
 let allCommands = [];
 let allMembers = [];
 
@@ -92,7 +94,7 @@ function renderResults(logs = []) {
 }
 
 async function searchLogs(e) {
-  console.log('[DEBUG] searchLogs() called');
+  if (DEBUG) console.log('[DEBUG] searchLogs() called');
   e?.preventDefault();
   const token = localStorage.getItem('jwt');
   const headers = token ? { Authorization: `Bearer ${token}` } : {};
@@ -109,7 +111,7 @@ async function searchLogs(e) {
   if (message) params.set('message', message);
 
   const url = `${PFC_CONFIG.apiBase}/api/activity-log/search?${params.toString()}`;
-  console.log('[DEBUG] Search URL:', url);
+  if (DEBUG) console.log('[DEBUG] Search URL:', url);
   try {
     const res = await fetch(url, { headers });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);

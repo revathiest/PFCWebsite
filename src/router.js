@@ -1,4 +1,7 @@
 import { getUser } from './auth.js';
+import { PFC_CONFIG } from './config.js';
+
+const DEBUG = PFC_CONFIG.debug;
 
 // router.js
 const routes = {
@@ -37,8 +40,8 @@ async function loadRoute() {
     return;
   }
 
-  console.log(`[router] path: ${path}`);
-  console.log(`[router] route: ${route}`);
+  if (DEBUG) console.log(`[router] path: ${path}`);
+  if (DEBUG) console.log(`[router] route: ${route}`);
 
   // Special case: protect /admin
   if (path === '/admin' || path === '/log-search') {
@@ -53,7 +56,7 @@ async function loadRoute() {
   }
 
   try {
-    console.log(`[router] fetching: /${route}`);
+    if (DEBUG) console.log(`[router] fetching: /${route}`);
     const res = await fetch('/' + route);
     if (!res.ok) throw new Error('Failed to fetch view: ' + route);
 
@@ -76,28 +79,28 @@ async function loadRoute() {
 
     // Load matching script module
     if (path.includes('accolades')) {
-      console.log('[router] importing accolades.js');
+      if (DEBUG) console.log('[router] importing accolades.js');
       import('./accolades.js').then(m => m.init?.());
     } else if (path.includes('accolade')) {
-      console.log('[router] importing accolade.js');
+      if (DEBUG) console.log('[router] importing accolade.js');
       import('./accolade.js').then(m => m.init?.());
     } else if (path.includes('events')) {
-      console.log('[router] importing events.js');
+      if (DEBUG) console.log('[router] importing events.js');
       import('./events.js').then(m => m.init?.());
     } else if (path.includes('admin')) {
-      console.log('[router] importing admin.js');
+      if (DEBUG) console.log('[router] importing admin.js');
       import('./admin.js').then(m => m.init?.());
     } else if (path.includes('log-search')) {
-      console.log('[router] importing log-search.js');
+      if (DEBUG) console.log('[router] importing log-search.js');
       import('./log-search.js').then(m => m.init?.());
     } else if (path.includes('unauthorized')) {
-      console.log('[router] importing unauthorized.js');
+      if (DEBUG) console.log('[router] importing unauthorized.js');
       import('./unauthorized.js').then(m => m.init?.());
     } else if (path === '/' || path === '/home') {
-      console.log('[router] importing home.js');
+      if (DEBUG) console.log('[router] importing home.js');
       import('./home.js').then(m => m.init?.());
     } else if (path.startsWith('/shop') || path.startsWith('/product/')) {
-      console.log('[router] importing shop.js');
+      if (DEBUG) console.log('[router] importing shop.js');
       import('./shop.js').then(m => m.init?.(path));
     }
   } catch (err) {

@@ -1,14 +1,16 @@
 import { PFC_CONFIG } from "./config";
 
+const DEBUG = PFC_CONFIG.debug;
+
 function finishDiscordLogin() {
-  console.log('finishDiscordLogin triggered.');
+  if (DEBUG) console.log('finishDiscordLogin triggered.');
 
   const params = new URLSearchParams(window.location.search);
   const code = params.get('code');
-  console.log('Parsed code from URL:', code);
+  if (DEBUG) console.log('Parsed code from URL:', code);
 
   if (!code) {
-    console.log('No code found in URL — skipping login finish.');
+    if (DEBUG) console.log('No code found in URL — skipping login finish.');
     return;
   }
 
@@ -21,14 +23,14 @@ function finishDiscordLogin() {
     })
   })
     .then(response => {
-      console.log('Received response:', response);
+      if (DEBUG) console.log('Received response:', response);
       return response.json();
     })
     .then(data => {
-      console.log('Parsed response JSON:', data);
+      if (DEBUG) console.log('Parsed response JSON:', data);
       if (data && data.token) {
         localStorage.setItem('jwt', data.token);
-        console.log('✅ JWT stored:', data.token);
+        if (DEBUG) console.log('✅ JWT stored:', data.token);
       } else {
         console.warn('[auth] No token received from API:', data);
       }
@@ -67,7 +69,7 @@ function startDiscordLogin() {
 
 function logout() {
   localStorage.removeItem('jwt');
-  console.log('🔒 Logged out. Reloading...');
+  if (DEBUG) console.log('🔒 Logged out. Reloading...');
   window.location.reload();
 }
 
