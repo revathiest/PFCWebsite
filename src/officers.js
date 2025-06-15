@@ -17,12 +17,31 @@ async function loadOfficers() {
     const data = await res.json();
     const officers = Array.isArray(data.officers) ? data.officers : [];
 
-    if (officers.length === 0) {
+    const RANK_ORDER = [
+      'Fleet Admiral',
+      'Admiral',
+      'Commodore',
+      'Captain',
+      'Commander'
+    ];
+
+    const sortedOfficers = officers
+      .filter(o => {
+        const role = o.role && o.role.name ? o.role.name : o.role;
+        return RANK_ORDER.includes(role);
+      })
+      .sort((a, b) => {
+        const roleA = a.role && a.role.name ? a.role.name : a.role;
+        const roleB = b.role && b.role.name ? b.role.name : b.role;
+        return RANK_ORDER.indexOf(roleA) - RANK_ORDER.indexOf(roleB);
+      });
+
+    if (sortedOfficers.length === 0) {
       container.innerHTML = '<p class="text-gray-300">No officer data available.</p>';
       return;
     }
 
-    container.innerHTML = officers.map(officer => {
+    container.innerHTML = sortedOfficers.map(officer => {
       const roleObj = officer.role || {};
       const roleName = typeof roleObj === 'string' ? roleObj : roleObj.name;
       const roleColor = officer.color || roleObj.color || '#fff';
