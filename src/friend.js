@@ -27,11 +27,11 @@ async function loadFriend() {
       </div>
       <img src="${org.logo}" alt="${org.name} logo" class="w-32 h-32 object-contain mx-auto mb-4" />
       <h2 class="text-3xl font-bold text-center mb-2">${org.name}</h2>
-      <div class="text-gray-300 mb-4">${org.headline.html || ''}</div>
+      <div class="text-gray-300 mb-4">${org.headline?.html || ''}</div>
       <div class="text-left space-y-4">
-        <div>${org.manifesto.html || ''}</div>
-        <details><summary class="cursor-pointer">Charter</summary>${org.charter.html || ''}</details>
-        <details><summary class="cursor-pointer">History</summary>${org.history.html || ''}</details>
+        <div>${org.manifesto?.html || ''}</div>
+        <details><summary class="cursor-pointer">Charter</summary>${org.charter?.html || ''}</details>
+        <details><summary class="cursor-pointer">History</summary>${org.history?.html || ''}</details>
         <p class="mt-2">Members: ${org.members}</p>
         <p>${org.recruiting ? 'Actively Recruiting' : 'Not Recruiting'}</p>
         <div class="mt-4 space-x-4">
