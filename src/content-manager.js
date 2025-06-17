@@ -91,25 +91,8 @@ export async function init() {
     await loadSections();
     const select = document.getElementById('section-select');
     const editor = document.getElementById('content-editor');
-    initEditor('content-editor', 'font-color');
     const saveBtn = document.getElementById('save-button');
-
-    if (toolbar) {
-      toolbar.innerHTML = `
-        <button type="button" data-cmd="bold"><i class="fas fa-bold"></i></button>
-        <button type="button" data-cmd="italic"><i class="fas fa-italic"></i></button>
-        <button type="button" data-cmd="underline"><i class="fas fa-underline"></i></button>
-        <button type="button" data-cmd="insertUnorderedList"><i class="fas fa-list-ul"></i></button>`;
-
-      toolbar.addEventListener('click', e => {
-        const btn = e.target.closest('button');
-        if (!btn) return;
-        const cmd = btn.dataset.cmd;
-        if (!cmd) return;
-        document.execCommand(cmd, false, null);
-        editor?.focus();
-      });
-    }
+    initEditor('content-editor', 'font-color', 'wysiwyg-toolbar');
 
     select?.addEventListener('change', e => {
       const value = e.target.value;
