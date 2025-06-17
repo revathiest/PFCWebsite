@@ -40,7 +40,8 @@ async function loadFriend() {
     const res = await fetch(`${PFC_CONFIG.apiBase}/api/orgs/${sid}`, { headers });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    const org = data.org || data;
+    const wrapper = data.org || data;
+    const org = wrapper.data || wrapper;
 
     // Get external links
     const orgWebsite = extractUrl(org.history?.plaintext, 'Website:');
