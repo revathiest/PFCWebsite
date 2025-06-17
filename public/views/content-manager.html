@@ -8,7 +8,8 @@
     </div>
     <div>
       <label for="content-area" class="block text-white mb-1">Content</label>
-      <textarea id="content-area" rows="10" class="w-full p-2 rounded bg-gray-200"></textarea>
+      <div id="editor-toolbar" class="editor-toolbar flex flex-wrap mb-2"></div>
+      <div id="content-area" contenteditable="true" class="w-full p-2 rounded bg-gray-200 text-black h-64 overflow-y-auto"></div>
     </div>
     <button id="save-button" type="button" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded">Save Changes</button>
   </div>
