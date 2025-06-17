@@ -10,12 +10,14 @@ const routes = {
   '/accolade': 'views/accolade.html',
   '/events': 'views/events.html',
   '/officers': 'views/officers.html',
+  '/friends': 'views/friends.html',
   '/admin': 'views/admin.html',
   '/log-search': 'views/log-search.html',
   '/content-manager': 'views/content-manager.html',
   '/unauthorized': 'views/unauthorized.html',
   '/shop': 'views/shop.html',
-  '/product/:handle': 'views/shop.html'
+  '/product/:handle': 'views/shop.html',
+  '/friends/:sid': 'views/friend.html'
 };
 
 export function navigateTo(url) {
@@ -30,6 +32,8 @@ async function loadRoute() {
   if (!route) {
     if (path.startsWith('/product/')) {
       route = routes['/product/:handle'];
+    } else if (path.startsWith('/friends/')) {
+      route = routes['/friends/:sid'];
     } else {
       route = routes['/'];
     }
@@ -96,6 +100,12 @@ async function loadRoute() {
     } else if (path.includes('officers')) {
       if (DEBUG) console.log('[router] importing officers.js');
       import('./officers.js').then(m => m.init?.());
+    } else if (path.startsWith('/friends/')) {
+      if (DEBUG) console.log('[router] importing friend.js');
+      import('./friend.js').then(m => m.init?.());
+    } else if (path.includes('friends')) {
+      if (DEBUG) console.log('[router] importing friends.js');
+      import('./friends.js').then(m => m.init?.());
     } else if (path.includes('admin')) {
       if (DEBUG) console.log('[router] importing admin.js');
       import('./admin.js').then(m => m.init?.());
