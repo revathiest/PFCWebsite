@@ -52,9 +52,7 @@ async function loadFriend() {
 
     container.innerHTML = `
       <div class="relative shadow-xl rounded-xl overflow-hidden bg-base-900 border border-base-700">
-        <div class="h-48 bg-cover bg-center" style="background-image: url('${org.banner}');">
-          <div class="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent"></div>
-        </div>
+        <div class="h-48 bg-cover bg-center" style="background-image: url('${org.banner}');"></div>
         <div class="relative px-8 -mt-12 flex flex-col items-center">
           <img src="${org.logo}" alt="${org.name} logo"
                class="w-32 h-32 object-contain shadow-lg bg-base-900" />
