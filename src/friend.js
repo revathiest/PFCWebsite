@@ -101,6 +101,22 @@ async function loadFriend() {
         </div>
       </div>
     `;
+
+    // Manually attach toggle handlers for details in case <details> is not
+    // natively supported or another style prevents default toggling
+    container.querySelectorAll('.details-block').forEach(details => {
+      const summary = details.querySelector('.details-summary');
+      if (!summary) return;
+      summary.addEventListener('click', () => {
+        details.open = !details.open;
+      });
+      summary.addEventListener('keypress', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          summary.click();
+        }
+      });
+    });
   } catch (err) {
     console.error('[friend] Failed to load org:', err);
     container.innerHTML = '<p class="text-red-500">Failed to load organisation.</p>';
