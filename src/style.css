@@ -185,6 +185,19 @@
     gap: 0.5rem;
   }
 
+  .wysiwyg-toolbar button {
+    background-color: var(--pfc-red);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+  }
+
+  .wysiwyg-toolbar button:hover {
+    background-color: var(--pfc-gold);
+  }
+
   .wysiwyg-editor {
     min-height: 10rem;
   }
