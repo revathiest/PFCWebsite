@@ -3,7 +3,7 @@ import { runIncludes } from './includes.js'
 import * as nav from './nav.js'
 import * as router from './router.js'
 import { PFC_CONFIG } from './config.js'
-import { finishDiscordLogin } from './auth.js'
+import { finishDiscordLogin, scheduleExpiryCheck } from './auth.js'
 
 const DEBUG = PFC_CONFIG.debug;
 
@@ -29,6 +29,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   // Load nav, includes, and routes
   runIncludes()
   nav.init()
+  scheduleExpiryCheck()
   router.init()
 
   if (DEBUG) console.log('[MAIN] Booted up successfully')
