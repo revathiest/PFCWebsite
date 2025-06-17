@@ -7,9 +7,11 @@
       <select id="section-select" class="w-full p-2 rounded"></select>
     </div>
     <div>
-      <label for="content-area" class="block text-white mb-1">Content</label>
-      <div id="editor-toolbar" class="editor-toolbar flex flex-wrap mb-2"></div>
-      <div id="content-area" contenteditable="true" class="w-full p-2 rounded bg-gray-200 text-black h-64 overflow-y-auto"></div>
+      <label for="content-editor" class="block text-white mb-1">Content</label>
+      <div class="wysiwyg-toolbar mb-2 flex gap-2">
+        <input type="color" id="font-color" title="Font colour" />
+      </div>
+      <div id="content-editor" class="w-full p-2 rounded bg-gray-200 wysiwyg-editor" contenteditable="true"></div>
     </div>
     <button id="save-button" type="button" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded">Save Changes</button>
   </div>

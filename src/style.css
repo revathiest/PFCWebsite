@@ -180,19 +180,14 @@
     margin-bottom: 2rem;
   }
 
-.editor-toolbar button {
-  background-color: #333;
-  color: #fff;
-  padding: 0.25rem 0.5rem;
-  margin-right: 0.25rem;
-  border-radius: 0.25rem;
-  border: 1px solid #444;
-  font-size: 0.875rem;
-}
+  .wysiwyg-toolbar {
+    display: flex;
+    gap: 0.5rem;
+  }
 
-.editor-toolbar button:hover {
-  background-color: #555;
-}
+  .wysiwyg-editor {
+    min-height: 10rem;
+  }
 
   
   

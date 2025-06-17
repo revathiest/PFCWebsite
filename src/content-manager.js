@@ -1,4 +1,5 @@
 import { PFC_CONFIG } from './config.js';
+import { initEditor } from './editor.js';
 
 const DEBUG = PFC_CONFIG.debug;
 
@@ -44,7 +45,7 @@ async function loadSections() {
 
 // Retrieve a section's content and populate the editor.
 async function loadContent(section) {
-  const editor = document.getElementById('content-area');
+  const editor = document.getElementById('content-editor');
   const errorEl = document.getElementById('content-error');
   if (!editor) return;
   try {
@@ -61,7 +62,7 @@ async function loadContent(section) {
 
 // Save the editor contents back to the API for a given section.
 async function saveContent(section) {
-  const editor = document.getElementById('content-area');
+  const editor = document.getElementById('content-editor');
   const errorEl = document.getElementById('content-error');
   if (!editor) return;
   const token = localStorage.getItem('jwt');
@@ -89,8 +90,8 @@ export async function init() {
   try {
     await loadSections();
     const select = document.getElementById('section-select');
-    const editor = document.getElementById('content-area');
-    const toolbar = document.getElementById('editor-toolbar');
+    const editor = document.getElementById('content-editor');
+    initEditor('content-editor', 'font-color');
     const saveBtn = document.getElementById('save-button');
 
     if (toolbar) {
