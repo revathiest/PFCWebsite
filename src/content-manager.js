@@ -1,4 +1,5 @@
 import { PFC_CONFIG } from './config.js';
+import { initEditor } from './editor.js';
 
 const DEBUG = PFC_CONFIG.debug;
 
@@ -44,26 +45,26 @@ async function loadSections() {
 
 // Retrieve a section's content and populate the textarea.
 async function loadContent(section) {
-  const textarea = document.getElementById('content-area');
+  const editor = document.getElementById('content-editor');
   const errorEl = document.getElementById('content-error');
-  if (!textarea) return;
+  if (!editor) return;
   try {
     const res = await fetch(`${PFC_CONFIG.apiBase}/api/content/${section}`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    textarea.value = data.content || data.value || '';
+    editor.innerHTML = data.content || data.value || '';
   } catch (err) {
     console.error(`[content-manager] Failed to load content for ${section}`, err);
     if (errorEl) errorEl.textContent = `Failed to load content for ${section}.`;
-    textarea.value = '';
+    editor.innerHTML = '';
   }
 }
 
 // Save the textarea contents back to the API for a given section.
 async function saveContent(section) {
-  const textarea = document.getElementById('content-area');
+  const editor = document.getElementById('content-editor');
   const errorEl = document.getElementById('content-error');
-  if (!textarea) return;
+  if (!editor) return;
   const token = localStorage.getItem('jwt');
   const headers = { 'Content-Type': 'application/json' };
   if (token) headers.Authorization = `Bearer ${token}`;
@@ -71,7 +72,7 @@ async function saveContent(section) {
     const res = await fetch(`${PFC_CONFIG.apiBase}/api/content/${section}`, {
       method: 'PUT',
       headers,
-      body: JSON.stringify({ content: textarea.value })
+      body: JSON.stringify({ content: editor.innerHTML })
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     if (errorEl) errorEl.textContent = 'Content saved.';
@@ -89,7 +90,8 @@ export async function init() {
   try {
     await loadSections();
     const select = document.getElementById('section-select');
-    const textarea = document.getElementById('content-area');
+    const editor = document.getElementById('content-editor');
+    initEditor('content-editor', 'font-color');
     const saveBtn = document.getElementById('save-button');
 
     select?.addEventListener('change', e => {
@@ -97,9 +99,9 @@ export async function init() {
       document.getElementById('content-error').textContent = '';
       if (value) {
         loadContent(value);
-        textarea?.focus();
-      } else if (textarea) {
-        textarea.value = '';
+        editor?.focus();
+      } else if (editor) {
+        editor.innerHTML = '';
       }
     });
 
