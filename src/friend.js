@@ -20,7 +20,9 @@ async function loadFriend() {
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     const res = await fetch(`${PFC_CONFIG.apiBase}/api/orgs/${sid}`, { headers });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const org = await res.json();
+    const data = await res.json();
+    // API may return { org: {...} }, but older versions returned the object
+    const org = data.org || data;
     container.innerHTML = `
       <div class="mb-4">
         <div class="w-full h-40 bg-cover bg-center rounded" style="background-image:url('${org.banner}')"></div>
