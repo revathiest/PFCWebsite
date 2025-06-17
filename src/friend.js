@@ -106,7 +106,8 @@ async function loadFriend() {
     container.querySelectorAll('.details-block').forEach(details => {
       const summary = details.querySelector('.details-summary');
       if (!summary) return;
-      summary.addEventListener('click', () => {
+      summary.addEventListener('click', e => {
+        e.preventDefault();
         details.open = !details.open;
       });
       summary.addEventListener('keypress', e => {
