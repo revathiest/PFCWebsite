@@ -180,5 +180,14 @@
     margin-bottom: 2rem;
   }
 
+  .wysiwyg-toolbar {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .wysiwyg-editor {
+    min-height: 10rem;
+  }
+
   
   
