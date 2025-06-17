@@ -1,6 +1,5 @@
 import { PFC_CONFIG } from './config.js';
 
-// Helper: Extracts a URL after a keyword in plaintext (eg, "Website: https://...")
 function extractUrl(str, prefix) {
   if (!str) return null;
   const regex = new RegExp(`${prefix}\\s*(https?://\\S+)`, 'i');
@@ -8,13 +7,24 @@ function extractUrl(str, prefix) {
   return match ? match[1] : null;
 }
 
-// Get org SID from URL
 function getSid() {
   const parts = window.location.pathname.split('/');
   return parts[2] || '';
 }
 
-// Renders the org card
+// Helper to build a custom collapsible block
+function collapsibleBlock(id, title, content) {
+  if (!content) return '';
+  return `
+    <div class="custom-collapsible mb-4" id="collapsible-${id}">
+      <div class="custom-collapsible-header details-summary" tabindex="0">${title} <span class="arrow">▼</span></div>
+      <div class="custom-collapsible-content details-content" style="display:none;">
+        ${content}
+      </div>
+    </div>
+  `;
+}
+
 async function loadFriend() {
   const sid = getSid();
   const container = document.getElementById('friend-detail');
@@ -36,7 +46,9 @@ async function loadFriend() {
     const orgWebsite = extractUrl(org.history?.plaintext, 'Website:');
     const orgDiscord = extractUrl(org.history?.plaintext, 'Discord:');
 
-    // Build the card
+    // DEBUG: Log link values
+    console.log('Links:', { orgURL: org.url, orgWebsite, orgDiscord });
+
     container.innerHTML = `
       <div class="relative shadow-xl rounded-xl overflow-hidden bg-base-900 border border-base-700">
         <div class="h-48 bg-cover bg-center" style="background-image: url('${org.banner}');">
@@ -79,33 +91,39 @@ async function loadFriend() {
               <div class="prose prose-invert">${org.manifesto.html}</div>
             </div>
           ` : ''}
-          ${org.charter?.html ? `
-            <details class="mb-4">
-              <summary class="cursor-pointer font-bold text-primary-400 bg-base-800 rounded px-4 py-2 hover:bg-base-700 focus:outline-none">Charter</summary>
-              <div class="prose prose-invert mt-2">${org.charter.html}</div>
-            </details>
-          ` : ''}
-          ${org.history?.html ? `
-            <details class="mb-4">
-              <summary class="cursor-pointer font-bold text-primary-400 bg-base-800 rounded px-4 py-2 hover:bg-base-700 focus:outline-none">History</summary>
-              <div class="prose prose-invert mt-2">${org.history.html}</div>
-            </details>
-          ` : ''}
+          ${collapsibleBlock('charter', 'Charter', org.charter?.html)}
+          ${collapsibleBlock('history', 'History', org.history?.html)}
           <div class="mt-8 flex flex-wrap gap-4 items-center">
-            <a href="${org.url}" class="btn btn-accent" target="_blank" rel="noopener">RSI Org Page</a>
+            ${org.url ? `<a href="${org.url}" class="btn btn-accent" target="_blank" rel="noopener">RSI Org Page</a>` : ''}
             ${orgWebsite ? `<a href="${orgWebsite}" class="btn btn-primary" target="_blank" rel="noopener">Org Website</a>` : ''}
             ${orgDiscord ? `<a href="${orgDiscord}" class="btn btn-secondary" target="_blank" rel="noopener">Discord</a>` : ''}
           </div>
         </div>
       </div>
     `;
+
+    // Attach collapsible toggles
+    document.querySelectorAll('.custom-collapsible-header').forEach(header => {
+      header.addEventListener('click', function () {
+        const parent = header.parentElement;
+        const content = parent.querySelector('.custom-collapsible-content');
+        const arrow = header.querySelector('.arrow');
+        const expanded = content.style.display === 'block';
+        content.style.display = expanded ? 'none' : 'block';
+        arrow.textContent = expanded ? '▼' : '▲';
+      });
+      header.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          header.click();
+        }
+      });
+    });
   } catch (err) {
     console.error('[friend] Failed to load org:', err);
     container.innerHTML = '<p class="text-red-500">Failed to load organisation.</p>';
   }
 }
 
-// Entry point
 export async function init() {
   await loadFriend();
 }

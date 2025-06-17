@@ -189,5 +189,34 @@
     min-height: 10rem;
   }
 
+  /* Collapsible <details> block styling */
+.details-block {
+  background: var(--base-800, #23272e);
+  border-radius: 8px;
+  border: 1px solid var(--base-700, #2c3137);
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.details-summary {
+  font-weight: bold;
+  font-size: 1.1rem;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  background: var(--base-700, #2c3137);
+  color: var(--primary-400, #6cb6ff);
+  transition: background 0.2s;
+}
+.details-block[open] .details-summary {
+  background: var(--base-800, #23272e);
+}
+
+.details-content {
+  padding: 1rem;
+  color: var(--base-300, #bcc4ce);
+  background: var(--base-900, #181a1b);
+}
+
+
   
   
