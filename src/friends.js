@@ -16,7 +16,8 @@ async function loadFriends() {
     }
 
     // Filter out the PFC's own organisation from the friends list
-    const visibleOrgs = orgs.filter(org =>
+    const mappedOrgs = orgs.map(o => o.data || o.org || o);
+    const visibleOrgs = mappedOrgs.filter(org =>
       (org.sid || '').toUpperCase() !== 'PFCS'
     );
 
