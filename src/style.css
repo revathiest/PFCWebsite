@@ -123,7 +123,8 @@
     margin: 1rem 0 2rem;
   }
   
-  .button {
+.button {
+    display: inline-block;
     padding: 0.5rem 1rem;
     background-color: var(--pfc-red);
     color: #fff;
@@ -132,7 +133,8 @@
     cursor: pointer;
     font-weight: 500;
     transition: background-color 0.2s ease;
-    
+    text-decoration: none;
+
   }
   
   .button:hover {
