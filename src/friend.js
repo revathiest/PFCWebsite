@@ -1,10 +1,12 @@
 import { PFC_CONFIG } from './config.js';
 
+// Extract the organisation sid from the current URL.
 function getSid() {
   const parts = window.location.pathname.split('/');
   return parts[2] || '';
 }
 
+// Fetch organisation data and render the detail section.
 async function loadFriend() {
   const sid = getSid();
   const container = document.getElementById('friend-detail');
@@ -14,7 +16,9 @@ async function loadFriend() {
     return;
   }
   try {
-    const res = await fetch(`${PFC_CONFIG.apiBase}/api/orgs/${sid}`);
+    const token = localStorage.getItem('jwt');
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    const res = await fetch(`${PFC_CONFIG.apiBase}/api/orgs/${sid}`, { headers });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const org = await res.json();
     container.innerHTML = `
@@ -41,6 +45,10 @@ async function loadFriend() {
   }
 }
 
+/**
+ * Entry point for the friend detail page.
+ * Loads the organisation info on page load.
+ */
 export async function init() {
   await loadFriend();
 }
