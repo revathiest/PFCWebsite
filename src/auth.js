@@ -1,6 +1,37 @@
-import { PFC_CONFIG } from "./config";
+import { PFC_CONFIG } from './config.js';
 
 const DEBUG = PFC_CONFIG.debug;
+
+/**
+ * Decode a JWT and return its payload.
+ *
+ * @param {string} token - JWT string
+ * @returns {object} Decoded payload
+ */
+function decodeJwt(token) {
+  return JSON.parse(atob(token.split('.')[1]));
+}
+
+/**
+ * Set a timeout to automatically log out when the JWT expires.
+ */
+function scheduleExpiryCheck() {
+  const token = localStorage.getItem('jwt');
+  if (!token) return;
+
+  try {
+    const payload = decodeJwt(token);
+    if (!payload.exp) return;
+    const msUntilExpiry = payload.exp * 1000 - Date.now();
+    if (msUntilExpiry <= 0) {
+      logout();
+    } else {
+      setTimeout(logout, msUntilExpiry);
+    }
+  } catch (err) {
+    console.warn('[auth] Failed to schedule expiry check:', err);
+  }
+}
 
 function finishDiscordLogin() {
   if (DEBUG) console.log('finishDiscordLogin triggered.');
@@ -31,6 +62,8 @@ function finishDiscordLogin() {
       if (data && data.token) {
         localStorage.setItem('jwt', data.token);
         if (DEBUG) console.log('✅ JWT stored:', data.token);
+        scheduleExpiryCheck();
+        document.dispatchEvent(new Event('login-success'));
       } else {
         console.warn('[auth] No token received from API:', data);
       }
@@ -45,7 +78,11 @@ function getUser() {
   try {
     const token = localStorage.getItem('jwt');
     if (!token || token === 'undefined') return null;
-    const payload = JSON.parse(atob(token.split('.')[1]));
+    const payload = decodeJwt(token);
+    if (payload.exp && Date.now() >= payload.exp * 1000) {
+      logout();
+      return null;
+    }
     return payload;
   } catch (err) {
     console.warn('[auth] Failed to decode JWT:', err);
@@ -77,6 +114,7 @@ export {
   finishDiscordLogin,
   getUser,
   startDiscordLogin,
-  logout
+  logout,
+  scheduleExpiryCheck
 };
 
