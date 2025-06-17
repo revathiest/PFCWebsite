@@ -15,7 +15,12 @@ async function loadFriends() {
       return;
     }
 
-    container.innerHTML = orgs.map(org => {
+    // Filter out the PFC's own organisation from the friends list
+    const visibleOrgs = orgs.filter(org =>
+      (org.sid || '').toUpperCase() !== 'PFCS'
+    );
+
+    container.innerHTML = visibleOrgs.map(org => {
       const recruiting = org.recruiting ? '<span class="badge ml-2">Recruiting</span>' : '';
       return `
         <div class="card flex flex-col items-center text-center">
