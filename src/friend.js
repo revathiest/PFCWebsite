@@ -12,16 +12,16 @@ function getSid() {
   return parts[2] || '';
 }
 
-// Helper to build a custom collapsible block
+// Helper to build a collapsible block using native <details> for reliability
 function collapsibleBlock(id, title, content) {
   if (!content) return '';
   return `
-    <div class="custom-collapsible mb-4" id="collapsible-${id}">
-      <div class="custom-collapsible-header details-summary" tabindex="0">${title} <span class="arrow">▼</span></div>
-      <div class="custom-collapsible-content details-content" style="display:none;">
+    <details class="details-block mb-4" id="collapsible-${id}">
+      <summary class="details-summary cursor-pointer">${title}</summary>
+      <div class="details-content">
         ${content}
       </div>
-    </div>
+    </details>
   `;
 }
 
@@ -94,30 +94,13 @@ async function loadFriend() {
           ${collapsibleBlock('charter', 'Charter', org.charter?.html)}
           ${collapsibleBlock('history', 'History', org.history?.html)}
           <div class="mt-8 flex flex-wrap gap-4 items-center">
-            ${org.url ? `<a href="${org.url}" class="btn btn-accent" target="_blank" rel="noopener">RSI Org Page</a>` : ''}
-            ${orgWebsite ? `<a href="${orgWebsite}" class="btn btn-primary" target="_blank" rel="noopener">Org Website</a>` : ''}
-            ${orgDiscord ? `<a href="${orgDiscord}" class="btn btn-secondary" target="_blank" rel="noopener">Discord</a>` : ''}
+            ${org.url ? `<a href="${org.url}" class="button" target="_blank" rel="noopener">RSI Org Page</a>` : ''}
+            ${orgWebsite ? `<a href="${orgWebsite}" class="button" target="_blank" rel="noopener">Org Website</a>` : ''}
+            ${orgDiscord ? `<a href="${orgDiscord}" class="button" target="_blank" rel="noopener">Discord</a>` : ''}
           </div>
         </div>
       </div>
     `;
-
-    // Attach collapsible toggles
-    document.querySelectorAll('.custom-collapsible-header').forEach(header => {
-      header.addEventListener('click', function () {
-        const parent = header.parentElement;
-        const content = parent.querySelector('.custom-collapsible-content');
-        const arrow = header.querySelector('.arrow');
-        const expanded = content.style.display === 'block';
-        content.style.display = expanded ? 'none' : 'block';
-        arrow.textContent = expanded ? '▼' : '▲';
-      });
-      header.addEventListener('keypress', function (e) {
-        if (e.key === 'Enter' || e.key === ' ') {
-          header.click();
-        }
-      });
-    });
   } catch (err) {
     console.error('[friend] Failed to load org:', err);
     container.innerHTML = '<p class="text-red-500">Failed to load organisation.</p>';
