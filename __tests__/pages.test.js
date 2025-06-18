@@ -4,6 +4,11 @@ jest.mock('../src/config.js', () => ({
   PFC_CONFIG: { apiBase: 'https://api', debug: false, shopifyDomain: 'dom', shopifyStorefrontToken: 'tok' }
 }));
 
+const mockGetUser = jest.fn();
+jest.mock('../src/auth.js', () => ({
+  getUser: () => mockGetUser()
+}));
+
 import * as home from '../src/home.js';
 import * as events from '../src/events.js';
 import * as accolades from '../src/accolades.js';
@@ -46,8 +51,7 @@ test('accolades.init renders list', async () => {
 test('accolade.init missing slug shows error', async () => {
   fetchMock.mockResponse(JSON.stringify({ accolades: [] }));
   document.body.innerHTML = '<div id="accolade-name"></div><div id="accolade-description"></div><div id="recipients"></div>';
-  delete window.location;
-  window.location = { search: '' };
+  window.history.pushState({}, '', '/accolades');
   await accolade.init();
   expect(document.getElementById('accolade-name').textContent).toBe('Error');
 });
@@ -68,14 +72,13 @@ test('friends.init handles empty list', async () => {
 
 test('friend.init invalid id shows error', async () => {
   document.body.innerHTML = '<div id="friend-detail"></div>';
-  delete window.location;
-  window.location = { pathname: '/friends/' };
+  window.history.pushState({}, '', '/friends/');
   await friend.init();
   expect(document.getElementById('friend-detail').innerHTML).toContain('Invalid');
 });
 
 test('admin.init renders with user', () => {
-  jest.mock('../src/auth.js', () => ({ getUser: () => ({ displayName: 'T' }) }));
+  mockGetUser.mockReturnValue({ displayName: 'T' });
   document.body.innerHTML = '<div id="admin-info"></div>';
   admin.init();
   expect(document.getElementById('admin-info').textContent).toContain('Welcome');
@@ -83,14 +86,15 @@ test('admin.init renders with user', () => {
 
 test('contentManager.init loads entries', async () => {
   fetchMock.mockResponse(JSON.stringify({ entries: [] }));
-  document.body.innerHTML = '<div id="cm-list"></div>';
+  document.body.innerHTML = '<select id="section-select"></select><div id="content-error"></div><div id="content-editor"></div><button id="save-button"></button>';
   await contentManager.init();
   expect(fetchMock).toHaveBeenCalled();
 });
 
 test('logSearch.init loads logs', async () => {
   fetchMock.mockResponse(JSON.stringify({ items: [] }));
-  document.body.innerHTML = '<div id="log-search"></div>';
+  localStorage.setItem('jwt', 'token');
+  document.body.innerHTML = '<select id="command"></select><select id="userId"></select><select id="type"></select><div id="results"></div><button id="search-button"></button>';
   await logSearch.init();
   expect(fetchMock).toHaveBeenCalled();
 });
