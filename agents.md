@@ -22,7 +22,8 @@ This document outlines the architecture and responsibilities of the Pyro Freelan
 
 ### 🧪 Testing
 
-* Manual testing via local Live Server or Vite dev
+* **Manual testing** via local Live Server or Vite dev
+* **Automated frontend tests** (Jest or Vitest) now required for core modules and auth logic
 * Ensure `.env` is not committed
 * Use Git or cPanel deployment only
 
@@ -69,6 +70,12 @@ A regular quarterly style review should be done to keep styling lean and managea
 * Render interactive content based on JWT state
 * Handle Discord OAuth2 redirect and send `code` to external login API
 * Store JWT in localStorage and attach it to API requests
+* Trigger and support automated tests (autotests) via Jest or Vitest for:
+
+  * JWT handling
+  * API fetch logic
+  * UI conditional rendering
+  * Auth flows
 
 ---
 
@@ -82,6 +89,7 @@ A regular quarterly style review should be done to keep styling lean and managea
 * Authenticate JWT on all protected `/api/` routes
 * Allow open access to public endpoints where JWT is not required
 * Proxy and secure Discord-integrated data (POIs, profiles, org data)
+* May expose /support endpoints or test hooks for autotests if needed
 
 **Technology:**
 
@@ -148,12 +156,17 @@ The site is deployed directly as a static frontend via PebbleHost.
 5. Protected content loads from API
 6. Public endpoints remain accessible without logging in
 
-### Frontend Testable Areas
+### Automated Testing (Autotests)
 
-* JWT storage/retrieval
-* API call success/failure
-* UI conditional rendering based on login state
-* Fallbacks for open vs protected content
+* **Jest or Vitest** is now required for key frontend modules:
+
+  * JWT storage/retrieval
+  * API call success/failure
+  * UI conditional rendering based on login state
+  * Auth and redirect logic
+  * Mocked fetch responses for both open and protected content
+* Tests must run via `npm test` or equivalent in CI and locally before deploy
+* All new features/modules require tests before merge
 
 ---
 
