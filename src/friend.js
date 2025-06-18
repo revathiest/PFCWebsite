@@ -43,13 +43,6 @@ async function loadFriend() {
     const wrapper = data.org || data;
     const org = wrapper.data || wrapper;
 
-    // Get external links
-    const orgWebsite = extractUrl(org.history?.plaintext, 'Website:');
-    const orgDiscord = extractUrl(org.history?.plaintext, 'Discord:');
-
-    // DEBUG: Log link values
-    console.log('Links:', { orgURL: org.url, orgWebsite, orgDiscord });
-
     container.innerHTML = `
       <div class="relative shadow-xl rounded-xl overflow-hidden bg-base-900 border border-base-700">
         <div class="h-48 bg-cover bg-center" style="background-image: url('${org.banner}');"></div>
@@ -94,8 +87,6 @@ async function loadFriend() {
           ${collapsibleBlock('history', 'History', org.history?.html)}
           <div class="mt-8 flex flex-wrap gap-4 items-center">
             ${org.url ? `<a href="${org.url}" class="button" target="_blank" rel="noopener">RSI Org Page</a>` : ''}
-            ${orgWebsite ? `<a href="${orgWebsite}" class="button" target="_blank" rel="noopener">Org Website</a>` : ''}
-            ${orgDiscord ? `<a href="${orgDiscord}" class="button" target="_blank" rel="noopener">Discord</a>` : ''}
           </div>
         </div>
       </div>
