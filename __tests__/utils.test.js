@@ -1,11 +1,7 @@
 import { slugify } from '../src/utils.js';
 
-describe('slugify', () => {
-  it('converts text to kebab-case', () => {
-    expect(slugify('Hello World')).toBe('hello-world');
-  });
-
-  it('removes special characters', () => {
-    expect(slugify('Hello, World!')).toBe('hello-world');
-  });
+test('slugify converts strings to lowercase hyphenated slugs', () => {
+  expect(slugify('Hello World')).toBe('hello-world');
+  expect(slugify('  Multi  Word   Test ')).toBe('multi-word-test');
+  expect(slugify('Café au lait')).toBe('caf-au-lait');
 });
