@@ -1,39 +1,30 @@
 module.exports = {
-  testEnvironment: 'node',
+  // Use jsdom so DOM APIs like document and localStorage are available
+  testEnvironment: 'jsdom',
   roots: ['<rootDir>/__tests__'],
-  moduleFileExtensions: ['js', 'json', 'ts'],
+  moduleFileExtensions: ['js', 'json'],
   moduleDirectories: ['node_modules', '<rootDir>'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   moduleNameMapper: {
-    // Force any import of 'discord.js' to use your custom mock
-    '^discord.js$': '<rootDir>/__mocks__/discord.js',
-    // Optional: mock image/static imports if needed
+    // Mock CSS imports used by Vite
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy'
   },
 
-  // === COVERAGE SETTINGS ===
-  collectCoverage: true,                        // always gather coverage
-  coverageDirectory: 'coverage',               // output folder
-  coverageReporters: ['text', 'lcov'],         // text = console table, lcov for HTML
-  collectCoverageFrom: [
-    'utils/**/*.{js,ts}',
-    'commands/**/*.{js,ts}',
-    'botactions/**/*.{js,ts}',
-    'jobs/**/*.{js,ts}',
-    'models/**/*.{js,ts}',
-    '!**/node_modules/**',
-    '!**/__mocks__/**'
-  ],
-    "coverageThreshold": {
-    "global": {
-      "branches": 80,
-      "functions": 80,
-      "lines": 80,
-      "statements": 80
-    }
+  // === TRANSFORMS ===
+  transform: {
+    '^.+\\.js$': 'babel-jest'
   },
 
-  // === SILENT MODE ===
+  // === COVERAGE SETTINGS ===
+  collectCoverage: true,
+  coverageDirectory: 'coverage',
+  coverageReporters: ['text', 'lcov'],
+  collectCoverageFrom: [
+    'src/**/*.js',
+    '!**/node_modules/**'
+  ],
+
+  // === OUTPUT ===
   verbose: false,
-  silent: true,
   reporters: ['default']
 };
