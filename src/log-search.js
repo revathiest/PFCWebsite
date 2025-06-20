@@ -128,8 +128,11 @@ export async function init() {
     document.getElementById('search-button')?.addEventListener('click', (e) => {
       e.preventDefault();
       searchLogs();
-    });    
+    });
   } catch (err) {
     console.error('[ERROR] Failed to load site content:', err);
   }
 }
+
+// Export non-init helpers for testing
+export { renderResults, searchLogs };
