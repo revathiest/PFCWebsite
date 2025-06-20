@@ -34,3 +34,33 @@ describe('scheduleExpiryCheck', () => {
 
 
 
+
+describe('auth flows', () => {
+  beforeEach(() => {
+    fetchMock.resetMocks();
+    jest.resetModules();
+  });
+
+  test('finishDiscordLogin does nothing without code', async () => {
+    window.history.pushState({}, '', '/');
+    const auth = require('../src/auth.js');
+    auth.finishDiscordLogin();
+    await Promise.resolve();
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  test('startDiscordLogin logs error when client id missing', () => {
+    const auth = require('../src/auth.js');
+    const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    auth.startDiscordLogin();
+    expect(errorSpy).toHaveBeenCalled();
+    errorSpy.mockRestore();
+  });
+
+  test('logout clears token', () => {
+    const auth = require('../src/auth.js');
+    localStorage.setItem('jwt', 't');
+    auth.logout();
+    expect(localStorage.getItem('jwt')).toBeNull();
+  });
+});
