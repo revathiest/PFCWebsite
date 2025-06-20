@@ -114,3 +114,51 @@ test('shop.init missing config shows error', async () => {
   await shop.init('/shop');
   expect(document.getElementById('view-container').innerHTML).toContain('Shop is not configured');
 });
+
+test('events.init renders list with event', async () => {
+  fetchMock.mockResponse(JSON.stringify({ events: [{ name: 'Party', start_time: Date.now(), end_time: Date.now() }] }));
+  document.body.innerHTML = '<div id="events"></div>';
+  await events.init();
+  expect(document.getElementById('events').innerHTML).toContain('Party');
+});
+
+test('friends.init renders organisation list', async () => {
+  fetchMock.mockResponse(JSON.stringify({ orgs: [{ sid: 'ABC', name: 'Alpha', headline: { plaintext: 'hello' }, members: 3 }] }));
+  document.body.innerHTML = '<div id="friends-grid"></div>';
+  await friends.init();
+  expect(document.getElementById('friends-grid').innerHTML).toContain('Alpha');
+});
+
+test('friend.init loads detail', async () => {
+  fetchMock.mockResponse(JSON.stringify({ data: { sid: 'ABC', name: 'Alpha', banner: '', logo: '', members: 1 } }));
+  document.body.innerHTML = '<div id="friend-detail"></div>';
+  window.history.pushState({}, '', '/friends/ABC');
+  await friend.init();
+  expect(document.getElementById('friend-detail').innerHTML).toContain('Alpha');
+});
+
+test('shop.init renders products', async () => {
+  const { PFC_CONFIG } = require('../src/config.js');
+  PFC_CONFIG.shopifyDomain = 'dom';
+  PFC_CONFIG.shopifyStorefrontToken = 'tok';
+  const prodData = {
+    products: { edges: [{ cursor:'c1', node: { handle: 'h', title: 'Hat', tags: [], images: { edges: [{ node: { url: 'u', altText:'a' } }] }, variants:{ edges:[{ node:{ id:'1', price:{amount:'5'} } }] } } }], pageInfo:{ hasNextPage:false } }
+  };
+  jest.resetModules();
+  jest.doMock('../src/api/shopify.js', () => ({ shopifyGraphQL: () => Promise.resolve(prodData) }));
+  document.body.innerHTML = '<div id="view-container"></div>';
+  const shop = require('../src/shop.js');
+  await shop.init('/shop');
+  expect(document.getElementById('view-container').innerHTML).toContain('Hat');
+});
+
+test('shop.init renders product detail', async () => {
+  const prodData = { productByHandle: { title:'Hat', handle:'h', images:{ edges:[{ node:{ url:'u', altText:'' } }] }, variants:{ edges:[{ node:{ id:'1', title:'One', price:{ amount:'5' } } }] }, descriptionHtml:'' } };
+  jest.resetModules();
+  jest.doMock('../src/api/shopify.js', () => ({ shopifyGraphQL: () => Promise.resolve(prodData) }));
+  document.body.innerHTML = '<div id="view-container"></div>';
+  window.history.pushState({}, '', '/product/h');
+  const shop = require('../src/shop.js');
+  await shop.init('/product/h');
+  expect(document.getElementById('view-container').innerHTML).toContain('variant-select');
+});
