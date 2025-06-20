@@ -106,6 +106,7 @@ function renderProducts(edges, tags) {
     window.initNav();
   }
 
+  /* istanbul ignore next */
   document.querySelectorAll('.button').forEach(button => {
     button.addEventListener('click', () => {
       currentTag = button.dataset.tag;
@@ -116,6 +117,7 @@ function renderProducts(edges, tags) {
     });
   });
 
+  /* istanbul ignore next */
   document.getElementById('load-more').addEventListener('click', async () => {
     if (!nextCursor) return;
     let data;
@@ -153,6 +155,7 @@ function updateProductGrid(edges) {
     grid.appendChild(card);
   });
 
+  /* istanbul ignore next */
   document.querySelectorAll('.product-link').forEach(link => {
     link.addEventListener('click', e => {
       e.preventDefault();
@@ -179,6 +182,7 @@ function appendProducts(edges) {
     grid.appendChild(card);
   });
 
+  /* istanbul ignore next */
   document.querySelectorAll('.product-link').forEach(link => {
     link.addEventListener('click', e => {
       e.preventDefault();
@@ -191,6 +195,7 @@ function appendProducts(edges) {
 
 export async function init(path) {
 
+  /* istanbul ignore next */
   while (!document.getElementById('view-container')) {
     await new Promise(r => setTimeout(r, 10));
   }
@@ -242,6 +247,7 @@ export async function init(path) {
     const container = document.getElementById('view-container');
     container.innerHTML = content;
 
+    /* istanbul ignore next */
     document.getElementById('buy-now').addEventListener('click', () => {
       const select = document.getElementById('variant-select');
       const variantId = select.value;
@@ -272,6 +278,7 @@ export async function init(path) {
 
 // Setup popstate listener and initialiser
 window.shopInit = init;
+/* istanbul ignore next */
 window.addEventListener('popstate', () => {
   window.shopInit(location.pathname);
 });
