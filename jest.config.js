@@ -22,23 +22,11 @@ module.exports = {
   collectCoverageFrom: [
     'src/**/*.js',
     '!**/node_modules/**',
-    '!src/shop.js',
-    '!src/nav.js',
-    '!src/main.js',
-    '!src/editor.js',
-    '!src/content-manager.js',
-    '!src/log-search.js',
-    '!src/friend.js',
-    '!src/friends.js',
-    '!src/officers.js',
-    '!src/accolade.js',
-    '!src/admin.js',
-    '!src/router.js',
-    '!src/unauthorized.js',
-    '!src/auth.js'
+    '!src/*.js'
   ],
 
   // === OUTPUT ===
   verbose: false,
+  silent: true,
   reporters: ['default']
 };

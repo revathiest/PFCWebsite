@@ -1,5 +1,6 @@
 node_modules/
 dist/
+coverage/
 .env
 server.cert
 server.key
