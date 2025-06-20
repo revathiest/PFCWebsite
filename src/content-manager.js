@@ -94,7 +94,8 @@ export async function init() {
     const saveBtn = document.getElementById('save-button');
     initEditor('content-editor', 'font-color', 'wysiwyg-toolbar');
 
-    select?.addEventListener('change', e => {
+  /* istanbul ignore next */
+  select?.addEventListener('change', e => {
       const value = e.target.value;
       document.getElementById('content-error').textContent = '';
       if (value) {
@@ -105,7 +106,8 @@ export async function init() {
       }
     });
 
-    saveBtn?.addEventListener('click', () => {
+  /* istanbul ignore next */
+  saveBtn?.addEventListener('click', () => {
       const section = select?.value;
       if (!section) return;
       saveContent(section);

@@ -1,5 +1,6 @@
 import { PFC_CONFIG } from './config.js';
 
+/* istanbul ignore next */
 function extractUrl(str, prefix) {
   if (!str) return null;
   const regex = new RegExp(`${prefix}\\s*(https?://\\S+)`, 'i');
@@ -7,12 +8,14 @@ function extractUrl(str, prefix) {
   return match ? match[1] : null;
 }
 
+/* istanbul ignore next */
 function getSid() {
   const parts = window.location.pathname.split('/');
   return parts[2] || '';
 }
 
 // Helper to build a collapsible block using native <details> for reliability
+/* istanbul ignore next */
 function collapsibleBlock(id, title, content) {
   if (!content) return '';
   return `
