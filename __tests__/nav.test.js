@@ -11,6 +11,7 @@ beforeEach(() => {
   const auth = require('../src/auth.js');
   auth.getUser.mockReset();
   localStorage.clear();
+  global.navigateTo = jest.fn();
   document.body.innerHTML = `
     <button id="login-btn" class="hidden"></button>
     <button id="login-btn-mobile" class="hidden"></button>
@@ -64,4 +65,55 @@ test('hamburger toggle hides and shows menu', async () => {
   expect(menu.classList.contains('hidden')).toBe(false);
   toggle.click();
   expect(menu.classList.contains('hidden')).toBe(true);
+});
+
+test('non-admin user on admin page is redirected', async () => {
+  window.history.pushState({}, '', '/admin.html');
+  localStorage.setItem('jwt', 't');
+  const auth = require('../src/auth.js');
+  auth.getUser.mockReturnValue({ displayName: 'User', roles: [] });
+  const nav = await loadNav();
+  nav.init();
+  await new Promise(r => setTimeout(r, 0));
+  expect(global.navigateTo).toHaveBeenCalledWith('./unauthorized.html');
+});
+
+test('unauthenticated user on admin page is redirected', async () => {
+  window.history.pushState({}, '', '/admin.html');
+  const nav = await loadNav();
+  nav.init();
+  await new Promise(r => setTimeout(r, 0));
+  expect(global.navigateTo).toHaveBeenCalledWith('./unauthorized.html');
+});
+
+test('login-success event reruns nav logic', async () => {
+  localStorage.setItem('jwt', 't');
+  const auth = require('../src/auth.js');
+  auth.getUser.mockReturnValue({ displayName: 'User1', roles: [] });
+  const nav = await loadNav();
+  nav.init();
+  await new Promise(r => setTimeout(r, 0));
+  expect(document.getElementById('display-name').textContent).toBe('User1');
+  auth.getUser.mockReturnValue({ displayName: 'User2', roles: [] });
+  document.dispatchEvent(new Event('login-success'));
+  await new Promise(r => setTimeout(r, 0));
+  expect(document.getElementById('display-name').textContent).toBe('User2');
+});
+
+test('warns when hamburger elements missing', async () => {
+  document.body.innerHTML = `
+    <button id="login-btn" class="hidden"></button>
+    <button id="login-btn-mobile" class="hidden"></button>
+    <button id="logout-btn" class="hidden"></button>
+    <button id="logout-btn-mobile" class="hidden"></button>
+    <p id="user-info" class="hidden"><span id="display-name"></span></p>
+    <a id="admin-link" class="hidden"></a>
+    <a id="admin-link-mobile" class="hidden"></a>
+    <div id="admin-container" class="hidden"></div>
+  `;
+  const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+  await loadNav();
+  document.dispatchEvent(new Event('nav-ready'));
+  expect(warn).toHaveBeenCalledWith("[nav] Couldn't find nav-toggle or nav-menu-mobile");
+  warn.mockRestore();
 });

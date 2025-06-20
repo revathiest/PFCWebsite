@@ -52,3 +52,21 @@ test('OAuth code triggers finishDiscordLogin', async () => {
   await new Promise(r => setTimeout(r, 0));
   expect(mods.auth.finishDiscordLogin).toHaveBeenCalled();
 });
+
+test('logs error when login fails with debug on', async () => {
+  const config = require('../src/config.js');
+  config.PFC_CONFIG.debug = true;
+  const auth = require('../src/auth.js');
+  auth.finishDiscordLogin.mockImplementation(() => Promise.reject(new Error('fail')));
+  const log = jest.spyOn(console, 'log').mockImplementation(() => {});
+  const err = jest.spyOn(console, 'error').mockImplementation(() => {});
+  window.history.pushState({}, '', '/?code=err');
+  const mods = await loadMain();
+  window.dispatchEvent(new Event('DOMContentLoaded'));
+  await new Promise(r => setTimeout(r, 0));
+  expect(mods.auth.finishDiscordLogin).toHaveBeenCalled();
+  expect(err).toHaveBeenCalled();
+  expect(log).toHaveBeenCalledWith('[MAIN] Booting up...');
+  log.mockRestore();
+  err.mockRestore();
+});
