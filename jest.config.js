@@ -21,8 +21,8 @@ module.exports = {
   coverageReporters: ['text', 'lcov'],
   collectCoverageFrom: [
     'src/**/*.js',
-    '!**/node_modules/**',
-    '!src/*.js'
+    'src/*.js',
+    '!**/node_modules/**'
   ],
 
   // === OUTPUT ===
