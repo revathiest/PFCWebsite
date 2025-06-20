@@ -275,3 +275,13 @@ window.shopInit = init;
 window.addEventListener('popstate', () => {
   window.shopInit(location.pathname);
 });
+
+// Export helpers for testing
+export {
+  getAllProductsQuery,
+  getProductByHandleQuery,
+  extractTags,
+  renderProducts,
+  updateProductGrid,
+  appendProducts
+};

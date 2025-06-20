@@ -114,3 +114,6 @@ export async function init() {
     console.error('[content-manager] init failed', err);
   }
 }
+
+// Export helpers for testing
+export { loadSections, loadContent, saveContent };
