@@ -60,70 +60,7 @@
     margin-bottom: 0.5rem;
   }
 
-
-
-  .product-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1.5rem;
-    margin-top: 1rem;
-    align-items: center;
-  }
-  
-  .product-card {
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-    align-items: center;
-  }
-  
-  .product-card img {
-    max-width: 100%;
-    height: 200px;
-    border-radius: 4px;
-    align-items: center;
-  }
-  
-  .load-more-wrapper {
-    display: flex;
-    justify-content: center;
-    margin: 2rem 0;
-  }
-  
-  #load-more {
-    background-color: var(--pfc-red);
-    color: #fff;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 4px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background 0.2s ease;
-  }
-  
-  #load-more:hover {
-    background-color: var(--pfc-gold);
-  }
-
-  .shop-header h1 {
-    font-size: 2.25rem;
-    margin-bottom: 0.25rem;
-  }
-  
-  .shop-header p {
-    font-size: 1.1rem;
-    color: #999;
-  }
-  .category-filters {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.5rem;
-    margin: 1rem 0 2rem;
-  }
-  
-.button {
+  .button {
     display: inline-block;
     padding: 0.5rem 1rem;
     background-color: var(--pfc-red);
@@ -134,52 +71,18 @@
     font-weight: 500;
     transition: background-color 0.2s ease;
     text-decoration: none;
-
   }
-  
+
   .button:hover {
-    background-color:var(--pfc-gold);
-  }
-  
-  .button.active {
-    outline: 2px solid var(--pfc-gold);
-    outline-offset: 1px;
+    background-color: var(--pfc-gold);
   }
 
-  .product-detail {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2rem;
-    margin-top: 2rem;
-  }
-  
-  .product-detail-image {
-    flex: 1 1 300px;
-    max-width: 500px;
-  }
-  
-  .product-detail-info {
-    flex: 1 1 300px;
-  }
-  
-  .product-detail img {
-    width: 100%;
-    border-radius: 8px;
-    align-items: center;
-  }
-  
-  #variant-select, #buy-now {
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
     margin-top: 1rem;
-    display: block;
-  }
-
-  .shop-header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding-bottom: 1rem;
-    text-align: center;
-    margin-bottom: 2rem;
+    align-items: stretch;
   }
 
   .wysiwyg-toolbar {

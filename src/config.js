@@ -8,7 +8,11 @@ let env = {};
 try {
   env = (0, eval)('import.meta.env');
 } catch {
-  env = process.env;
+  if (typeof process !== 'undefined' && process?.env) {
+    env = process.env;
+  } else {
+    env = {};
+  }
 }
 
 /**
@@ -19,9 +23,6 @@ export const PFC_CONFIG = {
   apiBase: env.VITE_API_BASE || globalConfig.apiBase,
   redirectUri: env.VITE_REDIRECT_URI || globalConfig.redirectUri,
   discordClientId: env.VITE_DISCORD_CLIENT_ID || globalConfig.discordClientId,
-  shopifyDomain: env.VITE_SHOPIFY_DOMAIN || globalConfig.shopifyDomain,
-  shopifyStorefrontToken:
-    env.VITE_SHOPIFY_STOREFRONT_TOKEN || globalConfig.shopifyStorefrontToken,
   // Global debug flag to control verbose logging
   debug: (env.VITE_DEBUG === 'true') || globalConfig.debug || false
 };

@@ -7,7 +7,6 @@ jest.mock('../src/auth.js', () => ({
 }));
 
 jest.mock('../src/accolades.js', () => ({ __esModule: true, init: jest.fn() }));
-jest.mock('../src/shop.js', () => ({ __esModule: true, init: jest.fn() }));
 jest.mock('../src/friend.js', () => ({ __esModule: true, init: jest.fn() }));
 jest.mock('../src/friends.js', () => ({ __esModule: true, init: jest.fn() }));
 jest.mock('../src/officers.js', () => ({ __esModule: true, init: jest.fn() }));
@@ -52,14 +51,6 @@ test('accolades route imports script', async () => {
   await new Promise(r => setTimeout(r, 0));
   const mod = require('../src/accolades.js');
   expect(mod.init).toHaveBeenCalled();
-});
-
-test('product route passes path to shop.init', async () => {
-  fetchMock.mockResponseOnce('<div id="view-container"></div>');
-  await router.navigateTo('/product/hat');
-  await new Promise(r => setTimeout(r, 0));
-  const mod = require('../src/shop.js');
-  expect(mod.init).toHaveBeenCalledWith('/product/hat');
 });
 
 test('friend route imports module', async () => {

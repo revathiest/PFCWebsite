@@ -15,8 +15,6 @@ const routes = {
   '/log-search': 'views/log-search.html',
   '/content-manager': 'views/content-manager.html',
   '/unauthorized': 'views/unauthorized.html',
-  '/shop': 'views/shop.html',
-  '/product/:handle': 'views/shop.html',
   '/friends/:sid': 'views/friend.html'
 };
 
@@ -30,9 +28,7 @@ async function loadRoute() {
   let route = routes[path];
 
   if (!route) {
-    if (path.startsWith('/product/')) {
-      route = routes['/product/:handle'];
-    } else if (path.startsWith('/friends/')) {
+    if (path.startsWith('/friends/')) {
       route = routes['/friends/:sid'];
     } else {
       route = routes['/'];
@@ -121,9 +117,6 @@ async function loadRoute() {
     } else if (path === '/' || path === '/home') {
       if (DEBUG) console.log('[router] importing home.js');
       import('./home.js').then(m => m.init?.());
-    } else if (path.startsWith('/shop') || path.startsWith('/product/')) {
-      if (DEBUG) console.log('[router] importing shop.js');
-      import('./shop.js').then(m => m.init?.(path));
     }
   } catch (err) {
     console.error('[router] Error loading route:', err);
