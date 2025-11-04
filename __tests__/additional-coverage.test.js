@@ -5,8 +5,6 @@ jest.mock('../src/config.js', () => ({
     apiBase: 'https://api',
     redirectUri: '/home',
     discordClientId: '123',
-    shopifyDomain: 'dom',
-    shopifyStorefrontToken: 'tok',
     debug: false
   }
 }));
@@ -123,18 +121,6 @@ test('navigateTo loads dynamic friend route', async () => {
   document.body.innerHTML = '<div id="view-container"></div>';
   await navigateTo('/friends/abc');
   expect(fetchMock).toHaveBeenCalled();
-});
-
-// --- shop.load more handler ---
-test('shop.init load more button fetches next page', async () => {
-  const data = { products:{ edges:[{cursor:'c1', node:{handle:'h', title:'Hat', tags:['a'], images:{edges:[{node:{url:'u', altText:'a'}}]}, variants:{edges:[{node:{id:'1', price:{amount:'1'}}}]}}}], pageInfo:{hasNextPage:false}} };
-  jest.doMock('../src/api/shopify.js', () => ({ shopifyGraphQL: () => Promise.resolve(data) }));
-  document.body.innerHTML = '<div id="view-container"></div>';
-  await jest.isolateModulesAsync(async () => {
-    const mod = require('../src/shop.js');
-    await mod.init('/shop');
-  });
-  expect(document.getElementById('view-container').innerHTML).toContain('Hat');
 });
 
 // --- unauthorized.init ---

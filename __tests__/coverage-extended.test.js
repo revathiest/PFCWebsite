@@ -5,8 +5,6 @@ jest.mock('../src/config.js', () => ({
     apiBase: 'https://api',
     redirectUri: '/home',
     discordClientId: '123',
-    shopifyDomain: 'dom',
-    shopifyStorefrontToken: 'tok',
     debug: false
   }
 }));
@@ -181,46 +179,3 @@ test('officers.init shows error on fetch failure', async () => {
   expect(document.getElementById('officer-list').innerHTML).toContain('Failed');
 });
 
-// --- shop.js helpers ---
-import { getAllProductsQuery, getProductByHandleQuery, extractTags, updateProductGrid } from '../src/shop.js';
-
-test('getAllProductsQuery includes cursor', () => {
-  expect(getAllProductsQuery('abc')).toContain('after: "abc"');
-});
-
-test('getProductByHandleQuery uses handle', () => {
-  expect(getProductByHandleQuery('h')).toContain('productByHandle(handle: "h")');
-});
-
-test('extractTags gathers unique values', () => {
-  const tags = extractTags([{ node:{ tags:['a','b'] } }, { node:{ tags:['b','c'] } }]);
-  expect(tags).toEqual(['a','b','c']);
-});
-
-test('updateProductGrid renders cards', () => {
-  document.body.innerHTML = '<div id="product-list"></div>';
-  updateProductGrid([{ node:{ handle:'h', title:'Hat', tags:[], images:{ edges:[{ node:{ url:'u', altText:'a' } }] }, variants:{ edges:[{ node:{ price:{ amount:'5' } } }] } } }]);
-  expect(document.getElementById('product-list').innerHTML).toContain('Hat');
-});
-
-test('renderProducts and appendProducts update DOM', () => {
-  document.body.innerHTML = '<div id="view-container"></div><div id="product-list"></div>';
-  const edges = [{ cursor:'c', node:{ handle:'h', title:'Hat', tags:['x'], images:{ edges:[{ node:{ url:'u', altText:'a' } }] }, variants:{ edges:[{ node:{ id:'1', price:{ amount:'5' } } }] } } }];
-  const tags = ['x'];
-  const { renderProducts, appendProducts } = require('../src/shop.js');
-  renderProducts(edges, tags);
-  expect(document.getElementById('product-list').innerHTML).toContain('Hat');
-  appendProducts(edges);
-  expect(document.querySelectorAll('.product-card').length).toBe(2);
-});
-
-// --- shopify.js ---
-
-test('shopifyGraphQL throws when config missing', async () => {
-  jest.resetModules();
-  jest.doMock('../src/config.js', () => ({ PFC_CONFIG: { shopifyDomain: null, shopifyStorefrontToken: null } }));
-  await expect(async () => {
-    const mod = await import('../src/api/shopify.js');
-    await mod.shopifyGraphQL('{x}');
-  }).rejects.toThrow();
-});
