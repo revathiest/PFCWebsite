@@ -1,6 +1,7 @@
 node_modules/
 dist/
 coverage/
+src/tw-source.css
 .env
 server.cert
 server.key
