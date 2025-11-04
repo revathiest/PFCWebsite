@@ -6,8 +6,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "node --no-deprecation -e \"process.stdout.write('\\x1Bc')\" && jest",
-    "build:css": "npx tailwindcss -i ./src/style.css -o ./dist/style.css --minify",
-    "watch:css": "npx tailwindcss -i ./src/style.css -o ./dist/style.css --watch"
+    "build:css": "npx tailwindcss -i ./src/tw-source.css -o ./src/style.css",
+    "watch:css": "npx tailwindcss -i ./src/tw-source.css -o ./dist/style.css --watch"
   },
   "license": "ISC",
   "devDependencies": {
