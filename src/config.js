@@ -8,7 +8,11 @@ let env = {};
 try {
   env = (0, eval)('import.meta.env');
 } catch {
-  env = process.env;
+  try{
+    env = process.env;
+  } catch (err){
+    console.log('Unable to process .env');
+  }
 }
 
 /**
