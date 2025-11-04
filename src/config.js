@@ -8,10 +8,10 @@ let env = {};
 try {
   env = (0, eval)('import.meta.env');
 } catch {
-  try{
+  if (typeof process !== 'undefined' && process?.env) {
     env = process.env;
-  } catch (err){
-    console.log('Unable to process .env');
+  } else {
+    env = {};
   }
 }
 
