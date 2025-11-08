@@ -14,7 +14,15 @@
   }
 
   .card {
-    @apply bg-gray-900 text-white rounded-xl shadow-lg p-6;
+    @apply bg-gray-900 text-white rounded-xl shadow-lg p-6 mb-6;
+  }
+
+  .meta {
+    @apply text-sm text-gray-400 mb-2;
+  }
+
+  .badge {
+    @apply bg-pfc-red text-white text-xs font-semibold px-2 py-1 rounded;
   }
 
   .container {
@@ -25,6 +33,7 @@
     @apply text-3xl font-bold mb-4;
   }
 }
+
 
 @layer utilities {
   @keyframes blink {
