@@ -1,18 +1,25 @@
 import { startDiscordLogin, logout, getUser } from './auth.js';
 import { PFC_CONFIG } from './config.js';
+import { navigateTo as routerNavigateTo } from './router.js';
 
 const DEBUG = PFC_CONFIG.debug;
+let controlsBound = false;
 
 if (DEBUG) console.log('[nav] Script start');
 
+const REQUIRED_IDS = ['login-btn', 'logout-btn', 'user-info', 'display-name'];
+
+function navElementsPresent() {
+  return REQUIRED_IDS.every(id => document.getElementById(id));
+}
+
 // Wait until all nav elements are present in DOM
 async function waitForNavElements(timeout = 1000) {
-  const required = ['login-btn', 'logout-btn', 'user-info', 'display-name'];
+  if (navElementsPresent()) return true;
   const start = Date.now();
   while (Date.now() - start < timeout) {
-    const missing = required.filter(id => !document.getElementById(id));
-    if (missing.length === 0) return true;
     await new Promise(r => setTimeout(r, 50));
+    if (navElementsPresent()) return true;
   }
   console.warn('[nav] Timeout waiting for nav elements');
   return false;
@@ -35,11 +42,59 @@ const hide = id => {
   }
 };
 
-function runNavLogic() {
+function goTo(url) {
+  if (typeof window !== 'undefined' && typeof window.navigateTo === 'function' && window.navigateTo !== routerNavigateTo) {
+    window.navigateTo(url);
+    return;
+  }
+  if (typeof routerNavigateTo === 'function') {
+    routerNavigateTo(url);
+    return;
+  }
+  if (typeof window !== 'undefined') {
+    window.location.href = url;
+  }
+}
+
+function bindNavControls() {
+  if (controlsBound) return;
+
+  document.getElementById('login-btn')?.addEventListener('click', startDiscordLogin);
+  document.getElementById('login-btn-mobile')?.addEventListener('click', startDiscordLogin);
+  document.getElementById('logout-btn')?.addEventListener('click', logout);
+  document.getElementById('logout-btn-mobile')?.addEventListener('click', logout);
+
+  const toggle = document.getElementById('nav-toggle');
+  const menu = document.getElementById('nav-menu-mobile');
+  if (!toggle || !menu) {
+    console.warn("[nav] Couldn't find nav-toggle or nav-menu-mobile");
+    return;
+  }
+
+  toggle.addEventListener('click', () => {
+    if (DEBUG) console.log('[nav] Toggling mobile menu');
+    menu.classList.toggle('hidden');
+    menu.style.maxHeight = menu.classList.contains('hidden') ? null : menu.scrollHeight + 'px';
+  });
+
+  controlsBound = true;
+}
+
+async function runNavLogic() {
   const token = localStorage.getItem('jwt');
   if (DEBUG) console.log('[nav] Token:', token);
 
-  waitForNavElements().then(() => {
+  if (!navElementsPresent()) {
+    const haveNav = await waitForNavElements();
+    if (!haveNav) {
+      if (DEBUG) console.warn('[nav] Nav elements never appeared; skipping logic run');
+      return;
+    }
+  }
+
+  bindNavControls();
+
+  try {
     let user = null;
     if (token) {
       try {
@@ -52,11 +107,9 @@ function runNavLogic() {
 
     const isAdmin = user?.roles?.includes('Fleet Admiral');
     if (DEBUG) console.log('[nav] Is admin:', isAdmin);
-
-    document.getElementById('login-btn')?.addEventListener('click', startDiscordLogin);
-    document.getElementById('login-btn-mobile')?.addEventListener('click', startDiscordLogin);
-    document.getElementById('logout-btn')?.addEventListener('click', logout);
-    document.getElementById('logout-btn-mobile')?.addEventListener('click', logout);
+    const pathname = window.location.pathname;
+    const normalizedPath = pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname;
+    const isAdminRoute = normalizedPath === '/admin' || pathname.endsWith('admin.html');
 
     if (user) {
       document.getElementById('display-name').textContent = user.displayName;
@@ -71,9 +124,9 @@ function runNavLogic() {
       } else {
         hide('admin-link'); hide('admin-link-mobile');
         hide('admin-container');
-        if (window.location.pathname.includes('admin.html')) {
+        if (isAdminRoute) {
           if (DEBUG) console.log('[nav] Redirecting non-admin');
-          navigateTo('./unauthorized.html');
+          goTo('./unauthorized.html');
         }
       }
     } else {
@@ -82,47 +135,31 @@ function runNavLogic() {
       hide('user-info');
       hide('admin-link'); hide('admin-link-mobile');
       hide('admin-container');
-      if (window.location.pathname.includes('admin.html')) {
+      if (isAdminRoute) {
         if (DEBUG) console.log('[nav] Redirecting unauthenticated user');
-        navigateTo('./unauthorized.html');
+        goTo('./unauthorized.html');
       }
     }
 
     if (DEBUG) console.log('[nav] Logic complete');
-  });
+  } catch (err) {
+    console.error('[nav] Unexpected error during nav update:', err);
+  }
 }
 
-// Attach hamburger toggle once DOM is ready
 document.addEventListener('nav-ready', () => {
   if (DEBUG) console.log('[nav] nav-ready fired');
   runNavLogic();
 });
 
 document.addEventListener('login-success', () => {
-  if (DEBUG) console.log('[nav] login-success event received — rerunning logic');
+  if (DEBUG) console.log('[nav] login-success event received -- rerunning logic');
   runNavLogic();
-});
-
-// Hamburger toggle support
-document.addEventListener('nav-ready', () => {
-  if (DEBUG) console.log('[nav] nav-ready fired');
-
-  const toggle = document.getElementById('nav-toggle');
-  const menu = document.getElementById('nav-menu-mobile');
-
-  if (toggle && menu) {
-    if (DEBUG) console.log('[nav] Hamburger elements found — binding toggle');
-    toggle.addEventListener('click', () => {
-      if (DEBUG) console.log('[nav] Toggling mobile menu');
-      menu.classList.toggle('hidden');
-      menu.style.maxHeight = menu.classList.contains('hidden') ? null : menu.scrollHeight + 'px';
-    });
-  } else {
-    console.warn("[nav] Couldn't find nav-toggle or nav-menu-mobile");
-  }
 });
 
 // Expose to SPA router
 export function init() {
-  runNavLogic();
+  if (document.getElementById('login-btn')) {
+    runNavLogic();
+  }
 }

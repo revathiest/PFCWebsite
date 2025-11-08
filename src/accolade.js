@@ -1,7 +1,7 @@
 import { PFC_CONFIG } from './config.js'
+import { slugify } from './utils.js'
 
 const DEBUG = PFC_CONFIG.debug;
-import { slugify } from './utils.js'
 
 function getSlug() {
   const params = new URLSearchParams(window.location.search);

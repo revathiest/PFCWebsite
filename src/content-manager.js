@@ -1,8 +1,6 @@
 import { PFC_CONFIG } from './config.js';
 import { initEditor } from './editor.js';
 
-const DEBUG = PFC_CONFIG.debug;
-
 // Fetch available content sections from the API and populate the dropdown.
 async function loadSections() {
   const select = document.getElementById('section-select');

@@ -1,4 +1,6 @@
-import { PFC_CONFIG } from './config.js'
+import { PFC_CONFIG } from './config.js';
+
+const DEBUG = PFC_CONFIG.debug;
 
 function formatDateRange(start, end) {
   const options = {
@@ -13,7 +15,7 @@ function formatDateRange(start, end) {
   const endStr = end && new Date(end).getFullYear() > 1970
     ? new Date(end).toLocaleString(undefined, options)
     : '';
-  return endStr ? `${startStr} – ${endStr}` : `${startStr}`;
+  return endStr ? `${startStr} - ${endStr}` : `${startStr}`;
 }
 
 function formatDescription(text) {
@@ -26,9 +28,16 @@ function formatDescription(text) {
 async function loadEvents() {
   const container = document.getElementById('events');
   try {
-    const res = await fetch(`${PFC_CONFIG.apiBase}/api/events`)
+    const apiUrl = `${PFC_CONFIG.apiBase}/api/events`;
+    if (DEBUG) console.log('[events] Fetching from:', apiUrl);
 
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const res = await fetch(apiUrl);
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(`HTTP ${res.status} - ${text}`);
+    }
+
     const { events } = await res.json();
 
     if (!Array.isArray(events) || events.length === 0) {
@@ -53,7 +62,7 @@ async function loadEvents() {
       `;
     }).join('');
   } catch (err) {
-    console.error('[ERROR] Failed to load events:', err);
+    console.error('[events] Failed to load events:', err);
     container.innerHTML = '<p class="text-red-500">Failed to load events. Please try again later.</p>';
   }
 }
@@ -62,6 +71,6 @@ export async function init() {
   try {
     await loadEvents();
   } catch (err) {
-    console.error('[ERROR] Failed to load site content:', err);
+    console.error('[events] Failed to load site content:', err);
   }
 }

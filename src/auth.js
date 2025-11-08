@@ -1,12 +1,10 @@
 import { PFC_CONFIG } from './config.js';
 
 const DEBUG = PFC_CONFIG.debug;
+let expiryTimerId = null;
 
 /**
  * Decode a JWT and return its payload.
- *
- * @param {string} token - JWT string
- * @returns {object} Decoded payload
  */
 function decodeJwt(token) {
   return JSON.parse(atob(token.split('.')[1]));
@@ -23,17 +21,23 @@ function scheduleExpiryCheck() {
     const payload = decodeJwt(token);
     if (!payload.exp) return;
     const msUntilExpiry = payload.exp * 1000 - Date.now();
+
+    if (expiryTimerId) {
+      clearTimeout(expiryTimerId);
+      expiryTimerId = null;
+    }
+
     if (msUntilExpiry <= 0) {
       logout();
     } else {
-      setTimeout(logout, msUntilExpiry);
+      expiryTimerId = setTimeout(logout, msUntilExpiry);
     }
   } catch (err) {
     console.warn('[auth] Failed to schedule expiry check:', err);
   }
 }
 
-function finishDiscordLogin() {
+async function finishDiscordLogin() {
   if (DEBUG) console.log('finishDiscordLogin triggered.');
 
   const params = new URLSearchParams(window.location.search);
@@ -41,38 +45,43 @@ function finishDiscordLogin() {
   if (DEBUG) console.log('Parsed code from URL:', code);
 
   if (!code) {
-    if (DEBUG) console.log('No code found in URL — skipping login finish.');
-    return;
+    if (DEBUG) console.log('No code found in URL -- skipping login finish.');
+    return null;
   }
 
-  fetch(`${PFC_CONFIG.apiBase}/api/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      code,
-      redirectUri: PFC_CONFIG.redirectUri
-    })
-  })
-    .then(response => {
-      if (DEBUG) console.log('Received response:', response);
-      return response.json();
-    })
-    .then(data => {
-      if (DEBUG) console.log('Parsed response JSON:', data);
-      if (data && data.token) {
-        localStorage.setItem('jwt', data.token);
-        if (DEBUG) console.log('✅ JWT stored:', data.token);
-        scheduleExpiryCheck();
-        document.dispatchEvent(new Event('login-success'));
-      } else {
-        console.warn('[auth] No token received from API:', data);
-      }
-      window.location.href = PFC_CONFIG.redirectUri;
-    })
-    .catch(err => {
-      console.error('❌ Error finishing Discord login:', err);
+  try {
+    const response = await fetch(`${PFC_CONFIG.apiBase}/api/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        code,
+        redirectUri: PFC_CONFIG.redirectUri
+      })
     });
+
+    if (!response.ok) {
+      throw new Error(`Login failed with status ${response.status}`);
+    }
+
+    const data = await response.json();
+    if (DEBUG) console.log('Parsed response JSON:', data);
+
+    if (data && data.token) {
+      localStorage.setItem('jwt', data.token);
+      if (DEBUG) console.log('JWT stored:', data.token);
+      scheduleExpiryCheck();
+      document.dispatchEvent(new Event('login-success'));
+    } else {
+      console.warn('[auth] No token received from API:', data);
+    }
+
+    window.location.href = PFC_CONFIG.redirectUri;
+    return data;
+  } catch (err) {
+    console.error('Error finishing Discord login:', err);
+    throw err;
   }
+}
 
 function getUser() {
   try {
@@ -94,19 +103,23 @@ function startDiscordLogin() {
   const clientId = PFC_CONFIG?.discordClientId;
   const redirectUri = PFC_CONFIG?.redirectUri;
 
-
   if (!clientId) {
     console.error('[auth] Missing Discord Client ID in PFC_CONFIG');
     return;
   }
 
-  const url = `https://discord.com/oauth2/authorize?response_type=code&client_id=${clientId}&scope=identify+guilds.members.read&redirect_uri=${redirectUri}`;
+  const encodedRedirect = encodeURIComponent(redirectUri);
+  const url = `https://discord.com/oauth2/authorize?response_type=code&client_id=${clientId}&scope=identify+guilds.members.read&redirect_uri=${encodedRedirect}`;
   window.location.href = url;
 }
 
 function logout() {
   localStorage.removeItem('jwt');
-  if (DEBUG) console.log('🔒 Logged out. Reloading...');
+  if (expiryTimerId) {
+    clearTimeout(expiryTimerId);
+    expiryTimerId = null;
+  }
+  if (DEBUG) console.log('[auth] Logged out. Reloading...');
   window.location.reload();
 }
 
@@ -117,4 +130,3 @@ export {
   logout,
   scheduleExpiryCheck
 };
-

@@ -2,9 +2,6 @@ import { PFC_CONFIG } from './config.js'
 
 const DEBUG = PFC_CONFIG.debug;
 
-let allCommands = [];
-let allMembers = [];
-
 async function populateFilters() {
   const token = localStorage.getItem('jwt');
   if (!token) return;
@@ -34,11 +31,11 @@ async function populateFilters() {
     const contentTypeC = commandsRes.headers.get('content-type') || '';
     const contentTypeM = membersRes.headers.get('content-type') || '';
 
-    const allCommands = contentTypeC.includes('application/json')
+    const commands = contentTypeC.includes('application/json')
       ? (await commandsRes.json()).commands || []
       : (() => { console.error('Commands response not JSON:', contentTypeC); return []; })();
 
-      const allMembers = contentTypeM.includes('application/json')
+      const members = contentTypeM.includes('application/json')
       ? ((await membersRes.json()).members || []).sort((a, b) =>
           (a.displayName || '').localeCompare(b.displayName || '')
         )
@@ -46,11 +43,11 @@ async function populateFilters() {
 
     const commandSelect = document.getElementById('command');
     commandSelect.innerHTML = '<option value="">Any</option>' +
-      allCommands.map(cmd => `<option value="${cmd}">${cmd}</option>`).join('');
+      commands.map(cmd => `<option value="${cmd}">${cmd}</option>`).join('');
 
     const userSelect = document.getElementById('userId');
     userSelect.innerHTML = '<option value="">Any</option>' +
-      allMembers.map(m => `<option value="${m.userId}">${m.displayName}</option>`).join('');
+      members.map(m => `<option value="${m.userId}">${m.displayName}</option>`).join('');
 
       const typeSelect = document.getElementById('type');
       try {
@@ -82,7 +79,7 @@ function renderResults(logs = []) {
     const user = log.displayName || log.memberName || log.user_id;
     const location = log.channelName ? `in #${log.channelName}` : '';
     const command = log.command_name ? `used /${log.command_name}` : '';
-    const message = log.message_content?.trim() ? `— "${log.message_content}"` : '';
+    const message = log.message_content?.trim() ? `- "${log.message_content}"` : '';
     const summary = [user, command || message, location, `@ ${timestamp}`].filter(Boolean).join(' ');
 
     return `
