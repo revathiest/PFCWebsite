@@ -1,3 +1,4 @@
+import './style.css'
 import { runIncludes } from './includes.js'
 import * as nav from './nav.js'
 import * as router from './router.js'
