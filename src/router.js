@@ -2,6 +2,7 @@ import { getUser } from './auth.js';
 import { PFC_CONFIG } from './config.js';
 
 const DEBUG = PFC_CONFIG.debug;
+const PUBLIC_BASE_PATH = '/public';
 
 // router.js
 const routes = {
@@ -62,8 +63,9 @@ async function loadRoute() {
   }
 
   try {
-    if (DEBUG) console.log(`[router] fetching: /${route}`);
-    const res = await fetch('/' + route);
+    const routePath = `${PUBLIC_BASE_PATH}/${route}`.replace(/\/{2,}/g, '/');
+    if (DEBUG) console.log(`[router] fetching: ${routePath}`);
+    const res = await fetch(routePath);
     if (!res.ok) throw new Error('Failed to fetch view: ' + route);
 
     const html = await res.text();
