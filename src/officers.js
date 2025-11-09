@@ -8,8 +8,6 @@ async function loadOfficers() {
   const container = document.getElementById('officer-list');
   if (!container) return;
 
-
-
   try {
     const res = await fetch(`${PFC_CONFIG.apiBase}/api/officers`);
 
@@ -26,33 +24,29 @@ async function loadOfficers() {
     ];
 
     const sortedOfficers = officers
-      .filter(o => {
-        const role = o.roleName;
-        return RANK_ORDER.includes(role);
-      })
-      .sort((a, b) => {
-        const roleA = a.roleName;
-        const roleB = b.roleName;
-        return RANK_ORDER.indexOf(roleA) - RANK_ORDER.indexOf(roleB);
-      });
+      .filter(o => RANK_ORDER.includes(o.roleName))
+      .sort((a, b) =>
+        RANK_ORDER.indexOf(a.roleName) - RANK_ORDER.indexOf(b.roleName)
+      );
 
     if (sortedOfficers.length === 0) {
       container.innerHTML = '<p class="text-gray-300">No officer data available.</p>';
       return;
     }
 
+    container.classList.add('flex', 'flex-col', 'gap-6');
+
     container.innerHTML = sortedOfficers.map(officer => {
-      const roleObj = officer.roleName || {};
-      const roleName = typeof roleObj === 'string' ? roleObj : roleObj.roleName;
-      const roleColor = officer.roleColor || roleObj.roleColor || '#fff';
+      const role = officer.roleName;
+      const color = officer.roleColor || '#fff';
       const bio = officer.bio && officer.bio.trim()
         ? `<p class="text-gray-300 mt-2">${officer.bio}</p>`
         : '<p class="text-gray-500 italic mt-2">No biography available.</p>';
 
       return `
-        <div class="card">
-          <h3 style="color: ${roleColor};">${officer.displayName}</h3>
-          <p class="font-semibold" style="color: ${roleColor};">${roleName ?? ''}</p>
+        <div class="card border-l-4 animate-fade-in" style="border-color: ${color};">
+          <h3 class="text-2xl font-bold mb-1" style="color: ${color};">${officer.displayName}</h3>
+          <p class="font-semibold text-sm uppercase tracking-wide mb-2" style="color: ${color};">${role}</p>
           ${bio}
         </div>
       `;

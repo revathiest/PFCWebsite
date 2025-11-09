@@ -4,7 +4,7 @@ import { slugify } from './utils.js'
 async function loadAccolades() {
   const container = document.getElementById('accolade-list');
   try {
-    const res = await fetch(`${PFC_CONFIG.apiBase}/api/accolades`)
+    const res = await fetch(`${PFC_CONFIG.apiBase}/api/accolades`);
 
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const { accolades } = await res.json();
@@ -12,8 +12,11 @@ async function loadAccolades() {
     container.innerHTML = accolades.map(acc => {
       const slug = slugify(acc.name);
       return `
-        <a href="accolade?slug=${slug}" data-link class="block bg-gray-800 p-6 rounded-lg shadow hover:shadow-lg transition">
-          <h2 class="text-2xl font-bold text-pfc-red mb-2">${acc.emoji || ''} ${acc.name}</h2>
+        <a href="accolade?slug=${slug}" data-link
+           class="card border-l-4 border-pfc-red p-6 rounded-xl shadow-md hover:shadow-lg transition animate-fade-in block">
+          <h2 class="text-xl font-bold mb-2 bg-gradient-to-r from-pfc-red to-pfc-gold bg-clip-text text-transparent">
+            ${acc.emoji || ''} ${acc.name}
+          </h2>
           <p class="text-gray-300 text-sm">${acc.description || 'No description available.'}</p>
         </a>    
       `;

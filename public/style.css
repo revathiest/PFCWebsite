@@ -986,6 +986,10 @@ body {
   border-width: 1px;
 }
 
+.border-l-4 {
+  border-left-width: 4px;
+}
+
 .border-gray-400 {
   --tw-border-opacity: 1;
   border-color: rgb(156 163 175 / var(--tw-border-opacity));
@@ -994,6 +998,11 @@ body {
 .border-green-800 {
   --tw-border-opacity: 1;
   border-color: rgb(22 101 52 / var(--tw-border-opacity));
+}
+
+.border-pfc-red {
+  --tw-border-opacity: 1;
+  border-color: rgb(135 2 27 / var(--tw-border-opacity));
 }
 
 .border-pink-700 {
@@ -1030,8 +1039,27 @@ body {
   --tw-bg-opacity: 0.6;
 }
 
+.bg-gradient-to-r {
+  background-image: linear-gradient(to right, var(--tw-gradient-stops));
+}
+
+.from-pfc-red {
+  --tw-gradient-from: #87021b var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(135 2 27 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.to-pfc-gold {
+  --tw-gradient-to: #b59f3b var(--tw-gradient-to-position);
+}
+
 .bg-cover {
   background-size: cover;
+}
+
+.bg-clip-text {
+  -webkit-background-clip: text;
+          background-clip: text;
 }
 
 .bg-center {
@@ -1057,6 +1085,11 @@ body {
 
 .p-6 {
   padding: 1.5rem;
+}
+
+.px-2 {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
 }
 
 .px-3 {
@@ -1161,6 +1194,11 @@ body {
   line-height: 1.75rem;
 }
 
+.text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
 .font-bold {
   font-weight: 700;
 }
@@ -1173,12 +1211,20 @@ body {
   font-weight: 600;
 }
 
+.uppercase {
+  text-transform: uppercase;
+}
+
 .italic {
   font-style: italic;
 }
 
 .tracking-tight {
   letter-spacing: -0.025em;
+}
+
+.tracking-wide {
+  letter-spacing: 0.025em;
 }
 
 .text-black {
@@ -1211,6 +1257,11 @@ body {
   color: rgb(187 247 208 / var(--tw-text-opacity));
 }
 
+.text-pfc-gold {
+  --tw-text-opacity: 1;
+  color: rgb(181 159 59 / var(--tw-text-opacity));
+}
+
 .text-pfc-red {
   --tw-text-opacity: 1;
   color: rgb(135 2 27 / var(--tw-text-opacity));
@@ -1224,6 +1275,10 @@ body {
 .text-red-600 {
   --tw-text-opacity: 1;
   color: rgb(220 38 38 / var(--tw-text-opacity));
+}
+
+.text-transparent {
+  color: transparent;
 }
 
 .text-white {

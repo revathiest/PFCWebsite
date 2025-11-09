@@ -6,6 +6,7 @@ import { PFC_CONFIG } from './config.js';
 async function loadFriends() {
   const container = document.getElementById('friends-grid');
   if (!container) return;
+
   try {
     const res = await fetch(`${PFC_CONFIG.apiBase}/api/orgs`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -15,22 +16,26 @@ async function loadFriends() {
       return;
     }
 
-    // Filter out the PFC's own organisation from the friends list
     const mappedOrgs = orgs.map(o => o.data || o.org || o);
     const visibleOrgs = mappedOrgs.filter(org =>
       (org.sid || '').toUpperCase() !== 'PFCS'
     );
 
+    container.classList.add('grid', 'md:grid-cols-2', 'gap-6');
+
     container.innerHTML = visibleOrgs.map(org => {
-      const recruiting = org.recruiting ? '<span class="badge ml-2">Recruiting</span>' : '';
+      const recruiting = org.recruiting
+        ? '<span class="ml-2 px-2 py-1 rounded bg-green-700 text-xs text-white uppercase">Recruiting</span>'
+        : '';
+
       return `
-        <div class="card flex flex-col items-center text-center">
+        <div class="card border-l-4 border-pfc-red animate-fade-in flex flex-col items-center text-center">
           <div class="w-full h-32 bg-cover bg-center mb-4 rounded" style="background-image:url('${org.banner}')"></div>
-          <img src="${org.logo}" alt="${org.name} logo" class="w-24 h-24 object-contain mb-2" />
-          <h3 class="text-xl font-bold">${org.name}</h3>
-          <p class="text-sm text-gray-300 mb-2">${org.headline.plaintext || ''}</p>
-          <p class="text-sm mb-2">Members: ${org.members}${recruiting}</p>
-          <a data-link href="/friends/${org.sid}" class="button mt-auto">Learn More</a>
+          <img src="${org.logo}" alt="${org.name} logo" class="w-24 h-24 object-contain mb-2 rounded shadow-md" />
+          <h3 class="text-xl font-bold mb-1 bg-gradient-to-r from-pfc-red to-pfc-gold bg-clip-text text-transparent">${org.name}</h3>
+          <p class="text-sm text-gray-300 mb-2">${org.headline?.plaintext || ''}</p>
+          <p class="text-sm text-gray-400 mb-2">Members: ${org.members}${recruiting}</p>
+          <a data-link href="/friends/${org.sid}" class="btn mt-2">Learn More</a>
         </div>
       `;
     }).join('');

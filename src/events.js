@@ -45,19 +45,33 @@ async function loadEvents() {
       return;
     }
 
+    container.classList.add('flex', 'flex-col', 'gap-6');
+
     container.innerHTML = events.map(event => {
       const dateRange = formatDateRange(event.start_time, event.end_time);
       const descriptionHTML = formatDescription(event.description || '');
+
       return `
-        <div class="card text-left">
-          <h3>${event.name}</h3>
-          <div class="meta">
-            <time>${dateRange}</time>
-            <span class="badge">${event.status || 'Scheduled'}</span>
+        <div class="card w-full mb-6 border-l-4 border-pfc-red animate-fade-in">
+          <div class="text-pfc-gold font-semibold text-sm mb-2 uppercase tracking-wide">
+            ${new Date(event.start_time).toLocaleDateString(undefined, {
+              weekday: 'long',
+              month: 'short',
+              day: 'numeric'
+            })}
           </div>
-          ${descriptionHTML}
-          <p class="text-sm text-gray-500"><strong>Location:</strong> ${event.location || 'TBD'}<br>
-          <strong>Coordinator:</strong> ${event.event_coordinator || 'TBD'}</p>
+          <h3 class="text-2xl font-bold mb-2 bg-gradient-to-r from-pfc-red to-pfc-gold bg-clip-text text-transparent">
+            ${event.name}
+          </h3>
+          <div class="text-sm text-gray-400 mb-4">
+            <time>${dateRange}</time> 
+            <span class="ml-2 px-2 py-1 rounded bg-gray-800 text-xs uppercase">${event.status || 'Scheduled'}</span>
+          </div>
+          <div class="text-gray-300 mb-4">${descriptionHTML}</div>
+          <p class="text-sm text-gray-500">
+            <strong>Location:</strong> ${event.location || 'TBD'}<br>
+            <strong>Coordinator:</strong> ${event.event_coordinator || 'TBD'}
+          </p>
         </div>
       `;
     }).join('');

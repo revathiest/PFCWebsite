@@ -8,7 +8,6 @@ function getSlug() {
   return params.get('slug');
 }
 
-
 async function loadAccoladePage() {
   const slug = getSlug();
   const nameEl = document.getElementById('accolade-name');
@@ -33,12 +32,13 @@ async function loadAccoladePage() {
     const accolade = accolades.find(a => slugify(a.name) === slug);
     if (!accolade) throw new Error(`No accolade found matching slug: ${slug}`);
 
-    nameEl.textContent = `${accolade.emoji || ''} ${accolade.name}`;
+    nameEl.innerHTML = `<span class="bg-gradient-to-r from-pfc-red to-pfc-gold bg-clip-text text-transparent font-bold text-3xl">${accolade.emoji || ''} ${accolade.name}</span>`;
     descEl.textContent = accolade.description || '';
 
+    container.classList.add('flex', 'flex-col', 'gap-6');
     container.innerHTML = accolade.recipients.map(user => `
-      <div class="bg-gray-800 p-4 rounded shadow text-left">
-        <h3 class="text-xl font-bold text-white mb-1">${user.displayName}</h3>
+      <div class="card border-l-4 border-pfc-red animate-fade-in">
+        <h3 class="text-xl font-bold mb-1 text-white">${user.displayName}</h3>
       </div>
     `).join('');
   } catch (err) {
