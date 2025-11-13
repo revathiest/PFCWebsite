@@ -1,12 +1,10 @@
-
 // js/home.js
-import { PFC_CONFIG } from './config.js'
 
-const DEBUG = PFC_CONFIG.debug;
+const DEBUG = window.PFC_CONFIG.debug;
 
 async function loadContent(sectionId) {
   try {
-    const url = `${PFC_CONFIG.apiBase}/api/content/${sectionId}`;
+    const url = `${window.PFC_CONFIG.apiBase}/api/content/${sectionId}`;
     if (DEBUG) console.log(`[DEBUG] Requesting: ${url}`);
 
     const res = await fetch(url);
@@ -41,3 +39,5 @@ export async function init() {
     console.error('[ERROR] Failed to load site content:', err);
   }
 }
+
+document.addEventListener('DOMContentLoaded', init);
