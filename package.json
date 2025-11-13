@@ -6,7 +6,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "node --no-deprecation -e \"process.stdout.write('\\x1Bc')\" && jest",
-    "build:css": "npx tailwindcss -i ./src/style.css -o ./public/style.css",
+    "build:css": "npx tailwindcss -i ./src/style.css -o ./dist/style.css",
     "watch:css": "npx tailwindcss -i ./src/style.css -o ./public/style.css --watch"
   },
   "license": "ISC",
