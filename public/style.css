@@ -750,10 +750,6 @@ body {
   margin-right: auto;
 }
 
-.-mt-12 {
-  margin-top: -3rem;
-}
-
 .mb-1 {
   margin-bottom: 0.25rem;
 }
@@ -796,14 +792,6 @@ body {
 
 .mt-6 {
   margin-top: 1.5rem;
-}
-
-.mt-8 {
-  margin-top: 2rem;
-}
-
-.mt-auto {
-  margin-top: auto;
 }
 
 .block {
@@ -868,10 +856,6 @@ body {
 
 .w-24 {
   width: 6rem;
-}
-
-.w-32 {
-  width: 8rem;
 }
 
 .w-4 {
@@ -974,12 +958,13 @@ body {
   border-radius: 0.25rem;
 }
 
-.rounded-lg {
-  border-radius: 0.5rem;
-}
-
 .rounded-xl {
   border-radius: 0.75rem;
+}
+
+.rounded-t {
+  border-top-left-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
 }
 
 .border {
@@ -995,19 +980,24 @@ body {
   border-color: rgb(156 163 175 / var(--tw-border-opacity));
 }
 
+.border-gray-700 {
+  --tw-border-opacity: 1;
+  border-color: rgb(55 65 81 / var(--tw-border-opacity));
+}
+
 .border-green-800 {
   --tw-border-opacity: 1;
   border-color: rgb(22 101 52 / var(--tw-border-opacity));
 }
 
+.border-pfc-gold {
+  --tw-border-opacity: 1;
+  border-color: rgb(181 159 59 / var(--tw-border-opacity));
+}
+
 .border-pfc-red {
   --tw-border-opacity: 1;
   border-color: rgb(135 2 27 / var(--tw-border-opacity));
-}
-
-.border-pink-700 {
-  --tw-border-opacity: 1;
-  border-color: rgb(190 24 93 / var(--tw-border-opacity));
 }
 
 .bg-black {
@@ -1137,6 +1127,11 @@ body {
   padding-bottom: 0.75rem;
 }
 
+.py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
 .py-6 {
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
@@ -1144,10 +1139,6 @@ body {
 
 .py-8 {
   padding-top: 2rem;
-  padding-bottom: 2rem;
-}
-
-.pb-8 {
   padding-bottom: 2rem;
 }
 
@@ -1252,11 +1243,6 @@ body {
   color: rgb(107 114 128 / var(--tw-text-opacity));
 }
 
-.text-green-200 {
-  --tw-text-opacity: 1;
-  color: rgb(187 247 208 / var(--tw-text-opacity));
-}
-
 .text-pfc-gold {
   --tw-text-opacity: 1;
   color: rgb(181 159 59 / var(--tw-text-opacity));
@@ -1306,9 +1292,9 @@ body {
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
-.shadow-xl {
-  --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
+.shadow-md {
+  --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
@@ -1365,10 +1351,6 @@ body {
   50% {
     transform: translateY(-5px);
   }
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
 }
 
 .hover\:border-white:hover {
