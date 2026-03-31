@@ -5,8 +5,8 @@
 window.PFC_CONFIG = Object.assign(
   {
     apiBase: 'https://api.pyrofreelancercorps.com',
-    redirectUri: typeof window !== 'undefined' ? window.location.origin : '',
-    discordClientId: '',
+    redirectUri: 'https://pyrofreelancercorps.com/',
+    discordClientId: '819004565869035531',
     debug: false
   },
   window.PFC_CONFIG || {}
