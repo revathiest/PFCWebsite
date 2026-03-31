@@ -1,0 +1,1 @@
+import{n as o,P as t}from"./index-CbaTefUj.js";const i=t.debug;async function d(){i&&console.log("[unauthorized.js] Init called");const n=document.querySelector("a[data-link]");n==null||n.addEventListener("click",e=>{e.preventDefault(),typeof window<"u"&&typeof window.loadInitialRoute=="function"?window.loadInitialRoute():o("/")})}export{d as init};
