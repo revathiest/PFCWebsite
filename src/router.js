@@ -2,7 +2,7 @@ import { getUser } from './auth.js';
 import { PFC_CONFIG } from './config.js';
 
 const DEBUG = PFC_CONFIG.debug;
-const PUBLIC_BASE_PATH = '/public';
+const PUBLIC_BASE_PATH = '';
 
 const routes = {
   '/': 'views/home.html',

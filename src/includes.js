@@ -1,6 +1,6 @@
 // src/includes.js
 
-const PUBLIC_BASE_PATH = '/public';
+const PUBLIC_BASE_PATH = '';
 
 export async function runIncludes() {
   const includeElements = document.querySelectorAll('[data-include]')
