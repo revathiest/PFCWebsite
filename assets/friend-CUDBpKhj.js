@@ -1,4 +1,4 @@
-import{P as x}from"./index-IxenJPXn.js";function $(){return window.location.pathname.split("/")[2]||""}function h(s,r,a){return a?`
+import{P as x}from"./index-DD-3h3i9.js";function $(){return window.location.pathname.split("/")[2]||""}function h(s,r,a){return a?`
     <details class="details-block mb-4">
       <summary class="details-summary cursor-pointer text-pfc-gold font-semibold underline">${r}</summary>
       <div class="details-content text-gray-300 mt-2">
