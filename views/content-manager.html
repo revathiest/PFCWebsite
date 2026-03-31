@@ -1,0 +1,33 @@
+<section class="py-8 px-6">
+  <h1 class="text-3xl font-bold text-pfc-red mb-4 text-center">Content Manager</h1>
+  <div id="content-error" class="text-red-500 text-center mb-4"></div>
+  <div class="space-y-4 text-black">
+    <div>
+      <label for="section-select" class="block text-white mb-1">Section</label>
+      <select id="section-select" class="w-full p-2 rounded"></select>
+    </div>
+    <div>
+      <label for="content-editor" class="block text-white mb-1">Content</label>
+      <div id="wysiwygr-toolbar" class="wysiwygr-toolbar mb-2 flex gap-2">
+        <button type="button" data-cmd="bold" title="Bold">
+          <i class="fas fa-bold"></i>
+        </button>
+        <button type="button" data-cmd="italic" title="Italic">
+          <i class="fas fa-italic"></i>
+        </button>
+        <button type="button" data-cmd="underline" title="Underline">
+          <i class="fas fa-underline"></i>
+        </button>
+        <button type="button" data-cmd="insertUnorderedList" title="Bullet list">
+          <i class="fas fa-list-ul"></i>
+        </button>
+        <label for="font-color" class="text-white text-sm flex items-center">
+          Colour:
+        </label>
+        <input type="color" id="font-color" title="Font colour" />
+      </div>
+      <div id="content-editor" class="w-full p-2 rounded bg-gray-200 wysiwygr-editor" contenteditable="true"></div>
+    </div>
+    <button id="save-button" type="button" class="bg-pfc-red hover:bg-red-800 text-white font-bold py-2 px-4 rounded">Save Changes</button>
+  </div>
+</section>
