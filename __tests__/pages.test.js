@@ -41,43 +41,57 @@ test('events.init handles empty list', async () => {
   expect(document.getElementById('events').innerHTML).toContain('No upcoming');
 });
 
+// init() fetches known-versions and the default changelog in parallel;
+// this routes each URL to its own canned response so both calls resolve
+// sensibly regardless of which fires first.
+function mockChangelogFetches({ versions = [], changelogResponse } = {}) {
+  fetchMock.mockResponse(req => {
+    if (req.url.includes('known-versions')) {
+      return Promise.resolve(JSON.stringify({ versions }));
+    }
+    return Promise.resolve(JSON.stringify(changelogResponse));
+  });
+}
+
 test('changelog.init handles empty list', async () => {
-  fetchMock.mockResponse(JSON.stringify({ versionFrom: null, versionTo: null, entries: [] }));
+  mockChangelogFetches({ changelogResponse: { versionFrom: null, versionTo: null, entries: [] } });
   document.body.innerHTML = '<div id="changelog"></div>';
   await changelog.init();
-  expect(document.getElementById('changelog').innerHTML).toContain('No changelog data');
+  expect(document.getElementById('changelog-results').innerHTML).toContain('No changelog data');
 });
 
 test('changelog.init renders grouped entries', async () => {
-  fetchMock.mockResponse(JSON.stringify({
-    versionFrom: 'sc-alpha-4.8.0',
-    versionTo: 'sc-alpha-4.9.0',
-    entries: [
-      {
-        category: 'ships',
-        recordRef: 'ref-1',
-        recordName: 'Avenger Titan',
-        fieldKey: 'insurance_expedite_fee',
-        label: 'Insurance Expedite Fee',
-        unit: 'aUEC',
-        oldValue: '2343',
-        newValue: '9999'
-      },
-      {
-        category: 'ships',
-        recordRef: 'ref-1',
-        recordName: 'Avenger Titan',
-        fieldKey: 'crew_size',
-        label: 'Crew Size',
-        unit: null,
-        oldValue: '1',
-        newValue: '2'
-      }
-    ]
-  }));
+  mockChangelogFetches({
+    changelogResponse: {
+      versionFrom: 'sc-alpha-4.8.0',
+      versionTo: 'sc-alpha-4.9.0',
+      entries: [
+        {
+          category: 'ships',
+          recordRef: 'ref-1',
+          recordName: 'Avenger Titan',
+          fieldKey: 'insurance_expedite_fee',
+          label: 'Insurance Expedite Fee',
+          unit: 'aUEC',
+          oldValue: '2343',
+          newValue: '9999'
+        },
+        {
+          category: 'ships',
+          recordRef: 'ref-1',
+          recordName: 'Avenger Titan',
+          fieldKey: 'crew_size',
+          label: 'Crew Size',
+          unit: null,
+          oldValue: '1',
+          newValue: '2'
+        }
+      ]
+    }
+  });
   document.body.innerHTML = '<div id="changelog"></div>';
   await changelog.init();
-  const html = document.getElementById('changelog').innerHTML;
+  const html = document.getElementById('changelog-results').innerHTML;
   expect(html).toContain('Avenger Titan');
   expect(html).toContain('Insurance Expedite Fee');
   expect(html).toContain('Crew Size');
@@ -85,40 +99,42 @@ test('changelog.init renders grouped entries', async () => {
 });
 
 test('changelog.init renders one always-visible row per item with all its changes consolidated', async () => {
-  fetchMock.mockResponse(JSON.stringify({
-    versionFrom: 'v1',
-    versionTo: 'v2',
-    entries: [
-      {
-        category: 'ships',
-        recordRef: 'ref-1',
-        recordName: 'Avenger Titan',
-        fieldKey: 'insurance_expedite_fee',
-        label: 'Insurance Expedite Fee',
-        unit: 'aUEC',
-        oldValue: '2343',
-        newValue: '9999'
-      },
-      {
-        category: 'ships',
-        recordRef: 'ref-1',
-        recordName: 'Avenger Titan',
-        fieldKey: 'crew_size',
-        label: 'Crew Size',
-        unit: null,
-        oldValue: '1',
-        newValue: '2'
-      }
-    ]
-  }));
+  mockChangelogFetches({
+    changelogResponse: {
+      versionFrom: 'v1',
+      versionTo: 'v2',
+      entries: [
+        {
+          category: 'ships',
+          recordRef: 'ref-1',
+          recordName: 'Avenger Titan',
+          fieldKey: 'insurance_expedite_fee',
+          label: 'Insurance Expedite Fee',
+          unit: 'aUEC',
+          oldValue: '2343',
+          newValue: '9999'
+        },
+        {
+          category: 'ships',
+          recordRef: 'ref-1',
+          recordName: 'Avenger Titan',
+          fieldKey: 'crew_size',
+          label: 'Crew Size',
+          unit: null,
+          oldValue: '1',
+          newValue: '2'
+        }
+      ]
+    }
+  });
   document.body.innerHTML = '<div id="changelog"></div>';
   await changelog.init();
 
-  const container = document.getElementById('changelog');
+  const results = document.getElementById('changelog-results');
   // no accordion controls — the table is the whole UI, nothing to click
-  expect(container.querySelector('.accordion-toggle')).toBeNull();
+  expect(results.querySelector('.accordion-toggle')).toBeNull();
 
-  const rows = container.querySelectorAll('tbody tr');
+  const rows = results.querySelectorAll('tbody tr');
   expect(rows.length).toBe(1); // one row for the one record, not one per field
   expect(rows[0].textContent).toContain('Avenger Titan');
   expect(rows[0].textContent).toContain('Insurance Expedite Fee');
@@ -126,35 +142,37 @@ test('changelog.init renders one always-visible row per item with all its change
 });
 
 test('changelog.init renders added/removed fields as a dash, not the word null', async () => {
-  fetchMock.mockResponse(JSON.stringify({
-    versionFrom: 'sc-alpha-4.8.0',
-    versionTo: 'sc-alpha-4.9.0',
-    entries: [
-      {
-        category: 'weapons',
-        recordRef: 'ref-new',
-        recordName: 'New Weapon',
-        fieldKey: 'ammo_capacity',
-        label: 'Ammo Capacity',
-        unit: 'rounds',
-        oldValue: null,
-        newValue: '5220'
-      },
-      {
-        category: 'weapons',
-        recordRef: 'ref-old',
-        recordName: 'Old Weapon',
-        fieldKey: 'ammo_capacity',
-        label: 'Ammo Capacity',
-        unit: 'rounds',
-        oldValue: '3660',
-        newValue: null
-      }
-    ]
-  }));
+  mockChangelogFetches({
+    changelogResponse: {
+      versionFrom: 'sc-alpha-4.8.0',
+      versionTo: 'sc-alpha-4.9.0',
+      entries: [
+        {
+          category: 'weapons',
+          recordRef: 'ref-new',
+          recordName: 'New Weapon',
+          fieldKey: 'ammo_capacity',
+          label: 'Ammo Capacity',
+          unit: 'rounds',
+          oldValue: null,
+          newValue: '5220'
+        },
+        {
+          category: 'weapons',
+          recordRef: 'ref-old',
+          recordName: 'Old Weapon',
+          fieldKey: 'ammo_capacity',
+          label: 'Ammo Capacity',
+          unit: 'rounds',
+          oldValue: '3660',
+          newValue: null
+        }
+      ]
+    }
+  });
   document.body.innerHTML = '<div id="changelog"></div>';
   await changelog.init();
-  const html = document.getElementById('changelog').innerHTML;
+  const html = document.getElementById('changelog-results').innerHTML;
   expect(html).toContain('New Weapon');
   expect(html).toContain('Old Weapon');
   expect(html).not.toMatch(/>null</);
@@ -162,10 +180,52 @@ test('changelog.init renders added/removed fields as a dash, not the word null',
 });
 
 test('changelog.init handles fetch failure', async () => {
-  fetchMock.mockRejectOnce(new Error('fail'));
+  fetchMock.mockReject(new Error('fail'));
   document.body.innerHTML = '<div id="changelog"></div>';
   await changelog.init();
-  expect(document.getElementById('changelog').innerHTML).toContain('Failed to load changelog');
+  expect(document.getElementById('changelog-results').innerHTML).toContain('Failed to load changelog');
+});
+
+test('changelog.init hides the picker when fewer than two versions are known', async () => {
+  mockChangelogFetches({ versions: ['only-one'], changelogResponse: { versionFrom: null, versionTo: null, entries: [] } });
+  document.body.innerHTML = '<div id="changelog"></div>';
+  await changelog.init();
+  expect(document.getElementById('changelog-picker').innerHTML).toBe('');
+});
+
+test('changelog.init renders a version picker and re-fetches on Compare', async () => {
+  mockChangelogFetches({
+    versions: ['v1', 'v2', 'v3'],
+    changelogResponse: { versionFrom: 'v2', versionTo: 'v3', entries: [] }
+  });
+  document.body.innerHTML = '<div id="changelog"></div>';
+  await changelog.init();
+
+  const fromSelect = document.getElementById('changelog-from');
+  const toSelect = document.getElementById('changelog-to');
+  expect(fromSelect.value).toBe('v2'); // defaults to the latest pair
+  expect(toSelect.value).toBe('v3');
+
+  fetchMock.mockClear();
+  mockChangelogFetches({
+    versions: ['v1', 'v2', 'v3'],
+    changelogResponse: {
+      versionFrom: 'v1',
+      versionTo: 'v3',
+      entries: [{
+        category: 'ships', recordRef: 'ref-1', recordName: 'Avenger Titan',
+        fieldKey: 'crew_size', label: 'Crew Size', unit: null, oldValue: '1', newValue: '3'
+      }]
+    }
+  });
+  fromSelect.value = 'v1';
+  toSelect.value = 'v3';
+  document.getElementById('changelog-compare').click();
+  await new Promise(r => setTimeout(r, 0));
+
+  expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining('from=v1'));
+  expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining('to=v3'));
+  expect(document.getElementById('changelog-results').innerHTML).toContain('Avenger Titan');
 });
 
 test('accolades.init renders list', async () => {

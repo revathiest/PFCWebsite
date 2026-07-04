@@ -78,10 +78,57 @@ function renderTableRow(record) {
   `;
 }
 
-async function loadChangelog() {
-  const container = document.getElementById('changelog');
+function renderResults(versionFrom, versionTo, entries) {
+  if (!Array.isArray(entries) || entries.length === 0) {
+    return versionFrom && versionTo
+      ? `<p class="text-gray-400 mb-4">${versionFrom} &rarr; ${versionTo}</p><p class="text-gray-300">No tracked changes between these versions.</p>`
+      : '<p class="text-gray-300">No changelog data available yet.</p>';
+  }
+
+  const byCategory = groupByCategory(entries);
+  const sections = Object.keys(byCategory).sort().map(category => {
+    const records = groupByRecord(byCategory[category]);
+    const label = CATEGORY_LABELS[category] || category;
+    return `
+      <section class="mb-5">
+        <h2 class="text-lg font-bold text-pfc-gold uppercase tracking-wide mb-1.5">
+          ${label} <span class="text-gray-500 text-sm font-normal normal-case">(${records.length})</span>
+        </h2>
+        <div class="rounded-lg bg-gray-900/60 overflow-x-auto border border-gray-800">
+          <table class="w-full text-sm border-collapse table-fixed">
+            <thead>
+              <tr class="text-left text-gray-500 uppercase text-xs border-b border-gray-800">
+                <th class="w-[30%] px-3 py-1.5 font-semibold border-r border-gray-800">Item</th>
+                <th class="px-3 py-1.5 font-semibold">
+                  <div class="grid ${CHANGE_GRID_COLS} gap-x-3">
+                    <span>Parameter</span>
+                    <span class="text-right">Previous</span>
+                    <span class="text-right">Current</span>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              ${records.map(renderTableRow).join('')}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    `;
+  }).join('');
+
+  const subtitle = `<p class="text-gray-400 mb-4 text-center">${versionFrom} &rarr; ${versionTo}</p>`;
+
+  return subtitle + sections;
+}
+
+async function loadChangelog(from, to) {
+  const results = document.getElementById('changelog-results');
   try {
-    const apiUrl = `${PFC_CONFIG.apiBase}/api/sc-changelog`;
+    const url = new URL(`${PFC_CONFIG.apiBase}/api/sc-changelog`);
+    if (from) url.searchParams.set('from', from);
+    if (to) url.searchParams.set('to', to);
+    const apiUrl = url.toString();
     if (DEBUG) console.log('[changelog] Fetching from:', apiUrl);
 
     const res = await fetch(apiUrl);
@@ -92,60 +139,69 @@ async function loadChangelog() {
     }
 
     const { versionFrom, versionTo, entries } = await res.json();
+    results.classList.add('text-left');
+    results.innerHTML = renderResults(versionFrom, versionTo, entries);
+  } catch (err) {
+    console.error('[changelog] Failed to load changelog:', err);
+    results.innerHTML = '<p class="text-red-500">Failed to load changelog. Please try again later.</p>';
+  }
+}
 
-    if (!Array.isArray(entries) || entries.length === 0) {
-      container.innerHTML = '<p class="text-gray-300">No changelog data available yet.</p>';
+// Version picker — lets you compare any two tracked versions, not just the
+// latest pair. Hidden entirely until there are at least two known versions
+// to pick from (fewer than that, there's nothing to compare yet anyway).
+async function loadVersionPicker() {
+  const picker = document.getElementById('changelog-picker');
+  try {
+    const apiUrl = `${PFC_CONFIG.apiBase}/api/sc-changelog/known-versions`;
+    if (DEBUG) console.log('[changelog] Fetching known versions from:', apiUrl);
+
+    const res = await fetch(apiUrl);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const { versions } = await res.json();
+    if (!Array.isArray(versions) || versions.length < 2) {
+      picker.innerHTML = '';
       return;
     }
 
-    container.classList.add('text-left');
+    const options = versions.map(v => `<option value="${v}">${v}</option>`).join('');
+    picker.innerHTML = `
+      <div class="flex flex-wrap items-end justify-center gap-3 mb-6 text-sm">
+        <label class="flex flex-col items-start text-gray-400">
+          From
+          <select id="changelog-from" class="bg-gray-900 border border-gray-700 rounded px-2 py-1 text-gray-200">${options}</select>
+        </label>
+        <label class="flex flex-col items-start text-gray-400">
+          To
+          <select id="changelog-to" class="bg-gray-900 border border-gray-700 rounded px-2 py-1 text-gray-200">${options}</select>
+        </label>
+        <button id="changelog-compare" type="button" class="btn">Compare</button>
+      </div>
+    `;
 
-    const byCategory = groupByCategory(entries);
-    const sections = Object.keys(byCategory).sort().map(category => {
-      const records = groupByRecord(byCategory[category]);
-      const label = CATEGORY_LABELS[category] || category;
-      return `
-        <section class="mb-5">
-          <h2 class="text-lg font-bold text-pfc-gold uppercase tracking-wide mb-1.5">
-            ${label} <span class="text-gray-500 text-sm font-normal normal-case">(${records.length})</span>
-          </h2>
-          <div class="rounded-lg bg-gray-900/60 overflow-x-auto border border-gray-800">
-            <table class="w-full text-sm border-collapse table-fixed">
-              <thead>
-                <tr class="text-left text-gray-500 uppercase text-xs border-b border-gray-800">
-                  <th class="w-[30%] px-3 py-1.5 font-semibold border-r border-gray-800">Item</th>
-                  <th class="px-3 py-1.5 font-semibold">
-                    <div class="grid ${CHANGE_GRID_COLS} gap-x-3">
-                      <span>Parameter</span>
-                      <span class="text-right">Previous</span>
-                      <span class="text-right">Current</span>
-                    </div>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                ${records.map(renderTableRow).join('')}
-              </tbody>
-            </table>
-          </div>
-        </section>
-      `;
-    }).join('');
+    document.getElementById('changelog-from').value = versions[versions.length - 2];
+    document.getElementById('changelog-to').value = versions[versions.length - 1];
 
-    const subtitle = versionFrom && versionTo
-      ? `<p class="text-gray-400 mb-4 text-center">${versionFrom} &rarr; ${versionTo}</p>`
-      : '';
-
-    container.innerHTML = subtitle + sections;
+    document.getElementById('changelog-compare').addEventListener('click', () => {
+      const from = document.getElementById('changelog-from').value;
+      const to = document.getElementById('changelog-to').value;
+      loadChangelog(from, to);
+    });
   } catch (err) {
-    console.error('[changelog] Failed to load changelog:', err);
-    container.innerHTML = '<p class="text-red-500">Failed to load changelog. Please try again later.</p>';
+    console.error('[changelog] Failed to load version picker:', err);
+    picker.innerHTML = '';
   }
 }
 
 export async function init() {
+  const container = document.getElementById('changelog');
+  container.innerHTML = `
+    <div id="changelog-picker"></div>
+    <div id="changelog-results"></div>
+  `;
   try {
-    await loadChangelog();
+    await Promise.all([loadVersionPicker(), loadChangelog()]);
   } catch (err) {
     console.error('[changelog] Failed to load site content:', err);
   }
