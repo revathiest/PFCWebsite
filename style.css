@@ -729,6 +729,14 @@ body {
   border-width: 0;
 }
 
+.visible {
+  visibility: visible;
+}
+
+.fixed {
+  position: fixed;
+}
+
 .absolute {
   position: absolute;
 }
@@ -754,6 +762,10 @@ body {
   margin-bottom: 0.25rem;
 }
 
+.mb-1\.5 {
+  margin-bottom: 0.375rem;
+}
+
 .mb-10 {
   margin-bottom: 2.5rem;
 }
@@ -764,6 +776,10 @@ body {
 
 .mb-4 {
   margin-bottom: 1rem;
+}
+
+.mb-5 {
+  margin-bottom: 1.25rem;
 }
 
 .mb-6 {
@@ -804,6 +820,10 @@ body {
 
 .flex {
   display: flex;
+}
+
+.table {
+  display: table;
 }
 
 .grid {
@@ -866,6 +886,10 @@ body {
   width: 1.5rem;
 }
 
+.w-\[30\%\] {
+  width: 30%;
+}
+
 .w-auto {
   width: auto;
 }
@@ -890,8 +914,20 @@ body {
   flex-grow: 1;
 }
 
+.table-fixed {
+  table-layout: fixed;
+}
+
+.border-collapse {
+  border-collapse: collapse;
+}
+
 .cursor-pointer {
   cursor: pointer;
+}
+
+.grid-cols-\[1fr_5\.5rem_5\.5rem\] {
+  grid-template-columns: 1fr 5.5rem 5.5rem;
 }
 
 .flex-col {
@@ -926,6 +962,15 @@ body {
   gap: 1.5rem;
 }
 
+.gap-x-3 {
+  -moz-column-gap: 0.75rem;
+       column-gap: 0.75rem;
+}
+
+.gap-y-0\.5 {
+  row-gap: 0.125rem;
+}
+
 .space-x-4 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-x-reverse: 0;
   margin-right: calc(1rem * var(--tw-space-x-reverse));
@@ -954,8 +999,20 @@ body {
   overflow: hidden;
 }
 
+.overflow-x-auto {
+  overflow-x: auto;
+}
+
+.whitespace-nowrap {
+  white-space: nowrap;
+}
+
 .rounded {
   border-radius: 0.25rem;
+}
+
+.rounded-lg {
+  border-radius: 0.5rem;
 }
 
 .rounded-xl {
@@ -971,8 +1028,20 @@ body {
   border-width: 1px;
 }
 
+.border-b {
+  border-bottom-width: 1px;
+}
+
 .border-l-4 {
   border-left-width: 4px;
+}
+
+.border-r {
+  border-right-width: 1px;
+}
+
+.border-t {
+  border-top-width: 1px;
 }
 
 .border-gray-400 {
@@ -983,6 +1052,11 @@ body {
 .border-gray-700 {
   --tw-border-opacity: 1;
   border-color: rgb(55 65 81 / var(--tw-border-opacity));
+}
+
+.border-gray-800 {
+  --tw-border-opacity: 1;
+  border-color: rgb(31 41 55 / var(--tw-border-opacity));
 }
 
 .border-green-800 {
@@ -1013,6 +1087,10 @@ body {
 .bg-gray-800 {
   --tw-bg-opacity: 1;
   background-color: rgb(31 41 55 / var(--tw-bg-opacity));
+}
+
+.bg-gray-900\/60 {
+  background-color: rgb(17 24 39 / 0.6);
 }
 
 .bg-green-700 {
@@ -1112,6 +1190,11 @@ body {
   padding-bottom: 0.25rem;
 }
 
+.py-1\.5 {
+  padding-top: 0.375rem;
+  padding-bottom: 0.375rem;
+}
+
 .py-16 {
   padding-top: 4rem;
   padding-bottom: 4rem;
@@ -1148,6 +1231,14 @@ body {
 
 .text-center {
   text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.align-top {
+  vertical-align: top;
 }
 
 .text-2xl {
@@ -1198,12 +1289,20 @@ body {
   font-weight: 800;
 }
 
+.font-normal {
+  font-weight: 400;
+}
+
 .font-semibold {
   font-weight: 600;
 }
 
 .uppercase {
   text-transform: uppercase;
+}
+
+.normal-case {
+  text-transform: none;
 }
 
 .italic {
