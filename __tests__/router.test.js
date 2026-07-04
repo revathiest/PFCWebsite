@@ -11,6 +11,7 @@ jest.mock('../src/friend.js', () => ({ __esModule: true, init: jest.fn() }));
 jest.mock('../src/friends.js', () => ({ __esModule: true, init: jest.fn() }));
 jest.mock('../src/officers.js', () => ({ __esModule: true, init: jest.fn() }));
 jest.mock('../src/events.js', () => ({ __esModule: true, init: jest.fn() }));
+jest.mock('../src/changelog.js', () => ({ __esModule: true, init: jest.fn() }));
 jest.mock('../src/accolade.js', () => ({ __esModule: true, init: jest.fn() }));
 
 import * as router from '../src/router.js';
@@ -82,6 +83,14 @@ test('events route imports module', async () => {
   await router.navigateTo('/events');
   await new Promise(r => setTimeout(r, 0));
   const mod = require('../src/events.js');
+  expect(mod.init).toHaveBeenCalled();
+});
+
+test('changelog route imports module', async () => {
+  fetchMock.mockResponseOnce('<div id="view-container"></div>');
+  await router.navigateTo('/changelog');
+  await new Promise(r => setTimeout(r, 0));
+  const mod = require('../src/changelog.js');
   expect(mod.init).toHaveBeenCalled();
 });
 

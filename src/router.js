@@ -9,6 +9,7 @@ const routes = {
   '/accolades': 'views/accolades.html',
   '/accolade': 'views/accolade.html',
   '/events': 'views/events.html',
+  '/changelog': 'views/changelog.html',
   '/officers': 'views/officers.html',
   '/friends': 'views/friends.html',
   '/admin': 'views/admin.html',
@@ -101,6 +102,10 @@ async function loadPageModule(path) {
   } else if (path.includes('events')) {
     if (DEBUG) console.log('[router] importing events.js');
     const module = await import('./events.js');
+    module.init?.();
+  } else if (path.includes('changelog')) {
+    if (DEBUG) console.log('[router] importing changelog.js');
+    const module = await import('./changelog.js');
     module.init?.();
   } else if (path.includes('officers')) {
     if (DEBUG) console.log('[router] importing officers.js');
