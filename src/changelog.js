@@ -22,19 +22,24 @@ function groupByRecord(entries) {
   const byRecord = new Map();
   for (const entry of entries) {
     if (!byRecord.has(entry.recordRef)) {
-      byRecord.set(entry.recordRef, { recordName: entry.recordName, fields: [] });
+      byRecord.set(entry.recordRef, { recordName: entry.recordName, recordDisplayName: entry.recordDisplayName, fields: [] });
     }
     byRecord.get(entry.recordRef).fields.push(entry);
   }
   return [...byRecord.values()];
 }
 
-// Internal record names are raw identifiers (e.g. "AEGS_Avenger_Titan") —
-// this is a cosmetic cleanup, not real display-name resolution (that would
-// require pulling the game's localization string tables, a separate data
-// source this pipeline doesn't extract yet).
+// Internal record names are raw identifiers (e.g. "AEGS_Avenger_Titan").
+// recordDisplayName is the real player-facing name resolved from the game's
+// localization table, but plenty of records only have an unassigned-
+// localization placeholder there, so it's null for those — fall back to a
+// cosmetic cleanup of the raw name rather than showing nothing.
 function humanizeName(name) {
   return name.replace(/_/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function displayNameFor(record) {
+  return record.recordDisplayName || humanizeName(record.recordName);
 }
 
 // null means "this side doesn't exist" (an added or removed record/field),
@@ -68,7 +73,7 @@ function renderTableRow(record) {
 
   return `
     <tr class="border-t border-gray-800">
-      <td class="px-3 py-1.5 font-semibold text-pfc-red align-top border-r border-gray-800">${humanizeName(record.recordName)}</td>
+      <td class="px-3 py-1.5 font-semibold text-pfc-red align-top border-r border-gray-800">${displayNameFor(record)}</td>
       <td class="px-3 py-1.5 align-top">
         <div class="grid ${CHANGE_GRID_COLS} gap-x-3 gap-y-0.5 text-sm">
           ${fieldRows}
@@ -78,6 +83,36 @@ function renderTableRow(record) {
   `;
 }
 
+function renderCategoryTable(records) {
+  return `
+    <div class="rounded-lg bg-gray-900/60 overflow-x-auto border border-gray-800">
+      <table class="w-full text-sm border-collapse table-fixed">
+        <thead>
+          <tr class="text-left text-gray-500 uppercase text-xs border-b border-gray-800">
+            <th class="w-[30%] px-3 py-1.5 font-semibold border-r border-gray-800">Item</th>
+            <th class="px-3 py-1.5 font-semibold">
+              <div class="grid ${CHANGE_GRID_COLS} gap-x-3">
+                <span>Parameter</span>
+                <span class="text-right">Previous</span>
+                <span class="text-right">Current</span>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          ${records.map(renderTableRow).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+// One tab per category instead of one long stacked list — only the active
+// category's table is shown at a time. A <select> covers narrow screens
+// (swapped in below the `sm` breakpoint) since a horizontal tab strip with
+// five-plus labels doesn't fit a phone width; the tab strip covers `sm` and
+// up. Both controls drive the same activateChangelogTab() so they always
+// agree on which panel is showing.
 function renderResults(versionFrom, versionTo, entries) {
   if (!Array.isArray(entries) || entries.length === 0) {
     return versionFrom && versionTo
@@ -86,40 +121,65 @@ function renderResults(versionFrom, versionTo, entries) {
   }
 
   const byCategory = groupByCategory(entries);
-  const sections = Object.keys(byCategory).sort().map(category => {
-    const records = groupByRecord(byCategory[category]);
-    const label = CATEGORY_LABELS[category] || category;
-    return `
-      <section class="mb-5">
-        <h2 class="text-lg font-bold text-pfc-gold uppercase tracking-wide mb-1.5">
-          ${label} <span class="text-gray-500 text-sm font-normal normal-case">(${records.length})</span>
-        </h2>
-        <div class="rounded-lg bg-gray-900/60 overflow-x-auto border border-gray-800">
-          <table class="w-full text-sm border-collapse table-fixed">
-            <thead>
-              <tr class="text-left text-gray-500 uppercase text-xs border-b border-gray-800">
-                <th class="w-[30%] px-3 py-1.5 font-semibold border-r border-gray-800">Item</th>
-                <th class="px-3 py-1.5 font-semibold">
-                  <div class="grid ${CHANGE_GRID_COLS} gap-x-3">
-                    <span>Parameter</span>
-                    <span class="text-right">Previous</span>
-                    <span class="text-right">Current</span>
-                  </div>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              ${records.map(renderTableRow).join('')}
-            </tbody>
-          </table>
-        </div>
-      </section>
-    `;
-  }).join('');
+  const tabs = Object.keys(byCategory).sort().map(category => ({
+    category,
+    label: CATEGORY_LABELS[category] || category,
+    records: groupByRecord(byCategory[category]),
+  }));
+
+  const tabOptions = tabs.map(t => `<option value="${t.category}">${t.label} (${t.records.length})</option>`).join('');
+
+  const tabButtons = tabs.map((t, i) => `
+    <button type="button" data-changelog-tab="${t.category}" class="changelog-tab-btn px-4 py-2 text-sm font-semibold border-b-2 whitespace-nowrap transition-colors ${i === 0 ? 'border-pfc-gold text-pfc-gold' : 'border-transparent text-gray-400 hover:text-gray-200'}">
+      ${t.label} <span class="text-gray-500 font-normal">(${t.records.length})</span>
+    </button>
+  `).join('');
+
+  const panels = tabs.map((t, i) => `
+    <div data-changelog-panel="${t.category}" class="changelog-tab-panel${i === 0 ? '' : ' hidden'}">
+      ${renderCategoryTable(t.records)}
+    </div>
+  `).join('');
 
   const subtitle = `<p class="text-gray-400 mb-4 text-center">${versionFrom} &rarr; ${versionTo}</p>`;
 
-  return subtitle + sections;
+  return `
+    ${subtitle}
+    <div class="sm:hidden mb-4">
+      <select id="changelog-tab-select" class="w-full bg-gray-900 border border-gray-700 rounded px-3 py-2 text-gray-200">
+        ${tabOptions}
+      </select>
+    </div>
+    <div class="hidden sm:flex flex-wrap gap-1 border-b border-gray-800 mb-5" role="tablist">
+      ${tabButtons}
+    </div>
+    <div>${panels}</div>
+  `;
+}
+
+function activateChangelogTab(container, category) {
+  container.querySelectorAll('[data-changelog-panel]').forEach(panel => {
+    panel.classList.toggle('hidden', panel.dataset.changelogPanel !== category);
+  });
+  container.querySelectorAll('.changelog-tab-btn').forEach(btn => {
+    const active = btn.dataset.changelogTab === category;
+    btn.classList.toggle('border-pfc-gold', active);
+    btn.classList.toggle('text-pfc-gold', active);
+    btn.classList.toggle('border-transparent', !active);
+    btn.classList.toggle('text-gray-400', !active);
+  });
+  const select = container.querySelector('#changelog-tab-select');
+  if (select) select.value = category;
+}
+
+function bindChangelogTabs(container) {
+  container.querySelectorAll('.changelog-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => activateChangelogTab(container, btn.dataset.changelogTab));
+  });
+  const select = container.querySelector('#changelog-tab-select');
+  if (select) {
+    select.addEventListener('change', () => activateChangelogTab(container, select.value));
+  }
 }
 
 async function loadChangelog(from, to) {
@@ -141,6 +201,7 @@ async function loadChangelog(from, to) {
     const { versionFrom, versionTo, entries } = await res.json();
     results.classList.add('text-left');
     results.innerHTML = renderResults(versionFrom, versionTo, entries);
+    bindChangelogTabs(results);
   } catch (err) {
     console.error('[changelog] Failed to load changelog:', err);
     results.innerHTML = '<p class="text-red-500">Failed to load changelog. Please try again later.</p>';

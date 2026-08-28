@@ -141,6 +141,45 @@ test('changelog.init renders one always-visible row per item with all its change
   expect(rows[0].textContent).toContain('Crew Size');
 });
 
+test('changelog.init prefers recordDisplayName over the raw recordName, but falls back when absent', async () => {
+  mockChangelogFetches({
+    changelogResponse: {
+      versionFrom: 'v1',
+      versionTo: 'v2',
+      entries: [
+        {
+          category: 'ships',
+          recordRef: 'ref-1',
+          recordName: 'AEGS_Avenger_Titan',
+          recordDisplayName: 'Aegis Avenger Titan',
+          fieldKey: 'crew_size',
+          label: 'Crew Size',
+          unit: null,
+          oldValue: '1',
+          newValue: '2'
+        },
+        {
+          category: 'ships',
+          recordRef: 'ref-2',
+          recordName: 'Unassigned_Localization_Ship',
+          recordDisplayName: null,
+          fieldKey: 'crew_size',
+          label: 'Crew Size',
+          unit: null,
+          oldValue: '1',
+          newValue: '2'
+        }
+      ]
+    }
+  });
+  document.body.innerHTML = '<div id="changelog"></div>';
+  await changelog.init();
+  const html = document.getElementById('changelog-results').innerHTML;
+  expect(html).toContain('Aegis Avenger Titan');
+  expect(html).not.toContain('AEGS_Avenger_Titan');
+  expect(html).toContain('Unassigned Localization Ship'); // falls back to the humanized raw name
+});
+
 test('changelog.init renders added/removed fields as a dash, not the word null', async () => {
   mockChangelogFetches({
     changelogResponse: {
