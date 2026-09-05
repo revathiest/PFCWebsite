@@ -15,19 +15,12 @@ async function loadOfficers() {
     const data = await res.json();
     const officers = Array.isArray(data.officers) ? data.officers : [];
 
-    const RANK_ORDER = [
-      'Fleet Admiral',
-      'Admiral',
-      'Commodore',
-      'Captain',
-      'Commander'
-    ];
-
+    // Officers are ordered by their Discord role's hierarchy position (higher
+    // position = more senior), so renaming officer roles in Discord doesn't
+    // require any changes here.
     const sortedOfficers = officers
-      .filter(o => RANK_ORDER.includes(o.roleName))
-      .sort((a, b) =>
-        RANK_ORDER.indexOf(a.roleName) - RANK_ORDER.indexOf(b.roleName)
-      );
+      .filter(o => o.roleName)
+      .sort((a, b) => (b.rolePosition ?? -1) - (a.rolePosition ?? -1));
 
     if (sortedOfficers.length === 0) {
       container.innerHTML = '<p class="text-gray-300">No officer data available.</p>';
