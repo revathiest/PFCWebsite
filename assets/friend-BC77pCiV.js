@@ -1,11 +1,11 @@
-import{P as x}from"./index-9PT6fpz5.js";function $(){return window.location.pathname.split("/")[2]||""}function h(s,r,a){return a?`
-    <details class="details-block mb-4">
-      <summary class="details-summary cursor-pointer text-pfc-gold font-semibold underline">${r}</summary>
+import{P as v}from"./index-mw1R8J-Z.js";function x(){return window.location.pathname.split("/")[2]||""}function h(r,a,t){return t?`
+    <details id="collapsible-${r}" class="details-block mb-4">
+      <summary class="details-summary cursor-pointer text-pfc-gold font-semibold underline">${a}</summary>
       <div class="details-content text-gray-300 mt-2">
-        ${a}
+        ${t}
       </div>
     </details>
-  `:""}async function w(){var a,l,d,g,p,m,b,f;const s=$(),r=document.getElementById("friend-detail");if(r){if(!s){r.innerHTML='<p class="text-red-500">Invalid organisation id.</p>';return}try{const n=localStorage.getItem("jwt"),v=n?{Authorization:`Bearer ${n}`}:{},i=await fetch(`${x.apiBase}/api/orgs/${s}`,{headers:v});if(!i.ok)throw new Error(`HTTP ${i.status}`);const u=await i.json(),y=u.org||u,e=y.data||y;r.innerHTML=`
+  `:""}async function w(){var t,c,d,g,p,m,b,f;const r=x(),a=document.getElementById("friend-detail");if(a){if(!r){a.innerHTML='<p class="text-red-500">Invalid organisation id.</p>';return}try{const n=localStorage.getItem("jwt"),$=n?{Authorization:`Bearer ${n}`}:{},i=await fetch(`${v.apiBase}/api/orgs/${r}`,{headers:$});if(!i.ok)throw new Error(`HTTP ${i.status}`);const u=await i.json(),y=u.org||u,e=y.data||y;a.innerHTML=`
       <div class="card border-l-4 border-pfc-red animate-fade-in overflow-hidden">
         <div class="h-48 bg-cover bg-center rounded-t" style="background-image: url('${e.banner}');"></div>
         <div class="px-6 py-4 text-center">
@@ -18,9 +18,9 @@ import{P as x}from"./index-9PT6fpz5.js";function $(){return window.location.path
             <span class="badge bg-gray-800 border border-pfc-gold">${e.lang||"English"}</span>
             ${e.recruiting?'<span class="badge bg-green-700 text-white border border-green-800">Recruiting</span>':'<span class="badge bg-gray-800 text-gray-400 border border-gray-700">Not Recruiting</span>'}
           </div>
-          <p class="text-gray-300 mb-4">${((a=e.headline)==null?void 0:a.plaintext)||""}</p>
+          <p class="text-gray-300 mb-4">${((t=e.headline)==null?void 0:t.plaintext)||""}</p>
           <div class="flex flex-wrap justify-center gap-4 text-sm text-gray-400 mb-6">
-            ${(d=(l=e.focus)==null?void 0:l.primary)!=null&&d.image?`<div class="flex items-center gap-2">
+            ${(d=(c=e.focus)==null?void 0:c.primary)!=null&&d.image?`<div class="flex items-center gap-2">
               <img src="${e.focus.primary.image}" class="h-6 w-6" alt="Primary Focus" />
               <span>${e.focus.primary.name||""}</span>
             </div>`:""}
@@ -45,4 +45,4 @@ import{P as x}from"./index-9PT6fpz5.js";function $(){return window.location.path
           </div>
         </div>
       </div>
-    `,r.querySelectorAll(".details-block").forEach(c=>{const o=c.querySelector(".details-summary");o&&(o.addEventListener("click",t=>{t.preventDefault(),c.open=!c.open}),o.addEventListener("keypress",t=>{(t.key==="Enter"||t.key===" ")&&(t.preventDefault(),o.click())}))})}catch(n){console.error("[friend] Failed to load org:",n),r.innerHTML='<p class="text-red-500">Failed to load organisation.</p>'}}}async function E(){await w()}export{E as init};
+    `,a.querySelectorAll(".details-block").forEach(l=>{const o=l.querySelector(".details-summary");o&&(o.addEventListener("click",s=>{s.preventDefault(),l.open=!l.open}),o.addEventListener("keypress",s=>{(s.key==="Enter"||s.key===" ")&&(s.preventDefault(),o.click())}))})}catch(n){console.error("[friend] Failed to load org:",n),a.innerHTML='<p class="text-red-500">Failed to load organisation.</p>'}}}async function E(){await w()}export{E as init};
