@@ -105,7 +105,7 @@ async function runNavLogic() {
       }
     }
 
-    const isAdmin = user?.roles?.includes('Fleet Admiral');
+    const isAdmin = user?.roles?.includes('Commodore');
     if (DEBUG) console.log('[nav] Is admin:', isAdmin);
     const pathname = window.location.pathname;
     const normalizedPath = pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname;

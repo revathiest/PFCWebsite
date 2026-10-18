@@ -37,7 +37,7 @@ function resolveRoute(path) {
 async function ensureAuthorized(path) {
   if (!protectedRoutes.includes(path)) return true;
   const user = await getUser();
-  const isAdmin = user?.roles?.includes('Fleet Admiral');
+  const isAdmin = user?.roles?.includes('Commodore');
   if (!user || !isAdmin) {
     console.warn('[router] Access denied to protected route:', path);
     await navigateTo('/unauthorized');

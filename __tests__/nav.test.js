@@ -37,7 +37,7 @@ async function loadNav() {
 test('shows admin elements when user is admin', async () => {
   localStorage.setItem('jwt', 't');
   const auth = require('../src/auth.js');
-  auth.getUser.mockReturnValue({ displayName: 'Admin', roles: ['Fleet Admiral'] });
+  auth.getUser.mockReturnValue({ displayName: 'Admin', roles: ['Commodore'] });
   const nav = await loadNav();
   nav.init();
   await new Promise(r => setTimeout(r, 0));
