@@ -64,7 +64,7 @@ function formatValue(value, unit) {
 // seen in the data (e.g. "43.65 /shot") without wrapping.
 const CHANGE_GRID_COLS = 'grid-cols-[1fr_5.5rem_5.5rem]';
 
-function renderTableRow(record) {
+function renderTableRow(record, showRawName) {
   const fieldRows = record.fields.map(f => `
     <div class="text-gray-400">${f.label}</div>
     <div class="text-right text-gray-200 whitespace-nowrap">${formatValue(f.oldValue, f.unit)}</div>
@@ -73,7 +73,10 @@ function renderTableRow(record) {
 
   return `
     <tr class="border-t border-gray-800">
-      <td class="px-3 py-1.5 font-semibold text-pfc-red align-top border-r border-gray-800">${displayNameFor(record)}</td>
+      <td class="px-3 py-1.5 font-semibold text-pfc-red align-top border-r border-gray-800">
+        ${displayNameFor(record)}
+        ${showRawName ? `<div class="text-xs font-normal text-gray-500">${humanizeName(record.recordName)}</div>` : ''}
+      </td>
       <td class="px-3 py-1.5 align-top">
         <div class="grid ${CHANGE_GRID_COLS} gap-x-3 gap-y-0.5 text-sm">
           ${fieldRows}
@@ -83,7 +86,19 @@ function renderTableRow(record) {
   `;
 }
 
+// Several distinct records can resolve to the same player-facing name (an
+// NPC or game-master variant of a ship carries the same localized name as
+// the player one). Showing just that name twice looks like a duplicate row,
+// so when a name is not unique within the table, each of its rows also shows
+// the raw record name to tell them apart. Unique names skip it as clutter.
 function renderCategoryTable(records) {
+  const seen = new Map();
+  for (const record of records) {
+    const name = displayNameFor(record);
+    seen.set(name, (seen.get(name) || 0) + 1);
+  }
+  const ambiguous = new Set([...seen].filter(([, n]) => n > 1).map(([name]) => name));
+
   return `
     <div class="rounded-lg bg-gray-900/60 overflow-x-auto border border-gray-800">
       <table class="w-full text-sm border-collapse table-fixed">
@@ -100,7 +115,7 @@ function renderCategoryTable(records) {
           </tr>
         </thead>
         <tbody>
-          ${records.map(renderTableRow).join('')}
+          ${records.map(record => renderTableRow(record, ambiguous.has(displayNameFor(record)))).join('')}
         </tbody>
       </table>
     </div>

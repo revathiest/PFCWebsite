@@ -180,6 +180,64 @@ test('changelog.init prefers recordDisplayName over the raw recordName, but fall
   expect(html).toContain('Unassigned Localization Ship'); // falls back to the humanized raw name
 });
 
+test('changelog.init shows the raw record name as a subtitle when recordDisplayName collapses distinct records together', async () => {
+  mockChangelogFetches({
+    changelogResponse: {
+      versionFrom: 'v1',
+      versionTo: 'v2',
+      entries: [
+        {
+          category: 'ships',
+          recordRef: 'ref-1',
+          recordName: 'AEGS_Idris_M',
+          recordDisplayName: 'Aegis Idris-M',
+          fieldKey: 'crew_size',
+          label: 'Crew Size',
+          unit: null,
+          oldValue: '1',
+          newValue: '28'
+        },
+        {
+          category: 'ships',
+          recordRef: 'ref-2',
+          recordName: 'AEGS_Idris_M_PU_GameMaster',
+          recordDisplayName: 'Aegis Idris-M',
+          fieldKey: 'crew_size',
+          label: 'Crew Size',
+          unit: null,
+          oldValue: '1',
+          newValue: '28'
+        },
+        {
+          category: 'ships',
+          recordRef: 'ref-3',
+          recordName: 'AEGS_Avenger_Titan',
+          recordDisplayName: 'Aegis Avenger Titan',
+          fieldKey: 'crew_size',
+          label: 'Crew Size',
+          unit: null,
+          oldValue: '1',
+          newValue: '2'
+        }
+      ]
+    }
+  });
+  document.body.innerHTML = '<div id="changelog"></div>';
+  await changelog.init();
+  const results = document.getElementById('changelog-results');
+
+  const rows = results.querySelectorAll('tbody tr');
+  expect(rows.length).toBe(3); // still one row per distinct record, not merged
+
+  const html = results.innerHTML;
+  expect(html.match(/Aegis Idris-M/g).length).toBe(2);
+  expect(html).toContain('AEGS Idris M'); // subtitle disambiguates the first...
+  expect(html).toContain('AEGS Idris M PU GameMaster'); // ...from the second
+
+  // "Aegis Avenger Titan" is unique in this table, so no subtitle clutter.
+  expect(html).not.toContain('AEGS Avenger Titan');
+});
+
 test('changelog.init renders added/removed fields as a dash, not the word null', async () => {
   mockChangelogFetches({
     changelogResponse: {

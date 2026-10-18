@@ -17,7 +17,7 @@ function getSid() {
 function collapsibleBlock(id, title, content) {
   if (!content) return '';
   return `
-    <details class="details-block mb-4">
+    <details id="collapsible-${id}" class="details-block mb-4">
       <summary class="details-summary cursor-pointer text-pfc-gold font-semibold underline">${title}</summary>
       <div class="details-content text-gray-300 mt-2">
         ${content}
